@@ -22083,33 +22083,9 @@ MonoBehaviour:
   endPosition: {x: -345, y: -80, z: 0}
   autoCalculateStartPosition: 1
   fontColor: {r: 0.9137255, g: 0.5294118, b: 0.16470589, a: 1}
-  introPhrases:
-  - "Welcome to Slothy\u2019s Bakery"
-  - "My name is Slothy, and I\u2019m the baker."
-  - "Thank you for choosing Slothy\u2019s Bakery to start working."
-  - Today I need your help with comparing pieces of cakes or desserts.
-  - So I would like to explain a little about the magic of comparing fractions.
-  - You can compare two fractions by checking their numerators and denominators.
-  - With this, you can determine which fraction is greater than, less than or equals
-    to another, regardless of whether their denominators or numerators are equals.
-  - For this task, you need to analyze the denominator of the fractions to determine
-    if they are comparable.
-  - I will give you an example.
-  congratPhrases:
-  - Great work!
-  - As you could see, we can't compare directly 1/2 and 3/4, so we must multiply
-    1/2 with 2/2 (or a fraction equal to 1), changing the fraction to 2/4.
-  - The fractions 2/4 and 3/4 have the same denominators so they can be compared
-    directly by comparing their numerators.
-  - Let's practice a little more!
-  endPhrases:
-  - Amazing job!
-  - This is the first step to compare fractions, we must check if their denominators
-    can be compared or equal.
-  - If they can't be compared, we must multiply them to get a fraction with a comparable
-    denominator.
-  - For the next step, we can compare numerators and have a result that can be greater,
-    less or equals.
+  _introDialogSo: {fileID: 11400000, guid: 35d201658bdd34f1ca4889b121f28022, type: 2}
+  _midDialogSo: {fileID: 11400000, guid: 256518eb78c2049d5a28eb3c318e9371, type: 2}
+  _endDialogSo: {fileID: 11400000, guid: cf649f425d1824060accc938fc70de8a, type: 2}
   _phraseType: 0
   timeScaler: 0.75
   _animationCurve:

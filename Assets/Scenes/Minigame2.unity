@@ -1995,6 +1995,18 @@ PrefabInstance:
       value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 8226921903920718117, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
+      propertyPath: _endDialogSo
+      value: 
+      objectReference: {fileID: 11400000, guid: 822b0fb830e2c47a78b7ef3f26771b4a, type: 2}
+    - target: {fileID: 8226921903920718117, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
+      propertyPath: _midDialogSo
+      value: 
+      objectReference: {fileID: 11400000, guid: d654ae5765b6142fda92cd7f7be22dc9, type: 2}
+    - target: {fileID: 8226921903920718117, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
+      propertyPath: _introDialogSo
+      value: 
+      objectReference: {fileID: 11400000, guid: 08531c348abe646df9bec8718bbc3d9b, type: 2}
+    - target: {fileID: 8226921903920718117, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
       propertyPath: endPhrases.Array.size
       value: 3
       objectReference: {fileID: 0}
@@ -2095,7 +2107,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8226921904945143234, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -386.99994
+      value: -387
       objectReference: {fileID: 0}
     - target: {fileID: 8226921904945143234, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -8230,8 +8242,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28498c045fc70e24b94941a6c4556f0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  signPos: {fileID: 0}
   _sign: 2
   _state: 0
+  collider: {fileID: 0}
 --- !u!50 &1878406507563812969
 Rigidbody2D:
   serializedVersion: 4
@@ -8368,8 +8382,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28498c045fc70e24b94941a6c4556f0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  signPos: {fileID: 0}
   _sign: 0
   _state: 0
+  collider: {fileID: 0}
 --- !u!50 &1878406507565727211
 Rigidbody2D:
   serializedVersion: 4
@@ -8611,8 +8627,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28498c045fc70e24b94941a6c4556f0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  signPos: {fileID: 0}
   _sign: 1
   _state: 0
+  collider: {fileID: 0}
 --- !u!212 &1878406508023470520
 SpriteRenderer:
   m_ObjectHideFlags: 0

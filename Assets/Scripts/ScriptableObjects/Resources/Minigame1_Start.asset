@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9512d4c2c6914aaeaae127169e6ea3b, type: 3}
+  m_Name: Minigame1_Start
+  m_EditorClassIdentifier: 
+  phrases:
+  - "Welcome to Slothy\u2019s Bakery"
+  - "My name is Slothy, and I\u2019m the baker."
+  - "Thank you for choosing Slothy\u2019s Bakery to start working."
+  - Today I need your help with comparing pieces of cakes or desserts.
+  - So I would like to explain a little about the magic of comparing fractions.
+  - You can compare two fractions by checking their numerators and denominators.
+  - With this, you can determine which fraction is greater than, less than or equals
+    to another, regardless of whether their denominators or numerators are equals.
+  - For this task, you need to analyze the denominator of the fractions to determine
+    if they are comparable.
+  - I will give you an example.

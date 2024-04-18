@@ -12,9 +12,9 @@ namespace INART.SlothyBakery.Base
             BackgroundSoundManager._instance.SetBackgroundMusicVolume(_soundLevel);
         }
    
-        public void SetBSFXMusicVolume(float _soundLevel)
+        public void SetBsfxMusicVolume(float _soundLevel)
         {
-            BackgroundSoundManager._instance.SetBSFXMusicVolume(_soundLevel);
+            BackgroundSoundManager._instance.SetBsfxMusicVolume(_soundLevel);
         }
     }
 }

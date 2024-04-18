@@ -29,13 +29,11 @@ namespace INART.SlothyBakery.SoundManager
 
         public void SetBackgroundMusicVolume(float _soundLevel)
         {
-            //print(_soundLevel);
             mixer.SetFloat("MusicVol", Mathf.Log10(_soundLevel) * 20);
         }
 
-        public void SetBSFXMusicVolume(float _soundLevel)
+        public void SetBsfxMusicVolume(float _soundLevel)
         {
-            //print(_soundLevel);
             mixer.SetFloat("SFXVol", Mathf.Log10(_soundLevel) * 20);
         }
 
@@ -50,13 +48,12 @@ namespace INART.SlothyBakery.SoundManager
 
             if (!isTesting)
             {
-                if (SceneManager.GetActiveScene().name == sceneNames[0] || SceneManager.GetActiveScene().name == sceneNames[1])
-                {
-                    backgroundSound1.clip = background1;
-                    backgroundSound2.clip = background2;
-                    sceneBlock = 0;
-                    backgroundSound1.Play();
-                }
+                if (SceneManager.GetActiveScene().name != sceneNames[0] &&
+                    SceneManager.GetActiveScene().name != sceneNames[1]) return;
+                backgroundSound1.clip = background1;
+                backgroundSound2.clip = background2;
+                sceneBlock = 0;
+                backgroundSound1.Play();
             }
             else
             {
@@ -76,16 +73,14 @@ namespace INART.SlothyBakery.SoundManager
                     || SceneManager.GetActiveScene().name == sceneNames[4]
                     && sceneBlock == 1)
                 {
-                    if (currentCoroutine == null)
-                        currentCoroutine = StartCoroutine(FadeBetweenAudios(0, 0.4f));
+                    currentCoroutine ??= StartCoroutine(FadeBetweenAudios(0, 0.4f));
                 }
                 else if (SceneManager.GetActiveScene().name == sceneNames[1]
                          || SceneManager.GetActiveScene().name == sceneNames[5]
                          && sceneBlock == 0)
                 {
                     //print("Entering");
-                    if (currentCoroutine == null)
-                        currentCoroutine = StartCoroutine(FadeBetweenAudios(1, 0.4f));
+                    currentCoroutine ??= StartCoroutine(FadeBetweenAudios(1, 0.4f));
                 }
             }
 
@@ -114,7 +109,6 @@ namespace INART.SlothyBakery.SoundManager
                 }
 
                 sceneBlock = 0;
-                print(sceneBlock);
                 backgroundSound1.Stop();
             }
             else if (_type == 1)
@@ -134,12 +128,10 @@ namespace INART.SlothyBakery.SoundManager
                 }
 
                 sceneBlock = 1;
-                //print(sceneBlock);
                 backgroundSound2.Stop();
             }
 
             currentCoroutine = null;
-            //print("Current Coroutine CLeaned");
         }
     }
 }

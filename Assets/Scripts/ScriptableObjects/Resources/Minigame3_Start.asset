@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9512d4c2c6914aaeaae127169e6ea3b, type: 3}
+  m_Name: Minigame3_Start
+  m_EditorClassIdentifier: 
+  phrases:
+  - Good work! You are almost an expert analyzing fractions of desserts and cakes.
+  - Thank you for helping me with the first two tasks.
+  - For this step, we will do a final check to the orders that will be delivered
+    so you must pay attention to the questions so we can confirm the order is fine.
+  - "Let\u2019s put your skills in test once more."

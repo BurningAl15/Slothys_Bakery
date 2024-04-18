@@ -22,6 +22,7 @@ namespace INART.SlothyBakery.Core
         [FormerlySerializedAs("instructionsOn")][SerializeField] private bool turnOnInstructions = true;
         [FormerlySerializedAs("instructionsOn")][SerializeField] private bool turnOnQuestionButton = true;
         [SerializeField] private float canvasAnimationDuration;
+        
         private void Awake()
         {
             // QualitySettings.vSyncCount = 1; // VSync must be disabled
@@ -32,8 +33,13 @@ namespace INART.SlothyBakery.Core
         {
             GameStates._instance.Set_GameState_Load();
             miniGame.Init();
+#if UNITY_ANDROID || UNITY_IOS
+            CanvasAnimator._instance.Test(false);
+#else
             CanvasAnimator._instance.Test(isTesting);
-            if (currentCoroutine == null) currentCoroutine = StartCoroutine(StartGame(1f));
+#endif
+
+            currentCoroutine ??= StartCoroutine(StartGame(1f));
         }
 
         private IEnumerator StartGame(float _delayDuration)
@@ -82,7 +88,7 @@ namespace INART.SlothyBakery.Core
 
         public void CallNextScene()
         {
-            if (currentCoroutine == null) currentCoroutine = StartCoroutine(ToNextScene(3));
+            currentCoroutine ??= StartCoroutine(ToNextScene(3));
         }
     }
 }

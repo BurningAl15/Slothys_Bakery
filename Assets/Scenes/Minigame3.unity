@@ -1992,6 +1992,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Animation and Core Package
       objectReference: {fileID: 0}
+    - target: {fileID: 6756702440194423641, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -12.979004
+      objectReference: {fileID: 0}
     - target: {fileID: 8226921903171751729, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
       propertyPath: m_CullTransparentMesh
       value: 0
@@ -2021,9 +2025,21 @@ PrefabInstance:
       value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 8226921903920718117, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
+      propertyPath: _endDialogSo
+      value: 
+      objectReference: {fileID: 11400000, guid: 655117e27d9d04f4a8b252d962425bed, type: 2}
+    - target: {fileID: 8226921903920718117, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
+      propertyPath: _midDialogSo
+      value: 
+      objectReference: {fileID: 11400000, guid: 4bb3d1d06dc9e4ea3a3f953776119b12, type: 2}
+    - target: {fileID: 8226921903920718117, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
       propertyPath: endPosition.y
       value: -80
       objectReference: {fileID: 0}
+    - target: {fileID: 8226921903920718117, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
+      propertyPath: _introDialogSo
+      value: 
+      objectReference: {fileID: 11400000, guid: dff241dbefda548789182cbb86d39610, type: 2}
     - target: {fileID: 8226921903920718117, guid: e89103e4eb1139d4093dc511d0cfd54f, type: 3}
       propertyPath: endPhrases.Array.size
       value: 3

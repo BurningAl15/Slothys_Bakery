@@ -18,19 +18,16 @@ namespace INART.SlothyBakery.SoundManager
             Wrong,
             Selection1,
             Selection2,
-
         }
 
         [SerializeField] private AudioSource sfxAudioSource;
         [SerializeField] private AudioClip unlockClip;
 
-        [FormerlySerializedAs("aciertoClip")] [SerializeField]
-        private AudioClip successClip;
+        [SerializeField] private AudioClip successClip;
 
         [SerializeField] private AudioClip wrongClip;
         [SerializeField] private AudioClip selection1Clip;
         [SerializeField] private AudioClip selection2Clip;
-
 
         private void Awake()
         {

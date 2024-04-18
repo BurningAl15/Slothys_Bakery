@@ -45,18 +45,20 @@ namespace INART.SlothyBakery.CanvasAnimator
         private Vector3 dynamicStartPosition;
         [SerializeField] private Color fontColor;
 
-        [Header("First Phrases")]
-        [Tooltip("This phrases appear before you do anything")]
-        [SerializeField] private List<string> introPhrases = new List<string>();
+        [Header("First Phrases")] 
+        [Tooltip("This phrases appear before you do anything")] 
+        [SerializeField] private DialogSO _introDialogSo;
+        // [SerializeField] private List<string> introPhrases = new List<string>();
 
         [Header("Second Phrases")]
         [Tooltip("This phrases appear after you finish the first try of the minigame succesfully")]
-        [FormerlySerializedAs("phrases")]
-        [SerializeField] private List<string> congratPhrases = new List<string>();
+        [SerializeField] private DialogSO _midDialogSo;
+        // [SerializeField] private List<string> congratPhrases = new List<string>();
 
         [Header("End Phrases")]
         [Tooltip("This phrases appear after you finish the main game, then the character says this and dissapears")]
-        [SerializeField] private List<string> endPhrases = new List<string>();
+        [SerializeField] private DialogSO _endDialogSo;
+        // [SerializeField] private List<string> endPhrases = new List<string>();
 
         [Header("Animation Parameters")]
         [SerializeField] private PhraseUtils.PhraseType _phraseType;
@@ -79,6 +81,7 @@ namespace INART.SlothyBakery.CanvasAnimator
         private bool finishInstructions = false;
 
         private Coroutine currentCoroutine = null;
+        private static readonly int Talk = Animator.StringToHash("Talk");
 
 
         private void Awake()
@@ -94,24 +97,15 @@ namespace INART.SlothyBakery.CanvasAnimator
         private void Initialize()
         {
             if (autoCalculateStartPosition)
-                switch (canvasAnimationType)
+                dynamicStartPosition = canvasAnimationType switch
                 {
-                    case CanvasAnimationTypes.Vertical_BottomTop:
-                        dynamicStartPosition = new Vector3(endPosition.x, -800f, endPosition.z);
-                        break;
-                    case CanvasAnimationTypes.Horizontal_LeftRight:
-                        dynamicStartPosition = new Vector3(-1000f, endPosition.y, endPosition.z);
-                        break;
-                    case CanvasAnimationTypes.Horizontal_RightLeft:
-                        dynamicStartPosition = new Vector3(1000f, endPosition.y, endPosition.z);
-                        break;
-                    case CanvasAnimationTypes.Diagonally_LeftRight:
-                        dynamicStartPosition = new Vector3(-1000f, -800f, endPosition.z);
-                        break;
-                    case CanvasAnimationTypes.Diagonally_RightLeft:
-                        dynamicStartPosition = new Vector3(1000f, -800f, endPosition.z);
-                        break;
-                }
+                    CanvasAnimationTypes.Vertical_BottomTop => new Vector3(endPosition.x, -800f, endPosition.z),
+                    CanvasAnimationTypes.Horizontal_LeftRight => new Vector3(-1000f, endPosition.y, endPosition.z),
+                    CanvasAnimationTypes.Horizontal_RightLeft => new Vector3(1000f, endPosition.y, endPosition.z),
+                    CanvasAnimationTypes.Diagonally_LeftRight => new Vector3(-1000f, -800f, endPosition.z),
+                    CanvasAnimationTypes.Diagonally_RightLeft => new Vector3(1000f, -800f, endPosition.z),
+                    _ => dynamicStartPosition
+                };
 
             character.localPosition = startPosition;
             // speechBubble.color = new Color(1, 1, 1, 0);
@@ -144,112 +138,109 @@ namespace INART.SlothyBakery.CanvasAnimator
         /// <returns></returns>
         public IEnumerator CanvasAnimation(float _animationDuration, PhraseUtils.PhraseType _phraseType)
         {
-            if (!isTesting)
+            if (isTesting) yield break;
+            var scaledTime = Time.fixedDeltaTime * timeScaler;
+
+            //Fade In SpeechBubble and SpeechText
+            float animationTime = 0;
+
+            tempStartPosition = autoCalculateStartPosition ? dynamicStartPosition : startPosition;
+            character.localPosition = tempStartPosition;
+            speechText.text = "";
+
+            while (animationTime <= _animationDuration)
             {
-                var scaledTime = Time.fixedDeltaTime * timeScaler;
+                animationTime += scaledTime;
+                var percent = Mathf.Clamp01(animationTime / _animationDuration);
+                var animationCurveValue = _animationCurve.Evaluate(percent);
 
-                //Fade In SpeechBubble and SpeechText
-                float animationTime = 0;
-
-                tempStartPosition = autoCalculateStartPosition ? dynamicStartPosition : startPosition;
-                character.localPosition = tempStartPosition;
-                speechText.text = "";
-
-                while (animationTime <= _animationDuration)
-                {
-                    animationTime += scaledTime;
-                    var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                    character.localPosition = Vector3.Lerp(tempStartPosition, endPosition, animationCurveValue);
-                    yield return null;
-                }
-
-                animationTime = 0;
-                while (animationTime <= _animationDuration)
-                {
-                    animationTime += scaledTime;
-                    var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                    // speechBubble.color = new Color(1, 1, 1, animationCurveValue);
-                    speechBubbleCanvasGroup.alpha = animationCurveValue;
-
-                    speechText.color = new Color(fontColor.r, fontColor.g, fontColor.b, animationCurveValue);
-                    yield return null;
-                }
-
-
-                //TypeWrite
-                yield return TypeWrite(_phraseType);
-
-                #region Just for First Level
-
-
-                if (SceneUtils.IsCurrentSceneFirstLevel())
-                {
-                    if (speechBubbleGroup != null)
-                    {
-                        while (animationTime > 0)
-                        {
-                            speechBubbleGroup.alpha = _animationCurve.Evaluate(animationTime / _animationDuration);
-                            animationTime -= scaledTime;
-                            yield return null;
-                        }
-                        speechBubbleGroup.alpha = _animationCurve.Evaluate(0);
-                    }
-
-                    if (_phraseType == PhraseUtils.PhraseType.INTRO)
-                    {
-                        yield return ExplanationManager._instance.Instruction();
-                        yield return new WaitUntil(() => finishInstructions);
-                    }
-                }
-
-                #endregion
-
-                //Fade Out SpeechBubble and SpeechText
-                animationTime = 0;
-                while (animationTime <= _animationDuration)
-                {
-                    animationTime += scaledTime;
-                    var percent = 1 - Mathf.Clamp01(animationTime / _animationDuration);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                    // speechBubble.color = new Color(1, 1, 1, animationCurveValue);
-                    speechBubbleCanvasGroup.alpha = animationCurveValue;
-
-                    speechText.color = new Color(fontColor.r, fontColor.g, fontColor.b, animationCurveValue);
-                    yield return null;
-                }
-
-                #region Just for First Level
-
-                if (SceneUtils.IsCurrentSceneFirstLevel())
-                {
-                    if (_phraseType == PhraseUtils.PhraseType.INTRO)
-                        ExplanationManager._instance.TurnOff();
-                }
-
-                #endregion
-
-                yield return new WaitForSeconds(PhraseUtils.waitUntilPrevious);
-
-                //Or enter the animation here
-                animationTime = 0;
-                while (animationTime <= _animationDuration)
-                {
-                    animationTime += scaledTime;
-                    var percent = 1 - Mathf.Clamp01(animationTime / _animationDuration);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                    character.localPosition = Vector3.Lerp(tempStartPosition, endPosition, animationCurveValue);
-                    yield return null;
-                }
-                if (speechBubbleGroup != null)
-                    speechBubbleGroup.alpha = 1;
-
+                character.localPosition = Vector3.Lerp(tempStartPosition, endPosition, animationCurveValue);
+                yield return null;
             }
+
+            animationTime = 0;
+            while (animationTime <= _animationDuration)
+            {
+                animationTime += scaledTime;
+                var percent = Mathf.Clamp01(animationTime / _animationDuration);
+                var animationCurveValue = _animationCurve.Evaluate(percent);
+
+                // speechBubble.color = new Color(1, 1, 1, animationCurveValue);
+                speechBubbleCanvasGroup.alpha = animationCurveValue;
+
+                speechText.color = new Color(fontColor.r, fontColor.g, fontColor.b, animationCurveValue);
+                yield return null;
+            }
+
+
+            //TypeWrite
+            yield return TypeWrite(_phraseType);
+
+            #region Just for First Level
+
+
+            if (SceneUtils.IsCurrentSceneFirstLevel())
+            {
+                if (speechBubbleGroup != null)
+                {
+                    while (animationTime > 0)
+                    {
+                        speechBubbleGroup.alpha = _animationCurve.Evaluate(animationTime / _animationDuration);
+                        animationTime -= scaledTime;
+                        yield return null;
+                    }
+                    speechBubbleGroup.alpha = _animationCurve.Evaluate(0);
+                }
+
+                if (_phraseType == PhraseUtils.PhraseType.INTRO)
+                {
+                    yield return ExplanationManager._instance.Instruction();
+                    yield return new WaitUntil(() => finishInstructions);
+                }
+            }
+
+            #endregion
+
+            //Fade Out SpeechBubble and SpeechText
+            animationTime = 0;
+            while (animationTime <= _animationDuration)
+            {
+                animationTime += scaledTime;
+                var percent = 1 - Mathf.Clamp01(animationTime / _animationDuration);
+                var animationCurveValue = _animationCurve.Evaluate(percent);
+
+                // speechBubble.color = new Color(1, 1, 1, animationCurveValue);
+                speechBubbleCanvasGroup.alpha = animationCurveValue;
+
+                speechText.color = new Color(fontColor.r, fontColor.g, fontColor.b, animationCurveValue);
+                yield return null;
+            }
+
+            #region Just for First Level
+
+            if (SceneUtils.IsCurrentSceneFirstLevel())
+            {
+                if (_phraseType == PhraseUtils.PhraseType.INTRO)
+                    ExplanationManager._instance.TurnOff();
+            }
+
+            #endregion
+
+            yield return new WaitForSeconds(PhraseUtils.waitUntilPrevious);
+
+            //Or enter the animation here
+            animationTime = 0;
+            while (animationTime <= _animationDuration)
+            {
+                animationTime += scaledTime;
+                var percent = 1 - Mathf.Clamp01(animationTime / _animationDuration);
+                var animationCurveValue = _animationCurve.Evaluate(percent);
+
+                character.localPosition = Vector3.Lerp(tempStartPosition, endPosition, animationCurveValue);
+                yield return null;
+            }
+            if (speechBubbleGroup != null)
+                speechBubbleGroup.alpha = 1;
         }
 
         public IEnumerator InstructionsAnimation(bool runAnimation, bool turnOnInstructions = true,
@@ -284,7 +275,7 @@ namespace INART.SlothyBakery.CanvasAnimator
                     yield return null;
                 }
             }
-            else if (!runAnimation)
+            else
             {
                 for (var i = maxDelay; i > 0; i -= scaledTime)
                 {
@@ -317,13 +308,13 @@ namespace INART.SlothyBakery.CanvasAnimator
             switch (_phraseType)
             {
                 case PhraseUtils.PhraseType.INTRO:
-                    tempPhrase = introPhrases;
+                    tempPhrase = _introDialogSo.Phrases;
                     break;
                 case PhraseUtils.PhraseType.CONGRAT:
-                    tempPhrase = congratPhrases;
+                    tempPhrase = _midDialogSo.Phrases;
                     break;
                 case PhraseUtils.PhraseType.END:
-                    tempPhrase = endPhrases;
+                    tempPhrase = _endDialogSo.Phrases;
                     break;
             }
 
@@ -352,7 +343,7 @@ namespace INART.SlothyBakery.CanvasAnimator
                     //                             break;
                     //                     }
                     // #endif
-                    characterAnimator.SetBool("Talk", true);
+                    characterAnimator.SetBool(Talk, true);
                     for (var i = 0; i < tempPhrase[wordCounter].Length; i++)
                     {
                         tempText += tempPhrase[wordCounter][i];
@@ -363,7 +354,7 @@ namespace INART.SlothyBakery.CanvasAnimator
                     while (!Input.GetKeyDown(KeyCode.Space) && !Input.GetMouseButton(0))
                     {
                         waitingImage.gameObject.SetActive(true);
-                        characterAnimator.SetBool("Talk", false);
+                        characterAnimator.SetBool(Talk, false);
                         yield return null;
                     }
 
@@ -383,7 +374,7 @@ namespace INART.SlothyBakery.CanvasAnimator
                     break;
                 }
 
-            characterAnimator.SetBool("Talk", false);
+            characterAnimator.SetBool(Talk, false);
             yield return new WaitForSeconds(PhraseUtils.waitUntilPrevious);
         }
 

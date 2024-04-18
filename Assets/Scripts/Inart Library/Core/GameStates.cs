@@ -19,7 +19,10 @@ namespace INART.SlothyBakery.Core
 
         public enum GameState
         {
-            LOAD,PLAY,RESTART,END
+            LOAD,
+            PLAY,
+            RESTART,
+            END
         }
         public GameState _gameStates;
 
@@ -47,7 +50,7 @@ namespace INART.SlothyBakery.Core
 
         public bool IsGamePlaying()
         {
-            return _gameStates == GameState.PLAY ? true : false;
+            return _gameStates == GameState.PLAY;
         }
     }
 }

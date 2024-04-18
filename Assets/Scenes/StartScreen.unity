@@ -6989,7 +6989,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1399541197}
         m_TargetAssemblyTypeName: INART.SlothyBakery.Base.SoundSliders, Assembly-CSharp
-        m_MethodName: SetBSFXMusicVolume
+        m_MethodName: SetBsfxMusicVolume
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -14013,7 +14013,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6990957536484838843
 RectTransform:
   m_ObjectHideFlags: 0

@@ -28,6 +28,8 @@ namespace INART.SlothyBakery.SceneTransition
         [SerializeField] private float maxTimer;
 
         [SerializeField] private AnimationCurve _animationCurve;
+        private static readonly int EdgeSmoothing = Shader.PropertyToID("_EdgeSmoothing");
+        private static readonly int Cutoff = Shader.PropertyToID("_Cutoff");
 
         private void Awake()
         {
@@ -38,26 +40,24 @@ namespace INART.SlothyBakery.SceneTransition
 
             uiImage = GetComponent<Image>();
 
-            floorValue = uiImage.material.GetFloat("_EdgeSmoothing");
+            floorValue = uiImage.material.GetFloat(EdgeSmoothing);
             float clearValue = 1 + floorValue;
-            uiImage.material.SetFloat("_Cutoff", clearValue);
-            currentValue = uiImage.material.GetFloat("_Cutoff");
+            uiImage.material.SetFloat(Cutoff, clearValue);
+            currentValue = uiImage.material.GetFloat(Cutoff);
         }
 
         //From Black To Color
         public void FadeIn()
         {
             endAnimation = false;
-            if (currentCoroutine == null)
-                currentCoroutine = StartCoroutine(FadeEffect_IN());
+            currentCoroutine ??= StartCoroutine(FadeEffect_IN());
         }
 
         //From Color to Black
         public void FadeOut()
         {
             endAnimation = false;
-            if (currentCoroutine == null)
-                currentCoroutine = StartCoroutine(FadeEffect_OUT());
+            currentCoroutine ??= StartCoroutine(FadeEffect_OUT());
         }
 
         public IEnumerator FadeEffect_OUT()
@@ -67,7 +67,7 @@ namespace INART.SlothyBakery.SceneTransition
             var init = 1 + floorValue; //Color
             var end = -floorValue; //Black
 
-            uiImage.material.SetFloat("_Cutoff", init);
+            uiImage.material.SetFloat(Cutoff, init);
             // currentValue = init;
 
             yield return new WaitForSeconds(.5f);
@@ -84,12 +84,12 @@ namespace INART.SlothyBakery.SceneTransition
             while (timer >= 0)
             {
                 timer -= Time.deltaTime * transitionSpeed;
-                uiImage.material.SetFloat("_Cutoff", Mathf.InverseLerp(end, init, _animationCurve.Evaluate(timer)));
+                uiImage.material.SetFloat(Cutoff, Mathf.InverseLerp(end, init, _animationCurve.Evaluate(timer)));
                 yield return Time.deltaTime;
             }
             
             // currentValue = end;
-            uiImage.material.SetFloat("_Cutoff", end);
+            uiImage.material.SetFloat(Cutoff, end);
             currentCoroutine = null;
             endAnimation = true;
         }
@@ -101,7 +101,7 @@ namespace INART.SlothyBakery.SceneTransition
             var init = -floorValue;
             var end = 1 + floorValue;
 
-            uiImage.material.SetFloat("_Cutoff", init);
+            uiImage.material.SetFloat(Cutoff, init);
             // currentValue = init;
 
             yield return new WaitForSeconds(.5f);
@@ -118,12 +118,12 @@ namespace INART.SlothyBakery.SceneTransition
             while (timer <= maxTimer)
             {
                 timer += Time.deltaTime * transitionSpeed;
-                uiImage.material.SetFloat("_Cutoff", Mathf.InverseLerp( init,end, _animationCurve.Evaluate(timer)));
+                uiImage.material.SetFloat(Cutoff, Mathf.InverseLerp( init,end, _animationCurve.Evaluate(timer)));
                 yield return Time.deltaTime;
             }
             
             // currentValue = end;
-            uiImage.material.SetFloat("_Cutoff", end);
+            uiImage.material.SetFloat(Cutoff, end);
             currentCoroutine = null;
             endAnimation = true;
         }
