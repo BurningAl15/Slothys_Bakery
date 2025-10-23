@@ -1,0 +1,5 @@
+/Volumes/DiscoAccesoRapido/FatcatGameStudio/projects/SlothysBakeryURP/.utmp/RelWithDebInfo/6s2y5y10/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Volumes/DiscoAccesoRapido/FatcatGameStudio/projects/SlothysBakeryURP/.utmp/RelWithDebInfo/6s2y5y10/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Volumes/DiscoAccesoRapido/FatcatGameStudio/projects/SlothysBakeryURP/.utmp/RelWithDebInfo/6s2y5y10/armeabi-v7a/FramePacing/CMakeFiles/swappywrapper.dir
+/Volumes/DiscoAccesoRapido/FatcatGameStudio/projects/SlothysBakeryURP/.utmp/RelWithDebInfo/6s2y5y10/armeabi-v7a/FramePacing/CMakeFiles/edit_cache.dir
+/Volumes/DiscoAccesoRapido/FatcatGameStudio/projects/SlothysBakeryURP/.utmp/RelWithDebInfo/6s2y5y10/armeabi-v7a/FramePacing/CMakeFiles/rebuild_cache.dir
