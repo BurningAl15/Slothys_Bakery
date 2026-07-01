@@ -1,62 +1,54 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using DG.Tweening;
 using UnityEngine;
-using UnityEngine.UI;
+using INART.SlothyBakery.Core;
+using INART.Framework.Utils;
 
-public class HintManager : MonoBehaviour
+/// <summary>
+/// Slides the hint panel in/out using DOTween.
+/// Migrated from manual Lerp coroutine to DOLocalMove.
+/// Uses the same AnimationCurve as before so the easing stays identical.
+/// </summary>
+public class HintManager : Singleton<HintManager>
 {
-    public static HintManager _instance;
+    [SerializeField] private Vector2 initialPoint;
+    [SerializeField] private Vector2 endPoint;
+    [SerializeField] private AnimationCurve animCurve;
+    [SerializeField] private float duration = 0.4f;
 
-    [SerializeField] Vector2 initialPoint, endPoint;
-    [SerializeField] AnimationCurve animCurve;
-    [SerializeField] float maxTime;
+    [SerializeField] private RectTransform _messageTransform;
 
-    [SerializeField] RectTransform _messageTransform;
-    Coroutine currentCoroutine = null;
-    bool isOn = false;
+    protected override bool PersistAcrossScenes => false;
 
-    private void Awake()
+    private Tween _tween;
+    private bool _isOn;
+
+    protected override void OnAwake()
     {
-        if (_instance == null)
-            _instance = this;
-
         _messageTransform.localPosition = initialPoint;
-
     }
+
+    // ── Public API ─────────────────────────────────────────────────────────
 
     public void TurnOn()
     {
-        if (!isOn)
-        {
-            isOn = true;
-            if (currentCoroutine == null)
-                currentCoroutine = StartCoroutine(MoveCoroutine());
-        }
+        if (_isOn) return;
+        _isOn = true;
+        Slide(endPoint);
     }
 
     public void TurnOff()
     {
-        if (isOn)
-        {
-            isOn = false;
-            if (currentCoroutine == null)
-                currentCoroutine = StartCoroutine(MoveCoroutine());
-        }
+        if (!_isOn) return;
+        _isOn = false;
+        Slide(initialPoint);
     }
 
-    IEnumerator MoveCoroutine()
-    {
-        float value = 0;
-        Vector2 _initial = isOn ? initialPoint : endPoint;
-        Vector2 _end = isOn ? endPoint : initialPoint;
-        while (value <= maxTime)
-        {
-            _messageTransform.localPosition = Vector2.Lerp(_initial, _end, animCurve.Evaluate(value / maxTime));
-            value += Time.deltaTime;
-            yield return null;
-        }
-        _messageTransform.localPosition = _end;
+    // ── Internal ───────────────────────────────────────────────────────────
 
-        currentCoroutine = null;
+    private void Slide(Vector2 target)
+    {
+        _tween?.Kill();
+        // MoveToLocal with AnimationCurve preserves original easing feel
+        _tween = _messageTransform.MoveToLocal(target, duration, animCurve);
     }
 }

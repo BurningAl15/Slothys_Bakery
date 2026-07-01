@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-// using LoLSDK;
 
 namespace INART.SlothyBakery.Base
 {
@@ -21,7 +20,7 @@ namespace INART.SlothyBakery.Base
         private IEnumerator ToNextScene(string _sceneName)
         {
             //Do something or run a shader
-            yield return StartCoroutine(SceneTransitionController._instance.FadeEffect_OUT());
+            yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
             if (_sceneName == "0")
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             else if (_sceneName == "1" || _sceneName == "2" || _sceneName == "3")
@@ -43,8 +42,8 @@ namespace INART.SlothyBakery.Base
 
         public void BtnIntroToScene()
         {
-            // print(SaveLoadState.instance.GetActualState());
-            switch (SaveLoadState.instance.GetActualState())
+            // print(SaveLoadState.Instance.GetActualState());
+            switch (SaveLoadState.Instance.GetActualState())
             {
                 case 0:
                     if (currentCoroutine == null) currentCoroutine = StartCoroutine(ToNextScene("1"));

@@ -51,10 +51,10 @@ public class SignSelectable : MonoBehaviour
     {
         if (_state == SignState.Placed)
         {
-            SignManager._instance.SetSelectable_Active(this);
-            screenSpace = SignManager._instance.main.WorldToScreenPoint(signPos.position);
+            SignManager.Instance.SetSelectable_Active(this);
+            screenSpace = SignManager.Instance.main.WorldToScreenPoint(signPos.position);
             offset = signPos.position -
-                     SignManager._instance.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y,
+                     SignManager.Instance.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y,
                          screenSpace.z));
             signPos.localScale = Vector2.one * SignUtils.maxScale;
         }
@@ -66,7 +66,7 @@ public class SignSelectable : MonoBehaviour
         {
             var currentScreenSpace = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenSpace.z);
             
-            var currentPosition = SignManager._instance.main.ScreenToWorldPoint(currentScreenSpace) + offset;
+            var currentPosition = SignManager.Instance.main.ScreenToWorldPoint(currentScreenSpace) + offset;
 
             signPos.position = currentPosition;
         }
@@ -84,19 +84,19 @@ public class SignSelectable : MonoBehaviour
             //Reset by coroutine
             signPos.localScale = Vector2.one * SignUtils.maxScale;
             if (currentCoroutine == null)
-                currentCoroutine = StartCoroutine(Reset(SignManager._instance.GetInitialPos(Sign)));
+                currentCoroutine = StartCoroutine(Reset(SignManager.Instance.GetInitialPos(Sign)));
         }
     }
 
     public void _Reset(Sign _sign)
     {
         if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(Reset(SignManager._instance.GetInitialPos(_sign)));
+            currentCoroutine = StartCoroutine(Reset(SignManager.Instance.GetInitialPos(_sign)));
     }
     
     Vector3 OverlapChecking()
     {
-        Collider2D tempCollider = Physics2D.OverlapCircle(signPos.position, SignUtils.collisionRadius, SignManager._instance.collisionLayer);
+        Collider2D tempCollider = Physics2D.OverlapCircle(signPos.position, SignUtils.collisionRadius, SignManager.Instance.collisionLayer);
         if (tempCollider)
             return tempCollider.transform.position;
 
@@ -105,31 +105,31 @@ public class SignSelectable : MonoBehaviour
 
     bool OverlapChecking_ResetCheck()
     {
-        return Physics2D.OverlapCircle(signPos.position, SignUtils.collisionRadius, SignManager._instance.collisionLayer);
+        return Physics2D.OverlapCircle(signPos.position, SignUtils.collisionRadius, SignManager.Instance.collisionLayer);
     }
 
     void IsFull()
     {
         Collider2D temp = Physics2D.OverlapCircle(signPos.position, SignUtils.checkEmptyRadius,
-            SignManager._instance.checkEmptyLayer);
+            SignManager.Instance.checkEmptyLayer);
 
         if (temp != null)
         {
             SignSelectable tempSelectable = temp.gameObject.GetComponent<SignSelectable>();
-            SignManager._instance.ResetSelectable(tempSelectable);
+            SignManager.Instance.ResetSelectable(tempSelectable);
         }
     }
 
     IEnumerator Checking(Vector3 targetPos)
     {
-        if(SignManager._instance.version2)
+        if(SignManager.Instance.version2)
             IsFull();
         
         yield return Translate(targetPos);
         yield return Scale(true);
 
         ValueManager._instance.SetValue(Sign);
-        // SoundManager._instance.Run_SFX(SoundManager.SoundType.Selection1);
+        // SoundManager.Instance.Run_SFX(SoundManager.SoundType.Selection1);
         
         if (OverlapChecking_ResetCheck())
         {
@@ -138,7 +138,7 @@ public class SignSelectable : MonoBehaviour
         }
         else
         {
-            yield return Translate(SignManager._instance.GetInitialPos(_sign));
+            yield return Translate(SignManager.Instance.GetInitialPos(_sign));
             _state = SignState.Placed;
             gameObject.layer = SignUtils.resetLayer;
         }

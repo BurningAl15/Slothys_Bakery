@@ -6,7 +6,7 @@ public class InitializeModules : MonoBehaviour
 {
     void Start()
     {
-        SignManager._instance.Initialize();
+        SignManager.Instance.Initialize();
     }
 
   

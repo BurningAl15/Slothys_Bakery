@@ -1,18 +1,28 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
-// using LoLSDK;
-using UnityEngine.SceneManagement;
 
 namespace INART.SlothyBakery.CanvasAnimator
 {
-    public class CanvasAnimator : MonoBehaviour
+    using Core;
+    using SceneTransition; // SceneUtils
+
+    /// <summary>
+    /// Manages the character/speech-bubble intro sequence for each minigame scene.
+    ///
+    /// Migration notes:
+    ///   - All Lerp / alpha manual loops replaced with DOTween.
+    ///   - TypeWrite remains a coroutine (text logic, not animation).
+    ///   - All public method signatures are unchanged so GameManager compiles as-is.
+    ///   - ReducedMotion support: when SettingsManager.Instance.ReducedMotion is true
+    ///     the character animation is skipped and we jump straight to typewrite.
+    /// </summary>
+    public class CanvasAnimator : Singleton<CanvasAnimator>
     {
-        public static CanvasAnimator _instance;
+        // ── Enums ──────────────────────────────────────────────────────────────
 
         public enum CanvasAnimationTypes
         {
@@ -23,426 +33,281 @@ namespace INART.SlothyBakery.CanvasAnimator
             Diagonally_RightLeft
         }
 
+        // ── Inspector ──────────────────────────────────────────────────────────
+
+        [Header("Animation Type")]
         public CanvasAnimationTypes canvasAnimationType;
 
-        [Header("Animations")]
-        [Tooltip("The character you want to animate")]
-        [SerializeField] private RectTransform character;
-        [SerializeField] private Animator characterAnimator;
+        [Header("Character")]
+        [SerializeField] private RectTransform  character;
+        [SerializeField] private Animator        characterAnimator;
 
-        [Tooltip("The SpeechBubble where the text will appear")]
-        [SerializeField] private CanvasGroup speechBubbleCanvasGroup;
-        [SerializeField] private CanvasGroup speechBubbleGroup;
-
-        [Tooltip("The waiting icon that animates when you didn't press the button to go to the next phrase ")]
-        [SerializeField] private Animator waitingImage;
-
-        [Tooltip("The text in the SpeechBubble")]
+        [Header("Speech Bubble")]
+        [SerializeField] private CanvasGroup     speechBubbleCanvasGroup;
+        [SerializeField] private CanvasGroup     speechBubbleGroup;
         [SerializeField] private TextMeshProUGUI speechText;
+        [SerializeField] private Animator        waitingImage;
+        [SerializeField] private Color           fontColor;
 
-        [SerializeField] private Vector3 startPosition, endPosition;
-        [SerializeField] private bool autoCalculateStartPosition = false;
-        private Vector3 dynamicStartPosition;
-        [SerializeField] private Color fontColor;
+        [Header("Positions")]
+        [SerializeField] private Vector3 startPosition;
+        [SerializeField] private Vector3 endPosition;
+        [SerializeField] private bool    autoCalculateStartPosition;
 
-        [Header("First Phrases")] 
-        [Tooltip("This phrases appear before you do anything")] 
+        [Header("Dialogs")]
         [SerializeField] private DialogSO _introDialogSo;
-        // [SerializeField] private List<string> introPhrases = new List<string>();
-
-        [Header("Second Phrases")]
-        [Tooltip("This phrases appear after you finish the first try of the minigame succesfully")]
         [SerializeField] private DialogSO _midDialogSo;
-        // [SerializeField] private List<string> congratPhrases = new List<string>();
-
-        [Header("End Phrases")]
-        [Tooltip("This phrases appear after you finish the main game, then the character says this and dissapears")]
         [SerializeField] private DialogSO _endDialogSo;
-        // [SerializeField] private List<string> endPhrases = new List<string>();
-
-        [Header("Animation Parameters")]
-        [SerializeField] private PhraseUtils.PhraseType _phraseType;
-        [Range(.1f, 2f)][SerializeField] private float timeScaler;
-
-
-        [SerializeField] private AnimationCurve _animationCurve;
-        private Vector3 tempStartPosition;
 
         [Header("Instructions")]
         [SerializeField] private RectTransform instructions;
-        [SerializeField] private CanvasGroup _questionButton;
+        [SerializeField] private CanvasGroup    _questionButton;
 
-        private bool isTesting = false;
+        [Header("Timings")]
+        [SerializeField] private float charMoveDuration  = 0.5f;
+        [SerializeField] private float bubbleFadeDuration = 0.3f;
+        [SerializeField] private float instrFadeDuration  = 0.3f;
+        [SerializeField] private AnimationCurve _animationCurve;
 
-        private int actualLevel;
-
+        [Header("Debug")]
         [SerializeField] private TextMeshProUGUI testingText;
 
-        private bool finishInstructions = false;
+        // ── Runtime ────────────────────────────────────────────────────────────
 
-        private Coroutine currentCoroutine = null;
-        private static readonly int Talk = Animator.StringToHash("Talk");
+        private bool _isTesting;
+        private bool _finishInstructions;
+        private Vector3 _dynamicStartPosition;
 
+        private static readonly int TalkHash = Animator.StringToHash("Talk");
 
-        private void Awake()
-        {
-            if (_instance == null)
-                _instance = this;
-            else
-                Destroy(gameObject);
+        protected override bool PersistAcrossScenes => false;
 
-            Initialize();
-        }
+        // ── Singleton lifecycle ────────────────────────────────────────────────
+
+        protected override void OnAwake() => Initialize();
 
         private void Initialize()
         {
             if (autoCalculateStartPosition)
-                dynamicStartPosition = canvasAnimationType switch
+                _dynamicStartPosition = canvasAnimationType switch
                 {
-                    CanvasAnimationTypes.Vertical_BottomTop => new Vector3(endPosition.x, -800f, endPosition.z),
-                    CanvasAnimationTypes.Horizontal_LeftRight => new Vector3(-1000f, endPosition.y, endPosition.z),
-                    CanvasAnimationTypes.Horizontal_RightLeft => new Vector3(1000f, endPosition.y, endPosition.z),
-                    CanvasAnimationTypes.Diagonally_LeftRight => new Vector3(-1000f, -800f, endPosition.z),
-                    CanvasAnimationTypes.Diagonally_RightLeft => new Vector3(1000f, -800f, endPosition.z),
-                    _ => dynamicStartPosition
+                    CanvasAnimationTypes.Vertical_BottomTop    => new Vector3(endPosition.x, -800f, endPosition.z),
+                    CanvasAnimationTypes.Horizontal_LeftRight  => new Vector3(-1000f, endPosition.y, endPosition.z),
+                    CanvasAnimationTypes.Horizontal_RightLeft  => new Vector3( 1000f, endPosition.y, endPosition.z),
+                    CanvasAnimationTypes.Diagonally_LeftRight  => new Vector3(-1000f, -800f, endPosition.z),
+                    CanvasAnimationTypes.Diagonally_RightLeft  => new Vector3( 1000f, -800f, endPosition.z),
+                    _                                           => endPosition
                 };
 
-            character.localPosition = startPosition;
-            // speechBubble.color = new Color(1, 1, 1, 0);
-            speechBubbleCanvasGroup.alpha = 0;
-            if (speechBubbleGroup != null)
-                speechBubbleGroup.alpha = 1;
-            speechText.text = "";
-            speechText.color = new Color(fontColor.r, fontColor.g, fontColor.b, 0);
+            character.localPosition        = startPosition;
+            speechBubbleCanvasGroup.alpha  = 0f;
+            if (speechBubbleGroup != null) speechBubbleGroup.alpha = 1f;
+            speechText.text                = "";
+            speechText.color               = new Color(fontColor.r, fontColor.g, fontColor.b, 0f);
             waitingImage.gameObject.SetActive(false);
-            instructions.GetComponent<CanvasGroup>().alpha = 0;
+
+            var instrCg = instructions.GetComponent<CanvasGroup>();
+            instrCg.alpha = 0f;
+
             if (_questionButton != null)
             {
-                _questionButton.alpha = 0;
-                _questionButton.interactable = false;
+                _questionButton.alpha          = 0f;
+                _questionButton.interactable   = false;
                 _questionButton.blocksRaycasts = false;
             }
         }
 
-        public void Test(bool _isTesting)
+        // ── Public API — signatures unchanged ─────────────────────────────────
+
+        public void Test(bool isTesting)
         {
-            isTesting = _isTesting;
-            testingText.gameObject.SetActive(isTesting);
+            _isTesting = isTesting;
+            if (testingText != null) testingText.gameObject.SetActive(isTesting);
         }
 
         /// <summary>
-        /// Runs the first animation, reading the introPhrases
+        /// Runs the character intro: slides character in, fades speech bubble,
+        /// typerites the phrase, then slides everything out.
+        /// GameManager: yield return StartCoroutine(CanvasAnimation(duration, phraseType))
         /// </summary>
-        /// <param name="_animationDuration">How much every animation lasts</param>
-        /// <param name="_phraseType">Set the phrase type (INTRO,CONGRAT,END), this are the phrase lists we can choose</param>
-        /// <returns></returns>
-        public IEnumerator CanvasAnimation(float _animationDuration, PhraseUtils.PhraseType _phraseType)
+        public IEnumerator CanvasAnimation(float animationDuration, PhraseUtils.PhraseType phraseType)
         {
-            if (isTesting) yield break;
-            var scaledTime = Time.fixedDeltaTime * timeScaler;
+            if (_isTesting) yield break;
 
-            //Fade In SpeechBubble and SpeechText
-            float animationTime = 0;
+            // Check reduced-motion accessibility setting
+            bool reducedMotion = INART.Framework.Core.SettingsManager.Instance != null
+                                 && INART.Framework.Core.SettingsManager.Instance.ReducedMotion;
 
-            tempStartPosition = autoCalculateStartPosition ? dynamicStartPosition : startPosition;
-            character.localPosition = tempStartPosition;
-            speechText.text = "";
+            Vector3 tempStart = autoCalculateStartPosition ? _dynamicStartPosition : startPosition;
+            character.localPosition = tempStart;
+            speechText.text         = "";
 
-            while (animationTime <= _animationDuration)
+            // ── 1. Slide character in ──────────────────────────────────────────
+            if (!reducedMotion)
             {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                character.localPosition = Vector3.Lerp(tempStartPosition, endPosition, animationCurveValue);
-                yield return null;
-            }
-
-            animationTime = 0;
-            while (animationTime <= _animationDuration)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                // speechBubble.color = new Color(1, 1, 1, animationCurveValue);
-                speechBubbleCanvasGroup.alpha = animationCurveValue;
-
-                speechText.color = new Color(fontColor.r, fontColor.g, fontColor.b, animationCurveValue);
-                yield return null;
-            }
-
-
-            //TypeWrite
-            yield return TypeWrite(_phraseType);
-
-            #region Just for First Level
-
-
-            if (SceneUtils.IsCurrentSceneFirstLevel())
-            {
-                if (speechBubbleGroup != null)
-                {
-                    while (animationTime > 0)
-                    {
-                        speechBubbleGroup.alpha = _animationCurve.Evaluate(animationTime / _animationDuration);
-                        animationTime -= scaledTime;
-                        yield return null;
-                    }
-                    speechBubbleGroup.alpha = _animationCurve.Evaluate(0);
-                }
-
-                if (_phraseType == PhraseUtils.PhraseType.INTRO)
-                {
-                    yield return ExplanationManager._instance.Instruction();
-                    yield return new WaitUntil(() => finishInstructions);
-                }
-            }
-
-            #endregion
-
-            //Fade Out SpeechBubble and SpeechText
-            animationTime = 0;
-            while (animationTime <= _animationDuration)
-            {
-                animationTime += scaledTime;
-                var percent = 1 - Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                // speechBubble.color = new Color(1, 1, 1, animationCurveValue);
-                speechBubbleCanvasGroup.alpha = animationCurveValue;
-
-                speechText.color = new Color(fontColor.r, fontColor.g, fontColor.b, animationCurveValue);
-                yield return null;
-            }
-
-            #region Just for First Level
-
-            if (SceneUtils.IsCurrentSceneFirstLevel())
-            {
-                if (_phraseType == PhraseUtils.PhraseType.INTRO)
-                    ExplanationManager._instance.TurnOff();
-            }
-
-            #endregion
-
-            yield return new WaitForSeconds(PhraseUtils.waitUntilPrevious);
-
-            //Or enter the animation here
-            animationTime = 0;
-            while (animationTime <= _animationDuration)
-            {
-                animationTime += scaledTime;
-                var percent = 1 - Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                character.localPosition = Vector3.Lerp(tempStartPosition, endPosition, animationCurveValue);
-                yield return null;
-            }
-            if (speechBubbleGroup != null)
-                speechBubbleGroup.alpha = 1;
-        }
-
-        public IEnumerator InstructionsAnimation(bool runAnimation, bool turnOnInstructions = true,
-            bool turnOnQuestionButton = true)
-        {
-            var scaledTime = Time.fixedDeltaTime * timeScaler;
-
-            var maxDelay = .5f;
-
-            CanvasGroup _tempCanvas = instructions.GetComponent<CanvasGroup>();
-
-            if (runAnimation)
-            {
-                for (float i = 0; i <= maxDelay; i += scaledTime)
-                {
-                    var percent = Mathf.Clamp01(i / maxDelay);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                    if (turnOnInstructions)
-                    {
-                        _tempCanvas.alpha = animationCurveValue;
-                    }
-
-                    if (_questionButton != null)
-                    {
-                        if (turnOnQuestionButton)
-                        {
-                            _questionButton.alpha = animationCurveValue;
-                        }
-                    }
-
-                    yield return null;
-                }
+                yield return character
+                    .DOLocalMove(endPosition, charMoveDuration)
+                    .SetEase(_animationCurve)
+                    .WaitForCompletion();
             }
             else
             {
-                for (var i = maxDelay; i > 0; i -= scaledTime)
-                {
-                    var percent = Mathf.Clamp01(i / maxDelay);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                    // || _tempCanvas.alpha > 0
-                    if (turnOnInstructions)
-                        _tempCanvas.alpha = animationCurveValue;
-                    if (_questionButton != null)
-                    {
-                        // || _questionButton.alpha > 0
-                        if (turnOnQuestionButton)
-                            _questionButton.alpha = animationCurveValue;
-                    }
-
-                    yield return null;
-                }
+                character.localPosition = endPosition;
             }
-        }
 
-        IEnumerator TypeWrite(PhraseUtils.PhraseType _phraseType)
-        {
-            var tempText = "";
+            // ── 2. Fade speech bubble and text in ─────────────────────────────
+            var fadeIn = DOTween.Sequence()
+                .Append(speechBubbleCanvasGroup.DOFade(1f, bubbleFadeDuration).SetEase(Ease.OutQuad))
+                .Join(speechText.DOColor(new Color(fontColor.r, fontColor.g, fontColor.b, 1f),
+                                         bubbleFadeDuration).SetEase(Ease.OutQuad));
+            yield return fadeIn.WaitForCompletion();
 
-            // Typewrite effect Reading one of the multiple list of phrases
-            var wordCounter = 0;
-            var tempPhrase = new List<string>();
+            // ── 3. TypeWrite the phrase ────────────────────────────────────────
+            yield return TypeWrite(phraseType);
 
-            switch (_phraseType)
+            // ── 4. First-level-only: hide speech bubble group before showing explanation ──
+            if (SceneUtils.IsCurrentSceneFirstLevel() && speechBubbleGroup != null)
             {
-                case PhraseUtils.PhraseType.INTRO:
-                    tempPhrase = _introDialogSo.Phrases;
-                    break;
-                case PhraseUtils.PhraseType.CONGRAT:
-                    tempPhrase = _midDialogSo.Phrases;
-                    break;
-                case PhraseUtils.PhraseType.END:
-                    tempPhrase = _endDialogSo.Phrases;
-                    break;
+                yield return speechBubbleGroup
+                    .DOFade(0f, bubbleFadeDuration).SetEase(Ease.InQuad)
+                    .WaitForCompletion();
+
+                if (phraseType == PhraseUtils.PhraseType.INTRO)
+                {
+                    yield return StartCoroutine(ExplanationManager.Instance.Instruction());
+                    yield return new WaitUntil(() => _finishInstructions);
+                }
             }
 
-            while (true)
-                //If wordcounter is less than the tempPhrase size, then run
-                if (wordCounter < tempPhrase.Count)
-                {
-                    // #if UNITY_WEBGL
-                    //                     switch (SceneManager.GetActiveScene().name)
-                    //                     {
-                    //                         case "Minigame1":
-                    //                             LoLSDK_SetMinigameText(1, _phraseType, wordCounter);
-                    //                             actualLevel = 1;
-                    //                             break;
-                    //                         case "Minigame2":
-                    //                             LoLSDK_SetMinigameText(2, _phraseType, wordCounter);
-                    //                             actualLevel = 2;
-                    //                             break;
-                    //                         case "Minigame3":
-                    //                             LoLSDK_SetMinigameText(3, _phraseType, wordCounter);
-                    //                             actualLevel = 3;
-                    //                             break;
-                    //                         case "FinalCutscene":
-                    //                             LoLSDK_SetMinigameText(4, _phraseType, wordCounter);
-                    //                             actualLevel = 4;
-                    //                             break;
-                    //                     }
-                    // #endif
-                    characterAnimator.SetBool(Talk, true);
-                    for (var i = 0; i < tempPhrase[wordCounter].Length; i++)
-                    {
-                        tempText += tempPhrase[wordCounter][i];
-                        speechText.text = "" + tempText;
-                        yield return new WaitForSeconds(PhraseUtils.waitUntilNextLetter);
-                    }
+            // ── 5. Fade speech bubble and text out ────────────────────────────
+            var fadeOut = DOTween.Sequence()
+                .Append(speechBubbleCanvasGroup.DOFade(0f, bubbleFadeDuration).SetEase(Ease.InQuad))
+                .Join(speechText.DOColor(new Color(fontColor.r, fontColor.g, fontColor.b, 0f),
+                                          bubbleFadeDuration).SetEase(Ease.InQuad));
+            yield return fadeOut.WaitForCompletion();
 
-                    while (!Input.GetKeyDown(KeyCode.Space) && !Input.GetMouseButton(0))
-                    {
-                        waitingImage.gameObject.SetActive(true);
-                        characterAnimator.SetBool(Talk, false);
-                        yield return null;
-                    }
+            // ── 6. First-level cleanup ─────────────────────────────────────────
+            if (SceneUtils.IsCurrentSceneFirstLevel() && phraseType == PhraseUtils.PhraseType.INTRO)
+                ExplanationManager.Instance.TurnOff();
 
-                    waitingImage.gameObject.SetActive(false);
-
-                    wordCounter++;
-                    tempText = "";
-                    //LOL Instruction Speak
-                    // if (_phraseType == PhraseUtils.PhraseType.INTRO && wordCounter >= tempPhrase.Count &&
-                    //     actualLevel != 4)
-                    // {
-                    //     LOLSDK.Instance.SpeakText(StringConstants.Instruction + actualLevel);
-                    // }
-                }
-                else
-                {
-                    break;
-                }
-
-            characterAnimator.SetBool(Talk, false);
             yield return new WaitForSeconds(PhraseUtils.waitUntilPrevious);
-        }
 
-        public void TurnButton(bool _buttonActivation)
-        {
-            if (_questionButton != null)
+            // ── 7. Slide character out ─────────────────────────────────────────
+            if (!reducedMotion)
             {
-                _questionButton.interactable = _buttonActivation;
-                _questionButton.blocksRaycasts = _buttonActivation;
+                yield return character
+                    .DOLocalMove(tempStart, charMoveDuration)
+                    .SetEase(_animationCurve)
+                    .WaitForCompletion();
             }
-        }
-
-        // public void EnableTurnButton(bool _buttonActivation)
-        // {
-        //     _questionButton.gameObject.SetActive(true);
-        //     TurnButton(_buttonActivation);
-        //     _questionButton.alpha = 0;
-        //     _questionButton.interactable = false;
-        //     _questionButton.blocksRaycasts = false;
-
-        // }
-
-        public IEnumerator EnableTurnButton(bool _buttonActivation)
-        {
-            var scaledTime = Time.fixedDeltaTime * timeScaler;
-            var maxDelay = .5f;
-
-            for (float i = 0; i <= maxDelay; i += scaledTime)
+            else
             {
-                var percent = Mathf.Clamp01(i / maxDelay);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                if (_questionButton != null)
-                {
-                    _questionButton.alpha = animationCurveValue;
-                }
-
-                yield return null;
+                character.localPosition = tempStart;
             }
-            TurnButton(_buttonActivation);
+
+            if (speechBubbleGroup != null) speechBubbleGroup.alpha = 1f;
         }
 
-        // void LoLSDK_SetMinigameText(int _level, PhraseUtils.PhraseType _tempPhraseType,int _wordCounter){
-        //     if (_level != 4)
-        //     {
-        //         switch (_tempPhraseType)
-        //         {
-        //             case PhraseUtils.PhraseType.INTRO:
-        //                 LOLSDK.Instance.SpeakText(StringConstants.IntroPhrase + _level + _wordCounter);
-        //                 break;
-        //             case PhraseUtils.PhraseType.CONGRAT:
-        //                 LOLSDK.Instance.SpeakText(StringConstants.CongratPhrase + _level + _wordCounter);
-        //                 break;
-        //             case PhraseUtils.PhraseType.END:
-        //                 LOLSDK.Instance.SpeakText(StringConstants.EndPhrase + _level + _wordCounter);
-        //                 break;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         LOLSDK.Instance.SpeakText(StringConstants.Final + _wordCounter);
-        //     }
-        // }
+        /// <summary>
+        /// Fades the instructions panel (and optionally the question button) in or out.
+        /// GameManager: yield return StartCoroutine(InstructionsAnimation(...))
+        /// </summary>
+        public IEnumerator InstructionsAnimation(bool show,
+            bool turnOnInstructions  = true,
+            bool turnOnQuestionButton = true)
+        {
+            float target   = show ? 1f : 0f;
+            var   instrCg  = instructions.GetComponent<CanvasGroup>();
 
+            var seq = DOTween.Sequence();
+
+            if (turnOnInstructions)
+                seq.Append(instrCg.DOFade(target, instrFadeDuration).SetEase(Ease.OutQuad));
+
+            if (_questionButton != null && turnOnQuestionButton)
+            {
+                if (seq.IsActive())
+                    seq.Join(_questionButton.DOFade(target, instrFadeDuration).SetEase(Ease.OutQuad));
+                else
+                    seq.Append(_questionButton.DOFade(target, instrFadeDuration).SetEase(Ease.OutQuad));
+            }
+
+            yield return seq.WaitForCompletion();
+        }
+
+        /// <summary>
+        /// Fades the question button in, then enables interaction.
+        /// GameManager: yield return StartCoroutine(EnableTurnButton(true))
+        /// </summary>
+        public IEnumerator EnableTurnButton(bool activate)
+        {
+            if (_questionButton == null) yield break;
+
+            float target = activate ? 1f : 0f;
+            yield return _questionButton
+                .DOFade(target, instrFadeDuration)
+                .SetEase(Ease.OutQuad)
+                .WaitForCompletion();
+
+            TurnButton(activate);
+        }
+
+        /// <summary>Enables/disables question button interaction without animation.</summary>
+        public void TurnButton(bool active)
+        {
+            if (_questionButton == null) return;
+            _questionButton.interactable   = active;
+            _questionButton.blocksRaycasts = active;
+        }
+
+        /// <summary>Called by the "understood" button in ExplanationManager.</summary>
         public void TurnOnFinish()
         {
-            finishInstructions = true;
-            ExplanationManager._instance.TurnOffButton();
+            _finishInstructions = true;
+            ExplanationManager.Instance.TurnOffButton();
+        }
+
+        // ── TypeWrite — kept as coroutine (text logic, not animation) ──────────
+
+        private IEnumerator TypeWrite(PhraseUtils.PhraseType phraseType)
+        {
+            List<string> phrases = phraseType switch
+            {
+                PhraseUtils.PhraseType.INTRO  => _introDialogSo.Phrases,
+                PhraseUtils.PhraseType.CONGRAT => _midDialogSo.Phrases,
+                PhraseUtils.PhraseType.END    => _endDialogSo.Phrases,
+                _                              => new List<string>()
+            };
+
+            string tempText  = "";
+            int    wordIndex = 0;
+
+            while (wordIndex < phrases.Count)
+            {
+                characterAnimator.SetBool(TalkHash, true);
+
+                // Type out each character
+                for (int i = 0; i < phrases[wordIndex].Length; i++)
+                {
+                    tempText        += phrases[wordIndex][i];
+                    speechText.text  = tempText;
+                    yield return new WaitForSeconds(PhraseUtils.waitUntilNextLetter);
+                }
+
+                // Wait for tap/click to advance
+                characterAnimator.SetBool(TalkHash, false);
+                waitingImage.gameObject.SetActive(true);
+
+                yield return new WaitUntil(
+                    () => Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0));
+
+                waitingImage.gameObject.SetActive(false);
+                wordIndex++;
+                tempText = "";
+            }
+
+            characterAnimator.SetBool(TalkHash, false);
+            yield return new WaitForSeconds(PhraseUtils.waitUntilPrevious);
         }
     }
 }

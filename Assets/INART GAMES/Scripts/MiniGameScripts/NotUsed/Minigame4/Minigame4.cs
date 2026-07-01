@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-// using LoLSDK;
 
 namespace INART.SlothyBakery.Base
 {
@@ -74,7 +73,7 @@ namespace INART.SlothyBakery.Base
 
         private void Update()
         {
-            if (GameStates._instance.GetGameState() == GameStates.GameState.PLAY)
+            if (GameStates.Instance.GetGameState() == GameStates.States.Play)
                 if (next)
                     next = false;
         }
@@ -161,8 +160,8 @@ namespace INART.SlothyBakery.Base
             var tempText = "";
 
             yield return StartCoroutine(
-                ProgressionCanvas._instance.FillBar(index, ProgressionCanvas.ProgressionType.One));
-            yield return StartCoroutine(ProgressionCanvas._instance.UnlockStuff(index));
+                ProgressionCanvas.Instance.FillBar(index, ProgressionCanvas.ProgressionType.One));
+            yield return StartCoroutine(ProgressionCanvas.Instance.UnlockStuff(index));
 
             colliderCenter.ResetColliderEnabling();
             colliderCenter.Deactivate();
@@ -210,9 +209,6 @@ namespace INART.SlothyBakery.Base
 
             yield return new WaitForSeconds(.25f);
             //Warning(Aldhair): LolSDK
-// #if UNITY_WEBGL
-//             LOLSDK.Instance.SubmitProgress(0, index + 7, 18);
-// #endif
             if (index < rounds.Count - 1)
             {
                 index++;
@@ -222,14 +218,11 @@ namespace INART.SlothyBakery.Base
                 if (index == 1)
                 {
                     yield return StartCoroutine(
-                        CanvasAnimator._instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
+                        CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
                 }
 
                 rounds[index].parentObject.SetActive(true);
 
-// #if UNITY_WEBGL
-//                 //LOLSDK.Instance.SpeakText("Minigame2_Question_" + index);
-// #endif
 
                 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -277,9 +270,9 @@ namespace INART.SlothyBakery.Base
             }
             else
             {
-                yield return StartCoroutine(CanvasAnimator._instance.InstructionsAnimation(false));
-                yield return StartCoroutine(CanvasAnimator._instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
-                yield return StartCoroutine(SceneTransitionController._instance.FadeEffect_OUT());
+                yield return StartCoroutine(CanvasAnimator.Instance.InstructionsAnimation(false));
+                yield return StartCoroutine(CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
+                yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
                 SceneUtils.ToNextScene();
             }
 
@@ -320,7 +313,7 @@ namespace INART.SlothyBakery.Base
                 if (currentCoroutine == null)
                     currentCoroutine = StartCoroutine(Change(1f));
 
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Success);
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
             }
             else
             {
@@ -334,7 +327,7 @@ namespace INART.SlothyBakery.Base
                 }
 
                 ValueManager._instance.ResetValue();
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Wrong);
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
                 print("Nope :C");
             }
         }

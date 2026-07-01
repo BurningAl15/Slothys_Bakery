@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-// using LoLSDK;
 
 namespace INART.SlothyBakery.Base
 {
@@ -49,7 +48,7 @@ namespace INART.SlothyBakery.Base
 
         private void Update()
         {
-            if (GameStates._instance.GetGameState() == GameStates.GameState.PLAY)
+            if (GameStates.Instance.GetGameState() == GameStates.States.Play)
                 if (minigame1_Index < minigameStages.Count)
                 {
                     if (minigameStages[minigame1_Index].stage_CuttableObject1.HasFinished() && !next)
@@ -60,7 +59,7 @@ namespace INART.SlothyBakery.Base
                         print("A");
 #endif
                         //Check me, i could give problems but for now i work well :V
-                        StartCoroutine(ProgressionCanvas._instance.FillBar(minigame1_Index,
+                        StartCoroutine(ProgressionCanvas.Instance.FillBar(minigame1_Index,
                             ProgressionCanvas.ProgressionType.Two));
 
                         minigameStages[minigame1_Index].stage_CuttableObject2.Activate();
@@ -128,8 +127,8 @@ namespace INART.SlothyBakery.Base
             float tempDelay = 0;
 
             yield return StartCoroutine(
-                ProgressionCanvas._instance.FillBar(minigame1_Index, ProgressionCanvas.ProgressionType.Two));
-            yield return StartCoroutine(ProgressionCanvas._instance.UnlockStuff(minigame1_Index));
+                ProgressionCanvas.Instance.FillBar(minigame1_Index, ProgressionCanvas.ProgressionType.Two));
+            yield return StartCoroutine(ProgressionCanvas.Instance.UnlockStuff(minigame1_Index));
 
             equalsSprite.sprite = signList[minigameStages[minigame1_Index].signIndex];
 
@@ -164,9 +163,6 @@ namespace INART.SlothyBakery.Base
 
             // ResetPositions();
             //Warning(Aldhair): LolSDK
-            // #if UNITY_WEBGL
-            //             LOLSDK.Instance.SubmitProgress(0, minigame1_Index + 1, 18);
-            // #endif
             //Main Loop
             if (minigame1_Index < minigameStages.Count - 1)
             {
@@ -175,7 +171,7 @@ namespace INART.SlothyBakery.Base
                 if (minigame1_Index == 1)
                 {
                     yield return StartCoroutine(
-                        CanvasAnimator._instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
+                        CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
                 }
                 // #if UNITY_EDITOR
                 //                 print("Index: " + minigame1_Index);
@@ -200,10 +196,10 @@ namespace INART.SlothyBakery.Base
             //The last one
             else
             {
-                ProgressionCanvas._instance.RunPartyParticles();
-                yield return StartCoroutine(CanvasAnimator._instance.InstructionsAnimation(false));
-                yield return StartCoroutine(CanvasAnimator._instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
-                yield return StartCoroutine(SceneTransitionController._instance.FadeEffect_OUT());
+                ProgressionCanvas.Instance.RunPartyParticles();
+                yield return StartCoroutine(CanvasAnimator.Instance.InstructionsAnimation(false));
+                yield return StartCoroutine(CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
+                yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             }
 

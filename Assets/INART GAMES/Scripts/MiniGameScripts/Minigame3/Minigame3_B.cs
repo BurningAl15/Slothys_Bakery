@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
-// using LoLSDK;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
@@ -16,6 +15,8 @@ namespace INART.SlothyBakery.Base
     using CanvasAnimator;
     using SceneTransition;
     using ProgressionCanvas;
+    using Analytics;
+    using DailyChallenge;
 
     [Serializable]
     public class OptionsPerQuestion
@@ -65,7 +66,7 @@ namespace INART.SlothyBakery.Base
 
         private void Update()
         {
-            if (GameStates._instance.GetGameState() == GameStates.GameState.PLAY)
+            if (GameStates.Instance.GetGameState() == GameStates.States.Play)
                 if (next)
                     next = false;
         }
@@ -107,46 +108,35 @@ namespace INART.SlothyBakery.Base
             {
                 if (currentCoroutine == null)
                     currentCoroutine = StartCoroutine(Change(1f));
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Success);
-// #if UNITY_WEBGL
-//                 LOLSDK.Instance.SpeakText(StringConstants.minigame3_correct);
-// #endif
-                MessageManager._instance.Animate_Message(true);
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
+                MessageManager.Instance.Animate_Message(true);
+                AnalyticsManager.Instance?.TrackAnswerCorrect(index);
             }
             else
             {
                 ClearInputField();
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Wrong);
-                MessageManager._instance.Animate_Message(false);
-// #if UNITY_WEBGL
-//                 LOLSDK.Instance.SpeakText(StringConstants.minigame3_incorrect);
-// #endif
-                print("Mistake");
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
+                MessageManager.Instance.Animate_Message(false);
+                AnalyticsManager.Instance?.TrackAnswerWrong(index);
             }
         }
 
         void CheckIfEquals(double _value)
         {
-
             if (Math.Abs(_value - optionsGroup[index].currentAnswer) < .01f && Math.Abs(_value - optionsGroup[index].currentAnswer) > -.01f)
             {
                 if (currentCoroutine == null)
                     currentCoroutine = StartCoroutine(Change(1f));
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Success);
-                MessageManager._instance.Animate_Message(true);
-// #if UNITY_WEBGL
-//                 LOLSDK.Instance.SpeakText(StringConstants.minigame3_correct);
-// #endif
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
+                MessageManager.Instance.Animate_Message(true);
+                AnalyticsManager.Instance?.TrackAnswerCorrect(index);
             }
             else
             {
                 ClearInputField();
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Wrong);
-                MessageManager._instance.Animate_Message(false);
-// #if UNITY_WEBGL
-//                 LOLSDK.Instance.SpeakText(StringConstants.minigame3_incorrect);
-// #endif
-                // print("Mistake");
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
+                MessageManager.Instance.Animate_Message(false);
+                AnalyticsManager.Instance?.TrackAnswerWrong(index);
             }
         }
 
@@ -156,21 +146,16 @@ namespace INART.SlothyBakery.Base
             {
                 if (currentCoroutine == null)
                     currentCoroutine = StartCoroutine(Change(1f));
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Success);
-                MessageManager._instance.Animate_Message(true);
-// #if UNITY_WEBGL
-//                 LOLSDK.Instance.SpeakText(StringConstants.minigame3_correct);
-// #endif
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
+                MessageManager.Instance.Animate_Message(true);
+                AnalyticsManager.Instance?.TrackAnswerCorrect(index);
             }
             else
             {
                 ClearInputField();
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Wrong);
-                MessageManager._instance.Animate_Message(false);
-// #if UNITY_WEBGL
-//                 LOLSDK.Instance.SpeakText(StringConstants.minigame3_incorrect);
-// #endif
-                // print("Mistake");
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
+                MessageManager.Instance.Animate_Message(false);
+                AnalyticsManager.Instance?.TrackAnswerWrong(index);
             }
         }
 
@@ -199,8 +184,8 @@ namespace INART.SlothyBakery.Base
 
         public override void Init()
         {
-            SaveLoadState.instance.SetActualState(2);
-            SaveLoadState.instance.Save();
+            SaveLoadState.Instance.SetActualState(2);
+            SaveLoadState.Instance.Save();
             CanvasGroupAlpha(0);
             CanvasGroupEnabler(false);
 
@@ -252,7 +237,6 @@ namespace INART.SlothyBakery.Base
 
             // if (index == 0)
             // {
-            //     LOLSDK.Instance.SpeakText(StringConstants.minigame3_Q + (index + 1));
             // }
         }
 
@@ -262,8 +246,12 @@ namespace INART.SlothyBakery.Base
             var scaledTime = Time.fixedDeltaTime * timeScaler;
 
             yield return StartCoroutine(
-                ProgressionCanvas._instance.FillBar(index, ProgressionCanvas.ProgressionType.One));
-            yield return StartCoroutine(ProgressionCanvas._instance.UnlockStuff(index));
+                ProgressionCanvas.Instance.FillBar(index, ProgressionCanvas.ProgressionType.One));
+            yield return StartCoroutine(ProgressionCanvas.Instance.UnlockStuff(index));
+
+            // Analytics + Daily Challenge
+            AnalyticsManager.Instance?.TrackLevelCompleted($"minigame3_round_{index}", true);
+            DailyChallengeManager.Instance?.AddProgress("complete_rounds", 1);
 
             //Slide old bread from center to end
             float animationTime = 0;
@@ -297,9 +285,6 @@ namespace INART.SlothyBakery.Base
             buttonsGroup.blocksRaycasts = false;
 
             //Warning(Aldhair): LolSDK
-// #if UNITY_WEBGL
-//             LOLSDK.Instance.SubmitProgress(0, index + 13, 18);
-// #endif
             //Here we change the whole stuff
             //Main Loop
             if (index < optionsGroup.Count - 1)
@@ -324,7 +309,7 @@ namespace INART.SlothyBakery.Base
                     }
 
                     yield return StartCoroutine(
-                        CanvasAnimator._instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
+                        CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
 
                     questionText.text = paragraphs[optionsGroup[index].currentQuestion];
                     animationTime = 0;
@@ -359,9 +344,6 @@ namespace INART.SlothyBakery.Base
                 }
 
                 //Reset button colors and setting the options
-                // #if UNITY_WEBGL
-                //                 LOLSDK.Instance.SpeakText(StringConstants.minigame3_Q + (index + 1));
-                // #endif
                 ClearInputField();
 
                 //Button group appears (alpha 0 - 1)
@@ -400,11 +382,10 @@ namespace INART.SlothyBakery.Base
                     yield return null;
                 }
 
-                yield return StartCoroutine(CanvasAnimator._instance.InstructionsAnimation(false));
-                yield return StartCoroutine(CanvasAnimator._instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
-                yield return StartCoroutine(SceneTransitionController._instance.FadeEffect_OUT());
+                yield return StartCoroutine(CanvasAnimator.Instance.InstructionsAnimation(false));
+                yield return StartCoroutine(CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
+                yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-                //LOLSDK.Instance.CompleteGame();
             }
 
             currentCoroutine = null;
@@ -431,18 +412,12 @@ namespace INART.SlothyBakery.Base
             //             {
             //                 if (currentCoroutine == null)
             //                     currentCoroutine = StartCoroutine(Change(1f));
-            //                 SoundManager._instance.Run_SFX(SoundManager.SoundType.Success);
-            // #if UNITY_WEBGL
-            //                 //LOLSDK.Instance.SpeakText("Minigame3_Correct");
-            // #endif
+            //                 SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
             //             }
             //             else
             //             {
             //                 buttons[_answer].button.interactable = false;
-            //                 SoundManager._instance.Run_SFX(SoundManager.SoundType.Wrong);
-            // #if UNITY_WEBGL
-            //                 //LOLSDK.Instance.SpeakText("Minigame3_Incorrect");
-            // #endif
+            //                 SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
             //             }
         }
     }

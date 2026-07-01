@@ -108,13 +108,13 @@ public class QASystem : MonoBehaviour
         if(btnID == actualCorrectAnswer){
             verifyStatus = true;
 
-            //StartCoroutine(ProgressionCanvas._instance.FillBar(countPlay));
+            //StartCoroutine(ProgressionCanvas.Instance.FillBar(countPlay));
             if (firstTime)
             {
-                //StartCoroutine(ProgressionCanvas._instance.FillBar(countPlay));
+                //StartCoroutine(ProgressionCanvas.Instance.FillBar(countPlay));
                 firstTime = false;
             }
-            //StartCoroutine(ProgressionCanvas._instance.UnlockStuff(countPlay));
+            //StartCoroutine(ProgressionCanvas.Instance.UnlockStuff(countPlay));
             buttons[btnID].GetComponent<Image>().color = Color.green;
             qAStates = QAStates.OUTPUT;
         }

@@ -3,11 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using INART.SlothyBakery.Core;
 
-public class SignManager : MonoBehaviour
+public class SignManager : Singleton<SignManager>
 {
-    public static SignManager _instance;
-
     [SerializeField] private List<SignSelectable> _selectables = new List<SignSelectable>();
     [SerializeField] private List<Vector3> initialPositions = new List<Vector3>();
     [SerializeField] private Transform targetPos;
@@ -18,11 +17,11 @@ public class SignManager : MonoBehaviour
     private Dictionary<Sign, Vector3> initialPosDictionary = new Dictionary<Sign, Vector3>();
 
     public bool version2;
+
+    protected override bool PersistAcrossScenes => false; // Scene-specific
     
-    private void Awake()
+    protected override void OnAwake()
     {
-        if (_instance == null)
-            _instance = this;
         main = Camera.main;
     }
 
@@ -46,8 +45,6 @@ public class SignManager : MonoBehaviour
             {
                 if (_selectables[i].State != SignState.OnPlate)
                     SignUtils.SetSignState_Placed(_selectables[i]);
-                // else
-                    // _selectables[i]._Reset(_selectables[i].Sign);
             }
             else
             {
@@ -71,10 +68,8 @@ public class SignManager : MonoBehaviour
 
     public void ResetAll()
     {
-        // print("Called");
         for (int i = 0; i < _selectables.Count; i++)
         {
-            // if (_selectables[i].State == SignState.OnPlate)
             _selectables[i]._Reset(_selectables[i].Sign);
         }
     }

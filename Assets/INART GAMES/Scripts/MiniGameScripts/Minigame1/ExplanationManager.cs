@@ -1,263 +1,187 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using System.Collections;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
+using INART.SlothyBakery.Core;
 
-public class ExplanationManager : MonoBehaviour
+/// <summary>
+/// Tutorial/explanation UI for Minigame 1.
+/// Shows step-by-step fraction instructions with animated fades.
+///
+/// Migrated from manual alpha-loop coroutines to DOTween DOFade.
+/// The public Instruction() coroutine is preserved so CanvasAnimator
+/// can still yield on it unchanged.
+/// </summary>
+public class ExplanationManager : Singleton<ExplanationManager>
 {
-   public static ExplanationManager _instance;
+    // ── Inspector — main container ─────────────────────────────────────────
+    [SerializeField] private CanvasGroup wholeGroup;
+    [SerializeField] private Button      understoodButton;
+    [SerializeField] private TextMeshProUGUI denominator, numerator;
+    [SerializeField] private Image           fraction;
+    [SerializeField] private Color           highlightColor;
 
-   [SerializeField] private CanvasGroup wholeGroup;
+    // ── Inspector — title section ──────────────────────────────────────────
+    [Header("Title")]
+    [SerializeField] private CanvasGroup title;
+    [SerializeField] private CanvasGroup group1;
+    [SerializeField] private CanvasGroup group2;
 
-   #region Title
+    // ── Inspector — explanation 1 ──────────────────────────────────────────
+    [Header("Explanation 1")]
+    [SerializeField] private CanvasGroup title_explanation_1;
+    [SerializeField] private CanvasGroup explanation1_1_fraction;
+    [SerializeField] private CanvasGroup simbol_1;
+    [SerializeField] private CanvasGroup explanation1_2_fraction;
 
-   [Header("Title")]
-   [SerializeField] private CanvasGroup title;
-   [SerializeField] private CanvasGroup group1;
-   [SerializeField] private CanvasGroup group2;
+    // ── Inspector — explanation 2 ──────────────────────────────────────────
+    [Header("Explanation 2")]
+    [SerializeField] private CanvasGroup title_explanation_2;
+    [SerializeField] private CanvasGroup explanation2_1_fraction;
+    [SerializeField] private CanvasGroup simbol_2;
+    [SerializeField] private CanvasGroup explanation2_2_fraction;
+    [SerializeField] private CanvasGroup arrow;
+    [Space]
+    [SerializeField] private CanvasGroup explanation2_3_fraction;
+    [SerializeField] private CanvasGroup simbol_3;
+    [SerializeField] private CanvasGroup explanation2_4_fraction;
+    [SerializeField] private CanvasGroup simbol_4;
+    [SerializeField] private CanvasGroup explanation2_5_fraction;
+    [Space]
+    [SerializeField] private CanvasGroup title_explanation_3;
+    [SerializeField] private CanvasGroup explanation2_6_fraction;
+    [SerializeField] private CanvasGroup simbol_5;
+    [SerializeField] private CanvasGroup explanation2_7_fraction;
 
-   #endregion
-   
-   #region Explanation 1
+    // ── Inspector — timings ────────────────────────────────────────────────
+    [Header("Timings")]
+    [SerializeField] private float fadeDuration  = 0.2f;
+    [SerializeField] private float shortPause    = 0.15f;
+    [SerializeField] private float colorDuration = 0.2f;
 
-   [Header("Explanation 1")] 
-   [SerializeField]private CanvasGroup title_explanation_1;
-   [SerializeField] private CanvasGroup explanation1_1_fraction;
-   [SerializeField] private CanvasGroup simbol_1;
-   [SerializeField] private CanvasGroup explanation1_2_fraction;
+    // ── Singleton config ───────────────────────────────────────────────────
+    protected override bool PersistAcrossScenes => false;
 
-   #endregion
+    private Tween _buttonTween;
 
-   #region Explanation 2
+    // ── Lifecycle ──────────────────────────────────────────────────────────
 
-   [Header("Explanation 2")] 
-   [SerializeField] private CanvasGroup title_explanation_2; 
-   [SerializeField] private CanvasGroup explanation2_1_fraction; 
-   [SerializeField] private CanvasGroup simbol_2; 
-   [SerializeField] private CanvasGroup explanation2_2_fraction; 
-   [SerializeField] private CanvasGroup arrow; 
+    protected override void OnAwake() => InitializeAll();
 
-   [Space]
-   [SerializeField] private CanvasGroup explanation2_3_fraction; 
-   [SerializeField] private CanvasGroup simbol_3; 
-   [SerializeField] private CanvasGroup explanation2_4_fraction; 
-   [SerializeField] private CanvasGroup simbol_4; 
-   [SerializeField] private CanvasGroup explanation2_5_fraction; 
-  
-   [Space]
-   [SerializeField] private CanvasGroup title_explanation_3; 
-   [SerializeField] private CanvasGroup explanation2_6_fraction; 
-   [SerializeField] private CanvasGroup simbol_5; 
-   [SerializeField] private CanvasGroup explanation2_7_fraction;
+    // ── Public API ─────────────────────────────────────────────────────────
 
-   #endregion
+    /// <summary>
+    /// Runs the full step-by-step tutorial sequence.
+    /// Called by CanvasAnimator via: yield return StartCoroutine(Instruction())
+    /// </summary>
+    public IEnumerator Instruction()
+    {
+        yield return FadeIn(wholeGroup);
+        yield return FadeIn(title);
 
-   [SerializeField] private AnimationCurve _animationCurve;
-   float maxTime = .2f;
+        // Section 1
+        yield return FadeIn(group1);
+        yield return FadeIn(title_explanation_1);
+        yield return FadeIn(explanation1_1_fraction, explanation1_2_fraction);
+        yield return new WaitForSeconds(1f);
+        yield return FadeIn(simbol_1);
+        yield return new WaitForSeconds(2f);
 
-   [SerializeField] private Button understoodButton;
+        // Section 2
+        yield return FadeIn(group2);
+        yield return FadeIn(title_explanation_2);
+        yield return FadeIn(explanation2_1_fraction, explanation2_2_fraction);
+        yield return new WaitForSeconds(1f);
+        yield return FadeIn(simbol_2);
+        yield return FadeIn(arrow);
+        yield return LerpHighlightColor();
 
-   [SerializeField] private TextMeshProUGUI denominator, numerator;
-   [SerializeField] private Image fraction;
-   
-   [SerializeField] private Color hightLightColor;
-   
-   private Coroutine currentCoroutine = null;
-   
-   private void Awake()
-   {
-      if (_instance == null)
-         _instance = this;
-      else
-         Destroy(this.gameObject);
-      InitializeAll();
-   }
+        yield return FadeIn(explanation2_3_fraction);
+        yield return FadeIn(simbol_3);
+        yield return FadeIn(explanation2_4_fraction);
+        yield return FadeIn(simbol_4);
+        yield return FadeIn(explanation2_5_fraction);
 
-   public IEnumerator Instruction()
-   {
-      yield return TurnOn(wholeGroup);
-      yield return TurnOn(title);
-      
-      //Turn On Instructions 1
-      yield return TurnOn(group1);
-      yield return TurnOn(title_explanation_1);
+        yield return FadeIn(title_explanation_3);
+        yield return FadeIn(explanation2_6_fraction);
+        yield return FadeIn(simbol_5);
+        yield return FadeIn(explanation2_7_fraction);
 
-      yield return TurnOn(explanation1_1_fraction,explanation1_2_fraction);
-      yield return new WaitForSeconds(1f);
-      
-      yield return TurnOn(simbol_1);
-      yield return new WaitForSeconds(2f);
-      
-      // yield return TurnOff(group1);
-      //
-      // yield return new WaitForSeconds(1f);
-      //Turn On Instructions 2
-      yield return TurnOn(group2);
+        yield return new WaitForSeconds(2f);
 
-      yield return TurnOn(title_explanation_2);
-      yield return TurnOn(explanation2_1_fraction,explanation2_2_fraction);
-      yield return new WaitForSeconds(1f);
+        // Show "understood" button
+        var btnCg = understoodButton.GetComponent<CanvasGroup>();
+        yield return FadeIn(btnCg);
+        understoodButton.interactable = true;
+    }
 
-      yield return TurnOn(simbol_2);
-      yield return TurnOn(arrow);
-      yield return LerpColor(fraction, denominator, numerator);
+    /// <summary>Hides the entire explanation panel instantly.</summary>
+    public void TurnOff() => wholeGroup.alpha = 0f;
 
-      yield return TurnOn(explanation2_3_fraction);
-      yield return TurnOn(simbol_3);
-      yield return TurnOn(explanation2_4_fraction);
-      yield return TurnOn(simbol_4);
-      yield return TurnOn(explanation2_5_fraction);
+    /// <summary>Fades out and disables the "understood" button.</summary>
+    public void TurnOffButton()
+    {
+        _buttonTween?.Kill();
+        var btnCg = understoodButton.GetComponent<CanvasGroup>();
+        _buttonTween = DOTween.Sequence()
+            .AppendInterval(0.25f)
+            .Append(btnCg.DOFade(0f, fadeDuration).SetEase(Ease.InQuad))
+            .OnComplete(() =>
+            {
+                understoodButton.interactable = false;
+                understoodButton.gameObject.SetActive(false);
+                _buttonTween = null;
+            });
+    }
 
-      yield return TurnOn(title_explanation_3);
-      yield return TurnOn(explanation2_6_fraction);
-      yield return TurnOn(simbol_5);
-      yield return TurnOn(explanation2_7_fraction);
+    // ── Private helpers ────────────────────────────────────────────────────
 
-      yield return new WaitForSeconds(2f);
-      // yield return TurnOff(group2);
-      CanvasGroup tempCanvas=understoodButton.GetComponent<CanvasGroup>();
-      yield return TurnOn(tempCanvas);
-      understoodButton.interactable = true;
-   }
+    /// <summary>Fades a single CanvasGroup to 1 and pauses briefly after.</summary>
+    private IEnumerator FadeIn(CanvasGroup cg)
+    {
+        yield return cg.DOFade(1f, fadeDuration).SetEase(Ease.OutQuad).WaitForCompletion();
+        yield return new WaitForSeconds(shortPause);
+    }
 
-   public void TurnOff()
-   {
-      wholeGroup.alpha = 0;
-   }
-   
-   IEnumerator LerpColor(Image img, TextMeshProUGUI _temp1, TextMeshProUGUI _temp2)
-   {
-      float value = 0;
-      float evaluation = 0;
-      Color initialColor = img.color; 
-      while (value<maxTime)
-      {
-         evaluation = _animationCurve.Evaluate(value / maxTime);
-         img.color = Color.Lerp(initialColor,hightLightColor,evaluation);
-         _temp1.color=Color.Lerp(initialColor,hightLightColor,evaluation);
-         _temp2.color=Color.Lerp(initialColor,hightLightColor,evaluation);
-         value += Time.deltaTime;
-         yield return null;
-      }
-      img.color = Color.Lerp(initialColor,hightLightColor,1);
-      yield return new WaitForSeconds(.15f);
-   }
-   
-   IEnumerator TurnOn(CanvasGroup _canvasGroup)
-   {
-      float value = 0;
-      float evaluation = 0;
-      while (value<maxTime)
-      {
-         evaluation = _animationCurve.Evaluate(value / maxTime);
-         _canvasGroup.alpha = evaluation;
-         value += Time.deltaTime;
-         yield return null;
-      }
-      _canvasGroup.alpha = 1;
-      yield return new WaitForSeconds(.15f);
-   }
-   IEnumerator TurnOn(CanvasGroup _canvasGroup,CanvasGroup _canvasGroup1)
-   {
-      float value = 0;
-      float evaluation = 0;
-      while (value<maxTime)
-      {
-         evaluation = _animationCurve.Evaluate(value / maxTime);
-         _canvasGroup.alpha = evaluation;
-         _canvasGroup1.alpha = evaluation;
+    /// <summary>Fades two CanvasGroups to 1 simultaneously and pauses briefly after.</summary>
+    private IEnumerator FadeIn(CanvasGroup cg1, CanvasGroup cg2)
+    {
+        var seq = DOTween.Sequence()
+            .Append(cg1.DOFade(1f, fadeDuration).SetEase(Ease.OutQuad))
+            .Join(cg2.DOFade(1f, fadeDuration).SetEase(Ease.OutQuad));
+        yield return seq.WaitForCompletion();
+        yield return new WaitForSeconds(shortPause);
+    }
 
-         value += Time.deltaTime;
-         yield return null;
-      }
-      
-      _canvasGroup.alpha = 1;
-      _canvasGroup1.alpha = 1;
+    /// <summary>Tweens the fraction image and text to the highlight color.</summary>
+    private IEnumerator LerpHighlightColor()
+    {
+        var seq = DOTween.Sequence()
+            .Append(fraction.DOColor(highlightColor, colorDuration).SetEase(Ease.Linear))
+            .Join(denominator.DOColor(highlightColor, colorDuration).SetEase(Ease.Linear))
+            .Join(numerator.DOColor(highlightColor, colorDuration).SetEase(Ease.Linear));
+        yield return seq.WaitForCompletion();
+        yield return new WaitForSeconds(shortPause);
+    }
 
-      yield return new WaitForSeconds(.15f);
-   }
-   
-   IEnumerator TurnOff(CanvasGroup _canvasGroup)
-   {
-      float value = maxTime;
-      float evaluation = 0;
-      while (value>0)
-      {
-         evaluation = _animationCurve.Evaluate(value / maxTime);
-         _canvasGroup.alpha = evaluation;
-         value -= Time.deltaTime;
-         yield return null;
-      }
-      _canvasGroup.alpha = 0;
-      yield return new WaitForSeconds(.15f);
-   }
+    /// <summary>Sets all CanvasGroups to alpha 0 and disables the button.</summary>
+    private void InitializeAll()
+    {
+        CanvasGroup[] all =
+        {
+            wholeGroup, title, group1, group2,
+            title_explanation_1, explanation1_1_fraction, simbol_1, explanation1_2_fraction,
+            title_explanation_2, explanation2_1_fraction, simbol_2, explanation2_2_fraction,
+            arrow, explanation2_3_fraction, simbol_3, explanation2_4_fraction,
+            simbol_4, explanation2_5_fraction, title_explanation_3,
+            explanation2_6_fraction, simbol_5, explanation2_7_fraction
+        };
 
-   public void InitializeAll()
-   {
-      wholeGroup.alpha = 0;
+        foreach (var cg in all) cg.alpha = 0f;
 
-      #region Title
-      
-      title.alpha = 0;
-      group1.alpha = 0;
-      group2.alpha = 0;
-
-      #endregion
-      
-      #region Explanation 1
-
-      title_explanation_1.alpha = 0;
-      explanation1_1_fraction.alpha = 0;
-      simbol_1.alpha = 0;
-      explanation1_2_fraction.alpha = 0;
-
-      #endregion
-      
-      #region Explanation 2
-
-      title_explanation_2.alpha = 0;
-      explanation2_1_fraction.alpha = 0;
-      simbol_2.alpha = 0;
-      explanation2_2_fraction.alpha = 0;
-      arrow.alpha = 0;
-      
-      //SubSection 1
-
-      explanation2_3_fraction.alpha = 0;
-      simbol_3.alpha = 0;
-      explanation2_4_fraction.alpha = 0;
-      simbol_4.alpha = 0;
-      explanation2_5_fraction.alpha = 0;
-
-      //SubSection 2
-      title_explanation_3.alpha = 0;
-      explanation2_6_fraction.alpha = 0;
-      simbol_5.alpha = 0;
-      explanation2_7_fraction.alpha = 0;
-
-      #endregion
-
-      understoodButton.GetComponent<CanvasGroup>().alpha = 0;
-      understoodButton.interactable = false;
-   }
-
-   public void TurnOffButton()
-   {
-      if (currentCoroutine == null)
-         currentCoroutine = StartCoroutine(TurnOff_Button());
-   }
-
-   IEnumerator TurnOff_Button()
-   {
-      yield return new WaitForSeconds(.25f);
-      CanvasGroup tempCanvas=understoodButton.GetComponent<CanvasGroup>();
-      yield return TurnOff(tempCanvas);
-      understoodButton.interactable = false;
-      understoodButton.gameObject.SetActive(false);
-      currentCoroutine = null;
-   }
+        var btnCg = understoodButton.GetComponent<CanvasGroup>();
+        btnCg.alpha               = 0f;
+        understoodButton.interactable = false;
+    }
 }

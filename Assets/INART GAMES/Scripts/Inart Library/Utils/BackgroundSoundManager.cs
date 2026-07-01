@@ -6,9 +6,16 @@ using UnityEngine.SceneManagement;
 
 namespace INART.SlothyBakery.SoundManager
 {
-    public class BackgroundSoundManager : MonoBehaviour
+    using Core;
+    using Base;
+
+    /// <summary>
+    /// Manages background music transitions between scenes.
+    /// Handles smooth fading between two audio tracks based on scene changes.
+    /// </summary>
+    public class BackgroundSoundManager : Singleton<BackgroundSoundManager>
     {
-        public static BackgroundSoundManager _instance;
+        #region Serialized Fields
         [SerializeField] private AudioClip background1;
         [SerializeField] private AudioClip background2;
 
@@ -17,35 +24,25 @@ namespace INART.SlothyBakery.SoundManager
 
         [SerializeField] private List<string> sceneNames = new List<string>();
 
-        private Scene lastScene;
-        private int sceneBlock;
-        private bool changeScene;
-
         [SerializeField] private AudioMixer mixer;
 
         [SerializeField] private bool isTesting;
+        #endregion
 
+        #region Private Fields
+        private Scene lastScene;
+        private int sceneBlock;
+        private bool changeScene;
         private Coroutine currentCoroutine = null;
+        #endregion
 
-        public void SetBackgroundMusicVolume(float _soundLevel)
+        #region Singleton Configuration
+        protected override bool PersistAcrossScenes => true; // Music persists across scenes
+        #endregion
+
+        #region Unity Lifecycle
+        protected override void OnAwake()
         {
-            mixer.SetFloat("MusicVol", Mathf.Log10(_soundLevel) * 20);
-        }
-
-        public void SetBsfxMusicVolume(float _soundLevel)
-        {
-            mixer.SetFloat("SFXVol", Mathf.Log10(_soundLevel) * 20);
-        }
-
-        private void Awake()
-        {
-            DontDestroyOnLoad(this);
-
-            if (_instance == null)
-                _instance = this;
-            else if (_instance != null)
-                Destroy(this.gameObject);
-
             if (!isTesting)
             {
                 if (SceneManager.GetActiveScene().name != sceneNames[0] &&
@@ -79,14 +76,35 @@ namespace INART.SlothyBakery.SoundManager
                          || SceneManager.GetActiveScene().name == sceneNames[5]
                          && sceneBlock == 0)
                 {
-                    //print("Entering");
                     currentCoroutine ??= StartCoroutine(FadeBetweenAudios(1, 0.4f));
                 }
             }
 
             lastScene = SceneManager.GetActiveScene();
         }
+        #endregion
 
+        #region Public Methods
+        /// <summary>
+        /// Sets the background music volume.
+        /// </summary>
+        /// <param name="_soundLevel">Volume level (0-1)</param>
+        public void SetBackgroundMusicVolume(float _soundLevel)
+        {
+            mixer.SetFloat("MusicVol", Mathf.Log10(_soundLevel) * 20);
+        }
+
+        /// <summary>
+        /// Sets the SFX volume.
+        /// </summary>
+        /// <param name="_soundLevel">Volume level (0-1)</param>
+        public void SetBsfxMusicVolume(float _soundLevel)
+        {
+            mixer.SetFloat("SFXVol", Mathf.Log10(_soundLevel) * 20);
+        }
+        #endregion
+
+        #region Private Methods
         private IEnumerator FadeBetweenAudios(int _type, float _time)
         {
             var timeScaler = 1f;
@@ -133,5 +151,6 @@ namespace INART.SlothyBakery.SoundManager
 
             currentCoroutine = null;
         }
+        #endregion
     }
 }

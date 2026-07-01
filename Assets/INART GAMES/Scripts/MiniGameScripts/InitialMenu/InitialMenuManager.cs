@@ -1,260 +1,252 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.TextCore;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using INART.Framework.Utils;
 
 namespace INART.SlothyBakery.Base
 {
     using SceneTransition;
+
+    /// <summary>
+    /// Main menu manager. Handles the intro animation sequence and
+    /// the sound-settings panel slide.
+    ///
+    /// Migrated from manual Lerp coroutines to DOTween Sequences.
+    /// All public call-sites (CallNextScene, Call_SoundSettings, etc.) are unchanged.
+    /// </summary>
     public class InitialMenuManager : MonoBehaviour
     {
-        [Header("Base UI")] [SerializeField] private RectTransform slothImg;
+        // ── Inspector ──────────────────────────────────────────────────────────
+
+        [Header("UI Elements")]
+        [SerializeField] private RectTransform slothImg;
         [SerializeField] private RectTransform titleImg;
-        [FormerlySerializedAs("startButton")] [SerializeField] private List<Button> startButtons=new List<Button>();
-        [SerializeField] private Button continueButton;
-        [SerializeField] private Button soundButton;
+        [FormerlySerializedAs("startButton")]
+        [SerializeField] private Button[] startButtons;
+        [SerializeField] private Button   continueButton;
+        [SerializeField] private Button   soundButton;
 
-        [Header("Properties for Base UI")] [SerializeField]
-        private float slothImg_InitialY;
-
+        [Header("Sloth slide (Y positions)")]
+        [SerializeField] private float slothImg_InitialY;
         [SerializeField] private float slothImg_EndY;
 
-        private Vector3 initialPosition_Sloth;
-        private Vector3 endPosition_Sloth;
-
+        [Header("Title slide (X positions)")]
         [SerializeField] private float titleImg_InitialX;
         [SerializeField] private float titleImg_EndX;
 
-        private Vector3 initialPosition_Title;
-        private Vector3 endPosition_Title;
-
-        [Range(1f, 2f)] [SerializeField] private float timeScaler;
-
-        private Coroutine currentCoroutine = null;
+        [Header("Timings")]
+        [SerializeField] private float elementDuration = 0.5f;
+        [SerializeField] private float gapBetween      = 0.15f;
         [SerializeField] private AnimationCurve _animationCurve;
 
-        [Header("Sound Menu")] [SerializeField]
-        private CanvasGroup soundSettings;
+        [Header("Sound Settings panel")]
+        [SerializeField] private CanvasGroup soundSettings;
 
+        [Header("Click SFX")]
         [SerializeField] private AudioSource clickSource;
+
+        // ── Runtime ────────────────────────────────────────────────────────────
+
+        private Sequence _sequence;
+
+        // Cached start/end positions computed once in Awake
+        private Vector3 _slothStart, _slothEnd;
+        private Vector3 _titleStart, _titleEnd;
+
+        // ── Unity lifecycle ────────────────────────────────────────────────────
 
         private void Awake()
         {
-            Initialize();
-
-            if (currentCoroutine == null)
-                currentCoroutine = StartCoroutine(InitialAnimation(.75f));
-
-            // SaveLoadState.StateButtonInitialize<TrueBakeryData>(startButtons[0], continueButton, SaveLoadState.instance.OnLoad);
+            CachePositions();
+            ResetToHidden();
+            PlayIntroSequence();
         }
 
-        private void Initialize()
+        // ── Public API ─────────────────────────────────────────────────────────
+
+        public void CallNextScene()
         {
-            var slothPosition = slothImg.localPosition;
-            slothImg.localPosition = new Vector3(slothPosition.x, slothImg_InitialY, slothPosition.z);
-
-            initialPosition_Sloth = slothImg.localPosition;
-            endPosition_Sloth = new Vector3(slothPosition.x, slothImg_EndY, slothPosition.z);
-
-            var titlePosition = titleImg.localPosition;
-            titleImg.localPosition = new Vector3(titleImg_InitialX, titlePosition.y, titlePosition.z);
-
-            initialPosition_Title = titleImg.localPosition;
-            endPosition_Title = new Vector3(titleImg_EndX, titlePosition.y, titlePosition.z);
-
-            for (int i = 0; i < startButtons.Count; i++)
-                startButtons[i].GetComponent<RectTransform>().localScale = Vector3.zero;
-
-            soundButton.GetComponent<RectTransform>().localScale = Vector3.zero;
-
-            soundSettings.alpha = 0;
-            soundSettings.interactable = false;
-            soundSettings.blocksRaycasts = false;
+            if (_sequence != null && _sequence.IsPlaying()) return;
+            StartCoroutine(ToNextScene());
         }
 
         public void Call_SoundSettings()
         {
-            if (currentCoroutine == null)
-                currentCoroutine = StartCoroutine(SoundSettings(.75f));
+            if (_sequence != null && _sequence.IsPlaying()) return;
+            PlaySoundSettingsSequence();
         }
 
         public void Call_InitialAnimation()
         {
-            if (currentCoroutine == null)
-                currentCoroutine = StartCoroutine(InitialAnimation(.75f, false));
+            if (_sequence != null && _sequence.IsPlaying()) return;
+            PlayReturnFromSoundSequence();
         }
 
-        private IEnumerator InitialAnimation(float _animationDuration, bool isInitial = true)
-        {
-            var scaledTime = Time.fixedDeltaTime * timeScaler;
-            float animationTime = 0;
+        // ── Sequences ──────────────────────────────────────────────────────────
 
-            if (!isInitial)
+        /// <summary>Standard intro: sloth slides in, then title, then buttons, then sound button.</summary>
+        private void PlayIntroSequence()
+        {
+            _sequence?.Kill();
+            _sequence = DOTween.Sequence();
+
+            // 1. Sloth slides up
+            _sequence.Append(
+                slothImg.DOLocalMoveY(_slothEnd.y, elementDuration).SetEase(_animationCurve));
+
+            // 2. Short pause then title slides in
+            _sequence.AppendInterval(gapBetween);
+            _sequence.Append(
+                titleImg.DOLocalMoveX(_titleEnd.x, elementDuration).SetEase(_animationCurve));
+
+            // 3. Start buttons scale in (joined so they all animate together)
+            for (int i = 0; i < startButtons.Length; i++)
             {
-                animationTime = _animationDuration;
-                while (animationTime > 0)
+                var btn = startButtons[i].GetComponent<RectTransform>();
+                if (i == 0)
+                    _sequence.Append(btn.DOScale(1f, elementDuration).SetEase(Ease.OutBack));
+                else
+                    _sequence.Join(btn.DOScale(1f, elementDuration).SetEase(Ease.OutBack));
+            }
+
+            // 4. Sound button scales in
+            _sequence.Append(
+                soundButton.GetComponent<RectTransform>()
+                           .DOScale(1f, elementDuration).SetEase(Ease.OutBack));
+
+            // 5. Enable button animators when done
+            _sequence.OnComplete(() =>
+            {
+                foreach (var btn in startButtons)
                 {
-                    animationTime -= scaledTime;
-                    var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                    soundSettings.alpha = animationCurveValue;
-                    yield return null;
+                    var anim = btn.GetComponent<Animator>();
+                    if (anim != null) anim.enabled = true;
                 }
-
-                soundSettings.interactable = false;
-                soundSettings.blocksRaycasts = false;
-            }
-
-            animationTime = 0;
-
-            while (animationTime <= _animationDuration)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                slothImg.localPosition = Vector3.Lerp(initialPosition_Sloth, endPosition_Sloth, animationCurveValue);
-                yield return null;
-            }
-
-            yield return new WaitForSeconds(.25f);
-
-            animationTime = 0;
-            while (animationTime <= _animationDuration)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                titleImg.localPosition = Vector3.Lerp(initialPosition_Title, endPosition_Title, animationCurveValue);
-                yield return null;
-            }
-            // yield return new WaitForSeconds(.25f);
-
-            animationTime = 0;
-            while (animationTime <= _animationDuration)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                for (int i = 0; i < startButtons.Count; i++)
-                    startButtons[i].GetComponent<RectTransform>().localScale = Vector3.one * animationCurveValue;
-                
-                yield return null;
-            }
-
-            animationTime = 0;
-            while (animationTime <= _animationDuration)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                soundButton.GetComponent<RectTransform>().localScale = Vector3.one * animationCurveValue;
-
-                yield return null;
-            }
-
-            for (int i = 0; i < startButtons.Count; i++)
-                startButtons[i].GetComponent<Animator>().enabled = true;
-
-            currentCoroutine = null;
+                _sequence = null;
+            });
         }
 
-        private IEnumerator SoundSettings(float _animationDuration)
+        /// <summary>
+        /// Reverse: hides the main UI elements, then reveals the sound-settings panel.
+        /// </summary>
+        private void PlaySoundSettingsSequence()
         {
-            var scaledTime = Time.fixedDeltaTime * timeScaler;
-            var animationTime = _animationDuration;
+            _sequence?.Kill();
 
-            for (int i = 0; i < startButtons.Count; i++)
-                startButtons[i].GetComponent<Animator>().enabled = false;
-
-            while (animationTime > 0)
+            // Disable button animators first
+            foreach (var btn in startButtons)
             {
-                animationTime -= scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                slothImg.localPosition = Vector3.Lerp(initialPosition_Sloth, endPosition_Sloth, animationCurveValue);
-                yield return null;
+                var anim = btn.GetComponent<Animator>();
+                if (anim != null) anim.enabled = false;
             }
 
-            yield return new WaitForSeconds(.25f);
+            _sequence = DOTween.Sequence();
 
-            animationTime = _animationDuration;
-            while (animationTime > 0)
+            // Slide sloth back down
+            _sequence.Append(
+                slothImg.DOLocalMoveY(_slothStart.y, elementDuration).SetEase(_animationCurve));
+
+            _sequence.AppendInterval(gapBetween);
+
+            // Slide title back out
+            _sequence.Append(
+                titleImg.DOLocalMoveX(_titleStart.x, elementDuration).SetEase(_animationCurve));
+
+            // Scale out start buttons and sound button simultaneously
+            for (int i = 0; i < startButtons.Length; i++)
             {
-                animationTime -= scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                titleImg.localPosition = Vector3.Lerp(initialPosition_Title, endPosition_Title, animationCurveValue);
-                yield return null;
+                var btn = startButtons[i].GetComponent<RectTransform>();
+                if (i == 0)
+                    _sequence.Append(btn.DOScale(0f, elementDuration).SetEase(Ease.InBack));
+                else
+                    _sequence.Join(btn.DOScale(0f, elementDuration).SetEase(Ease.InBack));
             }
+            _sequence.Join(
+                soundButton.GetComponent<RectTransform>()
+                           .DOScale(0f, elementDuration).SetEase(Ease.InBack));
 
-            animationTime = _animationDuration;
-            while (animationTime > 0)
+            // Fade in sound settings panel
+            _sequence.Append(
+                soundSettings.DOFade(1f, elementDuration).SetEase(Ease.OutQuad));
+
+            _sequence.OnComplete(() =>
             {
-                animationTime -= scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                for (int i = 0; i < startButtons.Count; i++)
-                    startButtons[i].GetComponent<RectTransform>().localScale = Vector3.one * animationCurveValue;
-                
-                soundButton.GetComponent<RectTransform>().localScale = Vector3.one * animationTime;
-
-                yield return null;  
-            }
-
-            animationTime = 0;
-
-            while (animationTime <= _animationDuration)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _animationDuration);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                soundSettings.alpha = animationCurveValue;
-                yield return null;
-            }
-
-            soundSettings.interactable = true;
-            soundSettings.blocksRaycasts = true;
-
-            currentCoroutine = null;
+                soundSettings.interactable   = true;
+                soundSettings.blocksRaycasts = true;
+                _sequence = null;
+            });
         }
+
+        /// <summary>
+        /// Reverse of PlaySoundSettingsSequence: hides settings panel and
+        /// plays the intro sequence again.
+        /// </summary>
+        private void PlayReturnFromSoundSequence()
+        {
+            _sequence?.Kill();
+            _sequence = DOTween.Sequence();
+
+            // Fade out sound settings
+            soundSettings.interactable   = false;
+            soundSettings.blocksRaycasts = false;
+
+            _sequence.Append(
+                soundSettings.DOFade(0f, elementDuration).SetEase(Ease.InQuad));
+
+            _sequence.OnComplete(() =>
+            {
+                _sequence = null;
+                PlayIntroSequence();
+            });
+        }
+
+        // ── Scene transitions (keep as coroutines — need to yield on FadeOut) ──
 
         private IEnumerator ToNextScene()
         {
-            //Do something or run a shader
             if (clickSource != null)
             {
                 clickSource.Play();
-                yield return !clickSource.isPlaying;
+                yield return new WaitWhile(() => clickSource.isPlaying);
             }
 
-            yield return StartCoroutine(SceneTransitionController._instance.FadeEffect_OUT());
+            yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-            currentCoroutine = null;
         }
 
-        private IEnumerator ToNextScene(string _sceneName)
+        // ── Helpers ────────────────────────────────────────────────────────────
+
+        private void CachePositions()
         {
-            //Do something or run a shader
-            yield return StartCoroutine(SceneTransitionController._instance.FadeEffect_OUT());
-            SceneManager.LoadScene(_sceneName);
-            currentCoroutine = null;
+            var slothPos = slothImg.localPosition;
+            _slothStart  = new Vector3(slothPos.x, slothImg_InitialY, slothPos.z);
+            _slothEnd    = new Vector3(slothPos.x, slothImg_EndY,     slothPos.z);
+
+            var titlePos = titleImg.localPosition;
+            _titleStart  = new Vector3(titleImg_InitialX, titlePos.y, titlePos.z);
+            _titleEnd    = new Vector3(titleImg_EndX,     titlePos.y, titlePos.z);
         }
 
-        public void CallNextScene()
+        private void ResetToHidden()
         {
-            if (currentCoroutine == null) currentCoroutine = StartCoroutine(ToNextScene());
+            slothImg.localPosition = _slothStart;
+            titleImg.localPosition = _titleStart;
+
+            foreach (var btn in startButtons)
+            {
+                btn.GetComponent<RectTransform>().localScale = Vector3.zero;
+                var anim = btn.GetComponent<Animator>();
+                if (anim != null) anim.enabled = false;
+            }
+
+            soundButton.GetComponent<RectTransform>().localScale = Vector3.zero;
+
+            soundSettings.alpha          = 0f;
+            soundSettings.interactable   = false;
+            soundSettings.blocksRaycasts = false;
         }
     }
 }

@@ -1,68 +1,51 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+using INART.SlothyBakery.Core;
+using INART.Framework.Utils;
 
-public class MessageManager : MonoBehaviour
+/// <summary>
+/// Shows a feedback sprite (correct / wrong) with a scale-pop animation.
+/// Migrated from manual coroutine Lerp to DOTween Sequence.
+/// </summary>
+public class MessageManager : Singleton<MessageManager>
 {
-    public static MessageManager _instance;
-
     [SerializeField] private RectTransform message;
-    private Image messageImage;
-    [SerializeField] private AnimationCurve _animationCurve;
-
-    private Coroutine currentCoroutine = null;
-
-    [SerializeField] private float maxSize;
-
     [SerializeField] private Sprite badMessage, goodMessage;
-    
-    void Awake()
-    {
-        if (_instance == null)
-            _instance = this;
+    [SerializeField] private float maxScale = 1f;
+    [SerializeField] private float holdDuration = 0.5f;
 
-        messageImage = message.GetComponent<Image>();
-        message.localScale = Vector3.one * 0;
+    private Image _messageImage;
+    private Sequence _sequence;
+
+    protected override bool PersistAcrossScenes => false;
+
+    protected override void OnAwake()
+    {
+        _messageImage = message.GetComponent<Image>();
+        message.localScale = Vector3.zero;
     }
 
-    public void Animate_Message(bool isBadMessage)
+    /// <summary>
+    /// Shows the feedback popup. Safe to call while a previous animation is running
+    /// — kills the old sequence first and snaps back to zero.
+    /// </summary>
+    public void Animate_Message(bool isCorrect)
     {
-        if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(AnimateMessage(isBadMessage));
-    }
-    
-    IEnumerator AnimateMessage(bool isBadMessage)
-    {
-        messageImage.sprite = !isBadMessage ? badMessage : goodMessage;
-        messageImage.SetNativeSize();
-        
-        float value = 0;
-        float maxTime = .1f;
-        float evaluate = 0;
-        
-        while (value<maxTime)
-        {
-            value += Time.fixedDeltaTime;
-            evaluate = _animationCurve.Evaluate(Mathf.Clamp01(value / maxTime));
-            message.localScale = Vector2.Lerp(Vector3.one*0, Vector3.one*maxSize, evaluate);
-            yield return null;
-        }
-        message.localScale = Vector2.Lerp(Vector3.one*0, Vector3.one*maxSize, 1);
+        // Kill any running animation and reset immediately
+        _sequence?.Kill();
+        message.localScale = Vector3.zero;
 
-        yield return new WaitForSeconds(.5f);
-        
-        while (value>0)
-        {
-            value -= Time.fixedDeltaTime;
-            evaluate = _animationCurve.Evaluate(Mathf.Clamp01(value / maxTime));
-            message.localScale = Vector2.Lerp(Vector3.one * 0, Vector3.one * maxSize, evaluate); 
-            yield return null;
-        }
+        _messageImage.sprite = isCorrect ? goodMessage : badMessage;
+        _messageImage.SetNativeSize();
 
-        message.localScale = Vector2.Lerp(Vector3.one * 0, Vector3.one * maxSize, 0);
-
-        currentCoroutine = null;
+        _sequence = DOTween.Sequence()
+            // Grow to maxScale
+            .Append(message.DOScale(maxScale, 0.1f).SetEase(Ease.OutBack))
+            // Hold
+            .AppendInterval(holdDuration)
+            // Shrink back to zero
+            .Append(message.DOScale(0f, 0.12f).SetEase(Ease.InBack))
+            .OnComplete(() => _sequence = null);
     }
 }
- 

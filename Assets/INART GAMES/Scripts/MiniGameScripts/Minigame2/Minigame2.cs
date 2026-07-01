@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-// using LoLSDK;
 
 namespace INART.SlothyBakery.Base
 {
@@ -13,6 +12,8 @@ namespace INART.SlothyBakery.Base
     using SoundManager;
     using ProgressionCanvas;
     using CanvasAnimator;
+    using Analytics;
+    using DailyChallenge;
 
     public enum Side
     {
@@ -79,13 +80,13 @@ namespace INART.SlothyBakery.Base
             text_Color = leftText.color;
             for (int i = 0; i < rounds.Count; i++)
                 rounds[i]._spriteControl.Init();
-            SaveLoadState.instance.SetActualState(1);
-            SaveLoadState.instance.Save();
+            SaveLoadState.Instance.SetActualState(1);
+            SaveLoadState.Instance.Save();
         }
 
         private void Update()
         {
-            if (GameStates._instance.GetGameState() == GameStates.GameState.PLAY)
+            if (GameStates.Instance.GetGameState() == GameStates.States.Play)
                 if (next)
                     next = false;
         }
@@ -110,8 +111,8 @@ namespace INART.SlothyBakery.Base
             //Set the initial position of the draggables that are active for that round
             button.interactable = false;
             InitializeNewObjectInfo();
-            SignManager._instance.Initialize();
-            SignManager._instance.DisableColliders();
+            SignManager.Instance.Initialize();
+            SignManager.Instance.DisableColliders();
         }
 
         public override IEnumerator TurnOnGame(float _delay)
@@ -154,8 +155,8 @@ namespace INART.SlothyBakery.Base
                 yield return null;
             }
 
-            SignManager._instance.ResetAll();
-            SignManager._instance.EnableColliders();
+            SignManager.Instance.ResetAll();
+            SignManager.Instance.EnableColliders();
 
             yield return new WaitForSeconds(.25f);
 
@@ -178,8 +179,12 @@ namespace INART.SlothyBakery.Base
             }
 
             yield return StartCoroutine(
-                ProgressionCanvas._instance.FillBar(index, ProgressionCanvas.ProgressionType.One));
-            yield return StartCoroutine(ProgressionCanvas._instance.UnlockStuff(index));
+                ProgressionCanvas.Instance.FillBar(index, ProgressionCanvas.ProgressionType.One));
+            yield return StartCoroutine(ProgressionCanvas.Instance.UnlockStuff(index));
+
+            // Analytics + Daily Challenge
+            AnalyticsManager.Instance?.TrackLevelCompleted($"minigame2_round_{index}", true);
+            DailyChallengeManager.Instance?.AddProgress("complete_rounds", 1);
 
             yield return new WaitForSeconds(waitTime_UntilNextRow);
 
@@ -192,8 +197,8 @@ namespace INART.SlothyBakery.Base
             //     signDraggables[i].IsNotInRecognitionZone_WithoutCollider();
             //     signDraggables[i].IsSelected();
             // }
-            SignManager._instance.DisableColliders();
-            SignManager._instance.ResetAll();
+            SignManager.Instance.DisableColliders();
+            SignManager.Instance.ResetAll();
 
             button.interactable = false;
             ValueManager._instance.ResetValue();
@@ -231,9 +236,6 @@ namespace INART.SlothyBakery.Base
 
             yield return new WaitForSeconds(.25f);
             //Warning(Aldhair): LolSDK
-            // #if UNITY_WEBGL
-            //             LOLSDK.Instance.SubmitProgress(0, index + 7, 18);
-            // #endif
             if (index < rounds.Count - 1)
             {
                 index++;
@@ -241,14 +243,11 @@ namespace INART.SlothyBakery.Base
                 if (index == 1)
                 {
                     yield return StartCoroutine(
-                        CanvasAnimator._instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
+                        CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
                 }
 
                 rounds[index].parentObject.SetActive(true);
 
-                // #if UNITY_WEBGL
-                //                 LOLSDK.Instance.SpeakText(StringConstants.minigame2_question + index);
-                // #endif
 
                 animationTime = 0;
                 while (animationTime <= _delay)
@@ -289,15 +288,15 @@ namespace INART.SlothyBakery.Base
                 //     signDraggables[i].InitializeDraggable(true);
                 //
                 // colliderCenter.Init();
-                SignManager._instance.EnableColliders();
+                SignManager.Instance.EnableColliders();
 
                 button.interactable = true;
             }
             else
             {
-                yield return StartCoroutine(CanvasAnimator._instance.InstructionsAnimation(false));
-                yield return StartCoroutine(CanvasAnimator._instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
-                yield return StartCoroutine(SceneTransitionController._instance.FadeEffect_OUT());
+                yield return StartCoroutine(CanvasAnimator.Instance.InstructionsAnimation(false));
+                yield return StartCoroutine(CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
+                yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
                 SceneUtils.ToNextScene();
             }
 
@@ -336,36 +335,28 @@ namespace INART.SlothyBakery.Base
         {
             if (ValueManager._instance.GetValue() == rounds[index].correctAnswer)
             {
-                MessageManager._instance.Animate_Message(true);
+                MessageManager.Instance.Animate_Message(true);
                 button.interactable = false;
 
                 if (currentCoroutine == null)
                     currentCoroutine = StartCoroutine(Change(1f));
 
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Success);
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
+                AnalyticsManager.Instance?.TrackAnswerCorrect(index);
             }
             else
             {
-                MessageManager._instance.Animate_Message(false);
-                //Reset everything            
-                // colliderCenter.ResetColliderEnabling();
-                //
-                // for (int i = 0; i < signDraggables.Count; i++)
-                // {
-                //     signDraggables[i].IsNotInRecognitionZone();
-                //     signDraggables[i].IsSelected();
-                // }
+                MessageManager.Instance.Animate_Message(false);
                 if (!isTurnedOn)
                 {
                     rounds[index]._spriteControl.TurnOnSprites();
                     isTurnedOn = true;
                 }
 
-                SignManager._instance.ResetAll();
-
+                SignManager.Instance.ResetAll();
                 ValueManager._instance.ResetValue();
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Wrong);
-                // print("Nope :C");                
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
+                AnalyticsManager.Instance?.TrackAnswerWrong(index);
             }
         }
     }

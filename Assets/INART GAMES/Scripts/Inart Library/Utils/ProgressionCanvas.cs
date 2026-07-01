@@ -1,129 +1,149 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
+using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
+using INART.Framework.Utils;
 
 namespace INART.SlothyBakery.ProgressionCanvas
 {
     using SoundManager;
-    public class ProgressionCanvas : MonoBehaviour
-    {
-        public static ProgressionCanvas _instance;
-        [SerializeField] private List<Image> Bars = new List<Image>();
-        [SerializeField] private List<Image> Locks = new List<Image>();
-        [SerializeField] private Sprite unlockSprite;
-        [SerializeField] private List<ParticleSystem> particleSystems = new List<ParticleSystem>();
+    using Core;
 
-        [SerializeField] private ParticleSystem partyParticles;
-        
+    /// <summary>
+    /// Manages progression UI elements (bars, locks, particles).
+    /// Handles visual feedback for level completion and unlocks.
+    ///
+    /// Migrated from manual delta-time loops to DOTween.
+    /// Public API (FillBar / CleanBar / UnlockStuff) stays as coroutines
+    /// so existing minigame code can continue to yield on them unchanged.
+    /// </summary>
+    public class ProgressionCanvas : Singleton<ProgressionCanvas>
+    {
+        // ── Enums ──────────────────────────────────────────────────────────────
+
+        /// <summary>How much of the bar one action fills.</summary>
         public enum ProgressionType
         {
-            One,
-            Two,
-            Three
+            One,    // 100 %
+            Two,    // 50 %
+            Three   // 33.4 %
         }
 
-        private float fillBar = 0;
+        // ── Inspector ──────────────────────────────────────────────────────────
 
-        private void Awake()
+        [Header("Bars & Locks")]
+        [UnityEngine.Serialization.FormerlySerializedAs("bars")]
+        [SerializeField] private List<Image> bars  = new List<Image>();
+        [UnityEngine.Serialization.FormerlySerializedAs("locks")]
+        [SerializeField] private List<Image> locks = new List<Image>();
+        [SerializeField] private Sprite  unlockSprite;
+
+        [Header("Particles")]
+        [UnityEngine.Serialization.FormerlySerializedAs("particleSystems")]
+        [SerializeField] private List<ParticleSystem> particleSystems = new List<ParticleSystem>();
+        [SerializeField] private ParticleSystem   partyParticles;
+
+        [Header("Animation Timings")]
+        [SerializeField] private float fillDuration   = 0.5f;
+        [SerializeField] private float cleanDuration  = 0.35f;
+        [SerializeField] private float unlockDuration = 0.35f;
+
+        // ── Singleton config ───────────────────────────────────────────────────
+        protected override bool PersistAcrossScenes => false;
+
+        // ── Runtime state ──────────────────────────────────────────────────────
+        // Tracks the logical fill value per bar so DOTween always starts from
+        // the correct position regardless of animation interruption.
+        private float[] _fillValues;
+
+        protected override void OnAwake()
         {
-            if (_instance == null)
-                _instance = this;
-            else
-                Destroy(gameObject);
+            _fillValues = new float[bars.Count];
         }
+
+        // ── Public API — all coroutines so minigames can yield on them ─────────
 
         /// <summary>
-        /// Should be generalized but for the first game, i'm using two scenaries, cut two breads
-        /// This should be called every time you finish the cut, not when you finish a line, because
-        /// We are couting the success in the exercise, not just a part of the exercise
+        /// Fills bar[index] by the amount determined by <paramref name="progression"/>.
+        /// Plays the completion particle when fill reaches 1.
         /// </summary>
-        /// <param name="index">The index of the bar that should be painted</param>
-        /// <returns></returns>
-        public IEnumerator FillBar(int index, ProgressionType _progression)
+        public IEnumerator FillBar(int index, ProgressionType progression)
         {
-            var i = .5f;
-
-            switch (_progression)
+            if (index < 0 || index >= bars.Count)
             {
-                case ProgressionType.One:
-                    i = 1f;
-                    break;
-                case ProgressionType.Two:
-                    i = .5f;
-                    break;
-                case ProgressionType.Three:
-                    i = .334f;
-                    break;
-            }
-            // fillSoundSource.Play();
-            var topLimit = fillBar + i;
-            while (fillBar < topLimit)
-            {
-                fillBar += Time.fixedDeltaTime;
-                Bars[index].fillAmount = fillBar;
-                yield return null;
+                INART.Framework.Core.GameLogger.Error(
+                    $"ProgressionCanvas.FillBar: index {index} out of range (bars.Count={bars.Count}). " +
+                    "Check Inspector assignments.", INART.Framework.Core.LogCategory.UI);
+                yield break;
             }
 
-            if (fillBar >= 1)
+            float amount = progression switch
             {
+                ProgressionType.One   => 1.000f,
+                ProgressionType.Two   => 0.500f,
+                ProgressionType.Three => 0.334f,
+                _                     => 1.000f
+            };
+
+            float target = Mathf.Clamp01(_fillValues[index] + amount);
+            _fillValues[index] = target;
+
+            var tween = bars[index]
+                .DOFillAmount(target, fillDuration)
+                .SetEase(Ease.OutQuad);
+
+            yield return tween.WaitForCompletion();
+
+            if (target >= 1f && particleSystems != null && index < particleSystems.Count)
                 particleSystems[index].Play();
-            }
-            StopCoroutine("FillBar");
         }
 
-        /// <summary>
-        /// Should be generalized but for the first game, i'm using two scenaries, cut two breads
-        /// This should be called when you fail a part of the exercise or if the whole job is badly done
-        /// Will clear the whole bar so the mechanic should reflect that too.
-        /// </summary>
-        /// <param name="index">The index of the bar that should be return to 0</param>
-        /// <returns></returns>
         public IEnumerator CleanBar(int index)
         {
-            while (fillBar > 0)
+            if (index < 0 || index >= bars.Count)
             {
-                fillBar -= Time.fixedDeltaTime;
-                Bars[index].fillAmount = fillBar;
-                yield return null;
+                INART.Framework.Core.GameLogger.Error(
+                    $"ProgressionCanvas.CleanBar: index {index} out of range.", INART.Framework.Core.LogCategory.UI);
+                yield break;
             }
 
-            yield return null;
-            StopCoroutine("CleanBar");
+            _fillValues[index] = 0f;
+
+            var tween = bars[index]
+                .DOFillAmount(0f, cleanDuration)
+                .SetEase(Ease.InQuad);
+
+            yield return tween.WaitForCompletion();
         }
 
-        /// <summary>
-        /// Animates the whole Unlock Stuff, should be called when you success in the last part of the
-        /// exercise, run first the FillBar coroutine, and then this one
-        /// ex. yield return StartCoroutine(ProgressionCanvas._instance.FillBar(index));
-        /// ex. yield return StartCoroutine(ProgressionCanvas._instance.UnlockStuff(index));
-        /// </summary>
-        /// <param name="index">The index of the bar that should be painted</param>
-        /// <returns></returns>
-        public IEnumerator UnlockStuff(int _index)
+        public IEnumerator UnlockStuff(int index)
         {
-            fillBar = 0;
-            Locks[_index].GetComponent<RectTransform>().localScale = 1.5f * Vector3.one;
-            Locks[_index].sprite = unlockSprite;
-            var scaledTime = Time.fixedDeltaTime * 2;
-            SoundManager._instance.Run_SFX(SoundManager.SoundType.Unlock);
-
-            for (float i = 0; i <= 1; i += scaledTime)
+            if (index < 0 || index >= locks.Count)
             {
-                Locks[_index].GetComponent<RectTransform>().localScale = Vector3.Lerp(1.5f * Vector3.one, Vector3.one,
-                    Mathf.InverseLerp(0, 1, i * 2));
-                yield return null;
+                INART.Framework.Core.GameLogger.Error(
+                    $"ProgressionCanvas.UnlockStuff: index {index} out of range (locks.Count={locks.Count}). " +
+                    "Check Inspector assignments.", INART.Framework.Core.LogCategory.UI);
+                yield break;
             }
 
-            StopCoroutine("UnlockStuff");
+            _fillValues[index] = 0f;
+
+            var lockRt = locks[index].GetComponent<RectTransform>();
+
+            locks[index].sprite = unlockSprite;
+            lockRt.localScale   = Vector3.one * 1.5f;
+
+            SoundManager.Instance.Run_SFX(SoundManager.SoundType.Unlock);
+
+            var tween = lockRt
+                .DOScale(Vector3.one, unlockDuration)
+                .SetEase(Ease.OutBack);
+
+            yield return tween.WaitForCompletion();
         }
 
-        public void RunPartyParticles()
-        {
-            partyParticles.Play();
-        }
+        /// <summary>Plays the end-of-game celebration particles.</summary>
+        public void RunPartyParticles() => partyParticles?.Play();
     }
 }

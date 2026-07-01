@@ -9,12 +9,12 @@ namespace INART.SlothyBakery.Base
     {
         public void SetBackgroundMusicVolume(float _soundLevel)
         {
-            BackgroundSoundManager._instance.SetBackgroundMusicVolume(_soundLevel);
+            BackgroundSoundManager.Instance.SetBackgroundMusicVolume(_soundLevel);
         }
    
         public void SetBsfxMusicVolume(float _soundLevel)
         {
-            BackgroundSoundManager._instance.SetBsfxMusicVolume(_soundLevel);
+            BackgroundSoundManager.Instance.SetBsfxMusicVolume(_soundLevel);
         }
     }
 }

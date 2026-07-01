@@ -1,79 +1,38 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using DG.Tweening;
 using UnityEngine;
+using INART.SlothyBakery.Core;
+using INART.Framework.Utils;
 
-public class InstructionManager : MonoBehaviour
+/// <summary>
+/// Shows / hides the instructions panel with a DOTween alpha fade.
+/// Migrated from manual timer coroutine to DOFade.
+/// </summary>
+public class InstructionManager : Singleton<InstructionManager>
 {
     [SerializeField] private CanvasGroup _canvasGroup;
-    private Coroutine currentCoroutine = null;
-    [SerializeField] private AnimationCurve _animationCurve;
+    [SerializeField] private float fadeDuration = 0.2f;
 
-    private const float zero = 0;
-    private const float max = .2f;
+    protected override bool PersistAcrossScenes => false;
 
+    private Tween _tween;
 
-    private void Awake()
-    {
-        TurnOff();
-    }
+    protected override void OnAwake() => HideImmediate();
 
-    void TurnOff()
-    {
-        _canvasGroup.alpha = 0;
-        _canvasGroup.interactable = false;
-        _canvasGroup.blocksRaycasts = false;
-    }
-
-    IEnumerator AnimateInstructions(bool isOn)
-    {
-        float evaluate = 0;
-        float timer = isOn ? zero : max;
-        float maxTime = isOn ? max : zero;
-
-        if (isOn)
-        {
-            while (timer<maxTime)
-            {
-                timer += Time.fixedDeltaTime;
-                evaluate = _animationCurve.Evaluate(Mathf.Clamp01(timer / maxTime));
-                _canvasGroup.alpha = evaluate;
-                yield return null;
-            }
-            // evaluate = 1;
-            // _canvasGroup.alpha = evaluate;
-            
-            _canvasGroup.interactable = true;
-            _canvasGroup.blocksRaycasts = true;
-        }
-        else
-        {
-            while (timer>maxTime)
-            {
-                timer -= Time.fixedDeltaTime;
-                evaluate = _animationCurve.Evaluate(Mathf.Clamp01(timer / maxTime));
-                _canvasGroup.alpha = evaluate;
-                yield return null;
-            }
-            // evaluate = maxTime;
-            // _canvasGroup.alpha = evaluate;
-            
-            _canvasGroup.interactable = false;
-            _canvasGroup.blocksRaycasts = false;
-        }
-
-        currentCoroutine = null;
-    }
+    // ── Public API ─────────────────────────────────────────────────────────
 
     public void OpenInstructions()
     {
-        if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(AnimateInstructions(true));
+        _tween?.Kill();
+        _tween = _canvasGroup.FadeIn(fadeDuration, enableInteraction: true);
     }
 
     public void CloseInstructions()
     {
-        if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(AnimateInstructions(false));
+        _tween?.Kill();
+        _tween = _canvasGroup.FadeOut(fadeDuration, disableInteraction: true);
     }
+
+    // ── Helpers ────────────────────────────────────────────────────────────
+
+    private void HideImmediate() => _canvasGroup.SetAlpha(0f, interactable: false);
 }

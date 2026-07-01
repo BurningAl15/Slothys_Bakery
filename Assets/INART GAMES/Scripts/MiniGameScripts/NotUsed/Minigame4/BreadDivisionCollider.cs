@@ -47,7 +47,7 @@ namespace INART.SlothyBakery.Base
                             _tempDraggable.IsInRecognitionZone(transform.position);
                             _tempDraggable.NotSelected();
                             CounterManager._instance.AddCounter();
-                            SoundManager._instance.Run_SFX(SoundManager.SoundType.Selection1);
+                            SoundManager.Instance.Run_SFX(SoundManager.SoundType.Selection1);
                             collider.enabled = false;
                         }
                     }

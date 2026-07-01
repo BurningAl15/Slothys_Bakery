@@ -36,7 +36,7 @@ namespace INART.SlothyBakery.Base
                         _tempDraggable.IsInRecognitionZone(transform.position);
                         _tempDraggable.NotSelected();
                         // ValueManager._instance.SetValue(_tempDraggable.id);
-                        SoundManager._instance.Run_SFX(SoundManager.SoundType.Selection1);
+                        SoundManager.Instance.Run_SFX(SoundManager.SoundType.Selection1);
                         collider.enabled = false;
                     }
                 }

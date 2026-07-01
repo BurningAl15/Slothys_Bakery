@@ -5,7 +5,6 @@ using INART.SlothyBakery.Base;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-// using LoLSDK;
 
 namespace INART.SlothyBakery.Base
 {
@@ -14,6 +13,7 @@ namespace INART.SlothyBakery.Base
     using CanvasAnimator;
     using SceneTransition;
     using ProgressionCanvas;
+    using Analytics;
 
     [Serializable]
     public class MenuPositionPoints
@@ -73,8 +73,8 @@ namespace INART.SlothyBakery.Base
             Interact(_buttonMenu, false);
             Interact(_inputFieldMenu, false);
             Interact(_signButtonMenu, false);
-            SaveLoadState.instance.SetActualState(0);
-            SaveLoadState.instance.Save();
+            SaveLoadState.Instance.SetActualState(0);
+            SaveLoadState.Instance.Save();
         }
 
         public IEnumerator MoveMenu(bool run)
@@ -113,10 +113,7 @@ namespace INART.SlothyBakery.Base
             TurnOffButtonMenu(_inputFieldMenu);
             TurnOffButtonMenu(_signButtonMenu);
             TurnOnButtonMenu(_buttonMenu);
-            CanvasAnimator._instance.TurnButton(true);
-            // #if UNITY_WEBGL
-            //             LOLSDK.Instance.SpeakText(StringConstants.minigame1_questionA);
-            // #endif
+            CanvasAnimator.Instance.TurnButton(true);
             questionText.text = questions[0];
 
             fraction = _fraction;
@@ -141,19 +138,19 @@ namespace INART.SlothyBakery.Base
             if (temp)
             {
                 //Run a sound maybe
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Success);
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
                 fraction._left._fraction.UpdateColor(success);
                 inputField.text = "";
                 Interact(_signButtonMenu, true);
                 TurnOn_SignButtonMenu();
-                MessageManager._instance.Animate_Message(true);
-                CanvasAnimator._instance.TurnButton(false);
+                MessageManager.Instance.Animate_Message(true);
+                CanvasAnimator.Instance.TurnButton(false);
             }
             else
             {
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Wrong);
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
                 fraction._left._fraction.UpdateColor(wrong);
-                MessageManager._instance.Animate_Message(false);
+                MessageManager.Instance.Animate_Message(false);
                 TurnOn_InputFieldMenu();
             }
         }
@@ -173,26 +170,26 @@ namespace INART.SlothyBakery.Base
                 if (IsEquals(tempDenominator1, denominator2))
                 {
                     inputField.text = "";
-                    SoundManager._instance.Run_SFX(SoundManager.SoundType.Success);
+                    SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
                     fraction._left._fraction.UpdateColor(success);
                     TurnOn_SignButtonMenu();
                     Interact(_signButtonMenu, true);
-                    MessageManager._instance.Animate_Message(true);
-                    CanvasAnimator._instance.TurnButton(false);
+                    MessageManager.Instance.Animate_Message(true);
+                    CanvasAnimator.Instance.TurnButton(false);
                 }
                 else
                 {
-                    SoundManager._instance.Run_SFX(SoundManager.SoundType.Wrong);
+                    SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
                     fraction._left._fraction.UpdateColor(wrong);
-                    MessageManager._instance.Animate_Message(false);
+                    MessageManager.Instance.Animate_Message(false);
                     inputField.text = "";
                 }
             }
             else
             {
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Wrong);
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
                 fraction._left._fraction.UpdateColor(wrong);
-                MessageManager._instance.Animate_Message(false);
+                MessageManager.Instance.Animate_Message(false);
                 inputField.text = "";
             }
         }
@@ -201,7 +198,7 @@ namespace INART.SlothyBakery.Base
         {
             fraction._left._fraction.UpdateColor(normal);
             fraction._left._fraction.MultiplyWith(1);
-            SoundManager._instance.Run_SFX(SoundManager.SoundType.Selection2);
+            SoundManager.Instance.Run_SFX(SoundManager.SoundType.Selection2);
         }
 
         //Step 3 - Comparing by signs
@@ -210,16 +207,32 @@ namespace INART.SlothyBakery.Base
             if (_sign == (int)value)
             {
                 isCorrect = true;
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Success);
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
                 Interact(_buttonMenu, false);
                 Interact(_inputFieldMenu, false);
                 Interact(_signButtonMenu, false);
-                MessageManager._instance.Animate_Message(true);
+                MessageManager.Instance.Animate_Message(true);
+
+                // Analytics
+                AnalyticsManager.Instance?.TrackAnswerCorrect(0);
+                AnalyticsManager.Instance?.TrackCustom("sign_placed", new System.Collections.Generic.Dictionary<string, object>
+                {
+                    { "sign",    _sign },
+                    { "correct", true  }
+                });
             }
             else if (_sign != (int)value)
             {
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Wrong);
-                MessageManager._instance.Animate_Message(false);
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
+                MessageManager.Instance.Animate_Message(false);
+
+                // Analytics
+                AnalyticsManager.Instance?.TrackAnswerWrong(0);
+                AnalyticsManager.Instance?.TrackCustom("sign_placed", new System.Collections.Generic.Dictionary<string, object>
+                {
+                    { "sign",    _sign },
+                    { "correct", false }
+                });
             }
         }
 
@@ -228,10 +241,7 @@ namespace INART.SlothyBakery.Base
         {
             TurnOffButtonMenu(_buttonMenu);
             TurnOnButtonMenu(_inputFieldMenu);
-            HintManager._instance.TurnOn();
-            // #if UNITY_WEBGL
-            //             LOLSDK.Instance.SpeakText(StringConstants.minigame1_questionB);
-            // #endif
+            HintManager.Instance.TurnOn();
             questionText.text = questions[1];
         }
 
@@ -243,17 +253,14 @@ namespace INART.SlothyBakery.Base
             {
                 TurnOffButtonMenu(_buttonMenu);
                 TurnOnButtonMenu(_inputFieldMenu);
-                HintManager._instance.TurnOn();
-                // #if UNITY_WEBGL
-                //             LOLSDK.Instance.SpeakText(StringConstants.minigame1_questionB);
-                // #endif
+                HintManager.Instance.TurnOn();
                 questionText.text = questions[1];
             }
             else
             {
-                SoundManager._instance.Run_SFX(SoundManager.SoundType.Wrong);
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
                 fraction._left._fraction.UpdateColor(wrong);
-                MessageManager._instance.Animate_Message(false);
+                MessageManager.Instance.Animate_Message(false);
             }
         }
 
@@ -262,10 +269,7 @@ namespace INART.SlothyBakery.Base
             TurnOffButtonMenu(_buttonMenu);
             TurnOffButtonMenu(_inputFieldMenu);
             TurnOnButtonMenu(_signButtonMenu);
-            HintManager._instance.TurnOff();
-            // #if UNITY_WEBGL
-            //             LOLSDK.Instance.SpeakText(StringConstants.minigame1_questionC);
-            // #endif
+            HintManager.Instance.TurnOff();
             questionText.text = questions[2];
         }
 
@@ -273,10 +277,7 @@ namespace INART.SlothyBakery.Base
         {
             TurnOnButtonMenu(_buttonMenu);
             TurnOffButtonMenu(_inputFieldMenu);
-            HintManager._instance.TurnOff();
-            // #if UNITY_WEBGL
-            //             LOLSDK.Instance.SpeakText(StringConstants.minigame1_questionA);
-            // #endif
+            HintManager.Instance.TurnOff();
             Reset();
             questionText.text = questions[0];
         }
@@ -292,7 +293,7 @@ namespace INART.SlothyBakery.Base
         {
             _canvasGroup.alpha = 1;
             Interact(_canvasGroup, true);
-            HintManager._instance.TurnOff();
+            HintManager.Instance.TurnOff();
         }
 
         void Interact(CanvasGroup _canvasGroup, bool canInteract)

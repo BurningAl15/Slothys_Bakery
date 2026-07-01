@@ -1,14 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-
-using UnityEngine.SceneManagement;
-// using LoLSDK;
-
+using UnityEngine.Rendering.Universal;
 
 namespace INART.SlothyBakery.Base
 {
@@ -16,88 +10,73 @@ namespace INART.SlothyBakery.Base
     using CanvasAnimator;
     using SceneTransition;
     using ProgressionCanvas;
+    using Analytics;
+    using Rating;
 
+    /// <summary>
+    /// Final cutscene — plays the celebration animation, then triggers:
+    ///   - AnalyticsManager.TrackGameCompleted
+    ///   - RatingManager.OnGameCompleted (may show rating popup)
+    ///
+    /// Animation migrated from manual coroutine Lerp to DOTween.
+    /// TurnOff_Light still uses a coroutine (called externally from Animator events).
+    /// </summary>
     public class FinalCutscene : MiniGameParent
     {
-        private Coroutine currentCoroutine = null;
+        // ── Inspector ──────────────────────────────────────────────────────────
+        [Header("References")]
+        [SerializeField] private SpriteRenderer    _sprite;
+        [SerializeField] private Light2D           _light;
+        [SerializeField] private Animator          _anim;
+        [SerializeField] private ParticleSystem    _starParticleSystem;
+        [SerializeField] private List<ParticleSystem> particleSystems = new List<ParticleSystem>();
 
-        //[SerializeField] Button button;
-        [SerializeField] private SpriteRenderer _sprite;
-        [SerializeField] private UnityEngine.Rendering.Universal.Light2D light;
-        [SerializeField] private Animator anim;
-        [SerializeField] private AnimationCurve _animationCurve;
-        [SerializeField] List<ParticleSystem> particleSystems = new List<ParticleSystem>();
-        [SerializeField] private ParticleSystem _starParticleSystem;
+        [Header("Animation")]
+        [SerializeField] private float scaleInDuration  = 1f;
+        [SerializeField] private float lightMaxIntensity = 0.75f;
+        [SerializeField] private float holdBeforeStar    = 0.15f;
+        [SerializeField] private float holdAfterStar     = 0.5f;
+
+        // ── Lifecycle ──────────────────────────────────────────────────────────
 
         public override void Init()
         {
-            anim.enabled = false;
+            _anim.enabled              = false;
             _sprite.transform.localScale = Vector3.zero;
-            light.intensity = 0;
-            //button.GetComponent<RectTransform>().localScale = Vector3.zero;
-            //button.interactable = false;
-
-            // for (int i = 0; i < particleSystems.Count; i++)
-            // {
-            //     particleSystems[i].Stop();
-            // }
+            _light.intensity           = 0f;
         }
+
+        // ── MiniGameParent overrides ───────────────────────────────────────────
 
         public override IEnumerator TurnOnGame(float _delay)
         {
-            yield return null;
-
-            var scaledTime = Time.fixedDeltaTime;
-            float animationTime = 0;
-            var moveDelay = 1f;
             TurnOnParticles();
-            while (animationTime <= moveDelay)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / moveDelay);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
 
-                _sprite.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, animationCurveValue);
-                light.intensity = animationCurveValue * .75f;
+            // Scale sprite in + fade light simultaneously with DOTween
+            var seq = DOTween.Sequence()
+                .Append(_sprite.transform
+                    .DOScale(Vector3.one, scaleInDuration)
+                    .SetEase(Ease.OutBack))
+                .Join(DOTween.To(
+                    () => _light.intensity,
+                    v  => _light.intensity = v,
+                    lightMaxIntensity,
+                    scaleInDuration)
+                    .SetEase(Ease.OutQuad));
 
-                yield return null;
-            }
+            yield return seq.WaitForCompletion();
 
-            yield return new WaitForSeconds(.15f);
+            yield return new WaitForSeconds(holdBeforeStar);
+
             _starParticleSystem.Play();
-            anim.enabled = true;
+            _anim.enabled = true;
             TurnOnParticles();
-            // yield return StartCoroutine(SceneTransitionController._instance.FadeEffect_OUT());
-            yield return new WaitForSeconds(.5f);
-            // LOLSDK.Instance.CompleteGame();
 
-            //animationTime = 0;
-            //while (animationTime <= moveDelay)
-            //{
-            //    animationTime += scaledTime;
-            //    var percent = Mathf.Clamp01(animationTime / moveDelay);
-            //    var animationCurveValue = _animationCurve.Evaluate(percent);
+            yield return new WaitForSeconds(holdAfterStar);
 
-            //    button.GetComponent<RectTransform>().localScale = Vector3.one * animationCurveValue;
-
-            //    yield return null;
-            //}
-
-            //button.interactable = true;
-
-            // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-            currentCoroutine = null;
-        }
-
-        public void TurnOffLight()
-        {
-            StartCoroutine(TurnOff_Light());
-        }
-
-        IEnumerator TurnOff_Light()
-        {
-            yield return new WaitForSeconds(1f);
-            light.intensity = 0;
+            // ── Game completed — fire engagement modules ───────────────────────
+            AnalyticsManager.Instance?.TrackGameCompleted();
+            RatingManager.Instance?.OnGameCompleted();
         }
 
         protected override IEnumerator Change(float _delay)
@@ -105,12 +84,31 @@ namespace INART.SlothyBakery.Base
             yield return null;
         }
 
+        // ── Public helpers (called from Animator events or external scripts) ───
+
         public void TurnOnParticles()
         {
-            for (int i = 0; i < particleSystems.Count; i++)
-            {
-                particleSystems[i].Play();
-            }
+            foreach (var ps in particleSystems)
+                ps.Play();
+        }
+
+        /// <summary>Called from an Animator event to fade the light out.</summary>
+        public void TurnOffLight()
+        {
+            StartCoroutine(TurnOff_Light());
+        }
+
+        private IEnumerator TurnOff_Light()
+        {
+            yield return new WaitForSeconds(1f);
+
+            yield return DOTween.To(
+                () => _light.intensity,
+                v  => _light.intensity = v,
+                0f,
+                0.5f)
+                .SetEase(Ease.InQuad)
+                .WaitForCompletion();
         }
     }
 }

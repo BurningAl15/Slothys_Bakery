@@ -61,7 +61,7 @@ namespace INART.SlothyBakery
 
         private void Update()
         {
-            if (GameStates._instance.GetGameState() == GameStates.GameState.PLAY)
+            if (GameStates.Instance.GetGameState() == GameStates.States.Play)
             {
                 if (Input.GetMouseButtonDown(0))
                     StartCutting();

@@ -8,7 +8,6 @@ namespace INART.SlothyBakery.Base
 {
     public class CuttableObject : MonoBehaviour
     {
-        [SerializeField]
         private enum CutTypes
         {
             Two_Horizontal,

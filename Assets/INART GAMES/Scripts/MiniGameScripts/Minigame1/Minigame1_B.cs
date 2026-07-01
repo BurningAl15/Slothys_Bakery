@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-// using LoLSDK;
 
 namespace INART.SlothyBakery.Base
 {
@@ -10,6 +9,8 @@ namespace INART.SlothyBakery.Base
     using CanvasAnimator;
     using SceneTransition;
     using ProgressionCanvas;
+    using Analytics;
+    using DailyChallenge;
 
     public enum IsComparable
     {
@@ -158,7 +159,7 @@ namespace INART.SlothyBakery.Base
 
         void Update()
         {
-            if (GameStates._instance.GetGameState() == GameStates.GameState.PLAY)
+            if (GameStates.Instance.GetGameState() == GameStates.States.Play)
             {
                 if (minigame1_Index < compareFractions.Count)
                 {
@@ -240,10 +241,14 @@ namespace INART.SlothyBakery.Base
 
             //Run Progression
             yield return StartCoroutine(
-                ProgressionCanvas._instance.FillBar(minigame1_Index, ProgressionCanvas.ProgressionType.One));
+                ProgressionCanvas.Instance.FillBar(minigame1_Index, ProgressionCanvas.ProgressionType.One));
 
             //Run Unlock when Progression Finishes
-            yield return StartCoroutine(ProgressionCanvas._instance.UnlockStuff(minigame1_Index));
+            yield return StartCoroutine(ProgressionCanvas.Instance.UnlockStuff(minigame1_Index));
+
+            // Analytics + Daily Challenge
+            AnalyticsManager.Instance?.TrackLevelCompleted($"minigame1_round_{minigame1_Index}", true);
+            DailyChallengeManager.Instance?.AddProgress("complete_rounds", 1);
 
             //This should be a coroutine to make it soft but fast
             movement = 0;
@@ -288,9 +293,6 @@ namespace INART.SlothyBakery.Base
             _instructive = InstructiveState.Start;
 
 
-            // #if UNITY_WEBGL
-            //             LOLSDK.Instance.SubmitProgress(0, minigame1_Index + 1, 18);
-            // #endif
 
             //Main Loop
             if (minigame1_Index < compareFractions.Count - 1)
@@ -302,7 +304,7 @@ namespace INART.SlothyBakery.Base
                 {
                     yield return _logic.MoveMenu(false);
                     yield return StartCoroutine(
-                        CanvasAnimator._instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
+                        CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
                     yield return _logic.MoveMenu(true);
                 }
 #if UNITY_EDITOR
@@ -333,10 +335,10 @@ namespace INART.SlothyBakery.Base
             {
                 yield return _logic.MoveMenu(false);
 
-                ProgressionCanvas._instance.RunPartyParticles();
-                yield return StartCoroutine(CanvasAnimator._instance.InstructionsAnimation(false, false, true));
-                yield return StartCoroutine(CanvasAnimator._instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
-                yield return StartCoroutine(SceneTransitionController._instance.FadeEffect_OUT());
+                ProgressionCanvas.Instance.RunPartyParticles();
+                yield return StartCoroutine(CanvasAnimator.Instance.InstructionsAnimation(false, false, true));
+                yield return StartCoroutine(CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
+                yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
                 SceneUtils.ToNextScene();
             }
 

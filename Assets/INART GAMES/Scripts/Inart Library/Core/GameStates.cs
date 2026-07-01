@@ -5,52 +5,49 @@ using UnityEngine;
 
 namespace INART.SlothyBakery.Core
 {
-    public class GameStates : MonoBehaviour
+    public class GameStates : Singleton<GameStates>
     {
-        public static GameStates _instance;
-
-        private void Awake()
+        public enum States
         {
-            if (_instance == null)
-                _instance = this;
-            else
-                Destroy(this.gameObject);
+            Load,
+            Play,
+            Restart,
+            End
         }
 
-        public enum GameState
-        {
-            LOAD,
-            PLAY,
-            RESTART,
-            END
-        }
-        public GameState _gameStates;
+        [SerializeField] private States state;
+        public States State => state;
+
+        protected override bool PersistAcrossScenes => false; // Scene-specific state
 
         public void Set_GameState_Load()
         {
-            _gameStates = GameState.LOAD;
-        }
-        public void Set_GameState_Play()
-        {
-            _gameStates = GameState.PLAY;
-        }
-        public void Set_GameState_Restart()
-        {
-            _gameStates = GameState.RESTART;
-        }
-        public void Set_GameState_End()
-        {
-            _gameStates = GameState.END;
+            state = States.Load;
         }
 
-        public GameState GetGameState()
+        public void Set_GameState_Play()
         {
-            return _gameStates;
+            state = States.Play;
+        }
+        
+        public void Set_GameState_Restart()
+        {
+            state = States.Restart;
+        }
+        
+        public void Set_GameState_End()
+        {
+            state = States.End;
+        }
+
+        public States GetGameState()
+        {
+            return state;
         }
 
         public bool IsGamePlaying()
         {
-            return _gameStates == GameState.PLAY;
+            return state == States.Play;
         }
     }
 }

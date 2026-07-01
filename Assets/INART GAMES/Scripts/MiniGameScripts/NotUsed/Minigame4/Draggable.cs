@@ -77,7 +77,7 @@ namespace INART.SlothyBakery.Base
 
         private void Update()
         {
-            if (GameStates._instance.IsGamePlaying())
+            if (GameStates.Instance.IsGamePlaying())
             {
                 if (!breakDraggable)
                 {
