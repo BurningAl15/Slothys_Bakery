@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-String-Tables-Spanish (Paraguay) (es-PY)
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-String-Tables-Spanish (Paraguay) (es-PY)
+  m_GUID: 21174cd82a3ec4a71a4e95305908e461
+  m_SerializeEntries:
+  - m_GUID: 5799d654e19b544dcb7105dd9d6f36cb
+    m_Address: GamePhrases_es-PY
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es-PY
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b916b352073fd4d73a61f26c7fa8c538
+    m_Address: UI_es-PY
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es-PY
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f902c744d68b74a16a7c7c9f3a057783
+    m_Address: Notifications_es-PY
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es-PY
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 41cc14c4c2f09431ca54119971beec23, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: f5d17d6f5af7b4091a58ee57420520c4, type: 2}
+    - {fileID: 11400000, guid: 0881bd5b4af6b4502a263bf4cefe120f, type: 2}

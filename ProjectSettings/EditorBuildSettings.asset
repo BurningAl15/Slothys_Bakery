@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/INART GAMES/Scenes/1. Main Screen.unity
     guid: 82a7a1cb5d91db9448291eb3b8b9c3d2
   - enabled: 1
+    path: Assets/INART GAMES/Scenes/DEV_ModularMinigame.unity
+    guid: f094a9b7b4083467db0ca418dd5f719d
+  - enabled: 1
     path: Assets/INART GAMES/Scenes/2. Minigame1.unity
     guid: 1ec438f85f966924bbea5a63937cc59c
   - enabled: 1
@@ -20,5 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/INART GAMES/Scenes/5. FinalCutscene.unity
     guid: b9f56cff488233048896812f4f495e43
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: d49bb7a4f3e0445fe867ce243bebedc3, type: 2}
+    com.unity.localization.settings: {fileID: 11400000, guid: 004919b8e3fbe4820aaa7ca375e26f81, type: 2}
   m_UseUCBPForAssetBundles: 0

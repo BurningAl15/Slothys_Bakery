@@ -356,6 +356,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -492,7 +493,7 @@ GameObject:
   m_IsActive: 1
 --- !u!199 &567727088
 ParticleSystemRenderer:
-  serializedVersion: 6
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -538,6 +539,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: -1208543781
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -569,7 +571,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
-  m_MaskInteraction: 0
 --- !u!198 &567727089
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -5565,6 +5566,7 @@ GameObject:
   m_IsActive: 1
 --- !u!212 &772398710
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5610,6 +5612,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 4a82a0cc96ecdcf46879030087168082, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -5619,7 +5622,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &772398711
 Transform:
@@ -5676,7 +5678,8 @@ MonoBehaviour:
   slothImg_EndY: -30
   titleImg_InitialX: 462
   titleImg_EndX: -287
-  timeScaler: 1
+  elementDuration: 0.5
+  gapBetween: 0.15
   _animationCurve:
     serializedVersion: 2
     m_Curve:
@@ -5973,6 +5976,7 @@ GameObject:
   m_IsActive: 1
 --- !u!212 &1060040969
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -6018,6 +6022,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 4a82a0cc96ecdcf46879030087168082, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -6027,7 +6032,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1060040970
 Transform:
@@ -6297,6 +6301,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -6450,6 +6455,7 @@ GameObject:
   m_IsActive: 1
 --- !u!212 &1327792786
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -6495,6 +6501,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 4a82a0cc96ecdcf46879030087168082, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -6504,7 +6511,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1327792787
 Transform:
@@ -7227,6 +7233,143 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!1 &1845082812 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5687208143321476402, guid: 44f3191f6e93e4910a2c5b8f8d017f0b, type: 3}
+  m_PrefabInstance: {fileID: 5687208144806578895}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1845082815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1845082812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ea0d53c1eb004d3fab70accb342f763, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::INART.Framework.Core.LocalizationManager
+--- !u!1 &1869297306
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1869297313}
+  - component: {fileID: 1869297312}
+  - component: {fileID: 1869297311}
+  - component: {fileID: 1869297310}
+  - component: {fileID: 1869297308}
+  - component: {fileID: 1869297307}
+  m_Layer: 0
+  m_Name: '[App Managers]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1869297307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869297306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ea0d53c1eb004d3fab70accb342f763, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::INART.Framework.Core.LocalizationManager
+--- !u!114 &1869297308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869297306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d72b3c01b323348b18fb6948de8e70ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::INART.Framework.Core.SettingsManager
+--- !u!114 &1869297310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869297306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c6aaa1f698a4e8b8aa8f0359eacb89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::INART.SlothyBakery.Rating.RatingManager
+  playStoreUrl: 
+  appStoreUrl: 
+  completionsBeforePrompt: 2
+  titleKey: rating_title
+  bodyKey: rating_body
+  rateBtnKey: rating_btn_rate
+  laterBtnKey: rating_btn_later
+  neverBtnKey: rating_btn_never
+  fallbackTitle: Enjoying Slothy's Bakery?
+  fallbackBody: Your review helps us keep improving the game.
+  fallbackRate: "\u2B50  Rate Now"
+  fallbackLater: Later
+  fallbackNever: No, thanks
+  accentColor: {r: 0.98, g: 0.76, b: 0.1, a: 1}
+  cardColor: {r: 0.14, g: 0.12, b: 0.11, a: 0.98}
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.72}
+--- !u!114 &1869297311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869297306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adf20b7832bcc44c09bf887ab6d3af0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::INART.SlothyBakery.Notifications.NotificationManager
+  notificationTitleKey: notif_title
+  notificationBodyKey: notif_body
+  fallbackTitle: "Slothy's Bakery misses you! \U0001F950"
+  fallbackBody: New desserts are ready to compare. Come back and help Slothy!
+  delayHours: 24
+  androidChannelId: slothys_bakery_main
+  androidChannelName: Slothy's Bakery
+  androidChannelDesc: Recordatorios para volver a jugar Slothy's Bakery
+--- !u!114 &1869297312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869297306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c298d6607a9847ee9063cb93588a8f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::INART.SlothyBakery.Analytics.AnalyticsManager
+--- !u!4 &1869297313
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869297306}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1983315717
 GameObject:
   m_ObjectHideFlags: 0
@@ -7322,7 +7465,7 @@ GameObject:
   m_IsActive: 1
 --- !u!199 &2029902115
 ParticleSystemRenderer:
-  serializedVersion: 6
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -7368,6 +7511,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: -1208543781
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -7399,7 +7543,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
-  m_MaskInteraction: 0
 --- !u!198 &2029902116
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -12303,6 +12446,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -12726,7 +12870,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5687208143321476402, guid: 44f3191f6e93e4910a2c5b8f8d017f0b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1845082815}
   m_SourcePrefab: {fileID: 100100000, guid: 44f3191f6e93e4910a2c5b8f8d017f0b, type: 3}
 --- !u!1 &6990957534800365584
 GameObject:
@@ -13512,6 +13659,7 @@ MonoBehaviour:
   m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -13770,6 +13918,7 @@ MonoBehaviour:
   m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -14360,3 +14509,4 @@ SceneRoots:
   - {fileID: 1085454635}
   - {fileID: 7883195556887897183}
   - {fileID: 5687208144806578895}
+  - {fileID: 1869297313}

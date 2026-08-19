@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
+  m_Name: Notifications
+  m_EditorClassIdentifier: Unity.Localization.Editor::UnityEditor.Localization.StringTableCollection
+  m_SharedTableData: {fileID: 11400000, guid: 67546b09adae14ee2a5e82118920c2bb, type: 2}
+  m_Tables:
+  - {fileID: 11400000, guid: 395b0e37b169145f0aa0f7c430dc9342, type: 2}
+  - {fileID: 11400000, guid: e328a81d37cab4f2bb19e2e07f614091, type: 2}
+  - {fileID: 11400000, guid: 00935a191db514686bd0fe21c50cd28c, type: 2}
+  - {fileID: 11400000, guid: 53c9c81fb35954fc4ad6efbf4aa46950, type: 2}
+  - {fileID: 11400000, guid: 15922866eb3a44c1384eb0dd4186f565, type: 2}
+  - {fileID: 11400000, guid: f2d0502a63ea64eed84518fb5c75a93d, type: 2}
+  - {fileID: 11400000, guid: 594e90badabdf4c369c9b261266f2f1a, type: 2}
+  - {fileID: 11400000, guid: 6cfef24cb9dcb4f4881ca3ebc1430e4b, type: 2}
+  - {fileID: 11400000, guid: 5de82ddf3670f4dda9f38ccf19349b89, type: 2}
+  - {fileID: 11400000, guid: c4539fca727d4403b88f229360ec57cd, type: 2}
+  - {fileID: 11400000, guid: b2a32fd3e1dda41d4b668f09f056fe2e, type: 2}
+  - {fileID: 11400000, guid: 1fdc1feac70684bcea0fb056f48d2f2d, type: 2}
+  - {fileID: 11400000, guid: f902c744d68b74a16a7c7c9f3a057783, type: 2}
+  - {fileID: 11400000, guid: 35fbcfd21de024b1dbf92dbbc459d50a, type: 2}
+  - {fileID: 11400000, guid: d99f8c6c1488244d4a8eb6193f71be75, type: 2}
+  - {fileID: 11400000, guid: 7c21a62f23a874502b3a8dddc2f06d70, type: 2}
+  - {fileID: 11400000, guid: a5fdcc555ea4d450f8e56ba3001ea8c8, type: 2}
+  - {fileID: 11400000, guid: f976f5c3d53304b60a78b66d318ed2aa, type: 2}
+  - {fileID: 11400000, guid: d601dd727820147c99b090b1ceba2cea, type: 2}
+  m_Extensions: []
+  m_Group: String Table
+  references:
+    version: 2
+    RefIds: []

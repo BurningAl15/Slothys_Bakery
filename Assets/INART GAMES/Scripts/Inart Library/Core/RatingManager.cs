@@ -45,12 +45,20 @@ namespace INART.SlothyBakery.Rating
         [Tooltip("Show the popup after this many full game completions.")]
         [SerializeField] private int completionsBeforePrompt = 2;
 
-        [Header("Popup Text (localize as needed)")]
-        [SerializeField] private string titleText   = "¿Disfrutando Slothy's Bakery?";
-        [SerializeField] private string bodyText    = "Tu opinión nos ayuda a seguir mejorando el juego.";
-        [SerializeField] private string rateBtnText  = "⭐  Calificar";
-        [SerializeField] private string laterBtnText = "Más tarde";
-        [SerializeField] private string neverBtnText = "No, gracias";
+        [Header("Popup Text — Localization Keys")]
+        [Tooltip("Key en la StringTable 'UI' para el título del popup.")]
+        [SerializeField] private string titleKey   = "rating_title";
+        [SerializeField] private string bodyKey    = "rating_body";
+        [SerializeField] private string rateBtnKey  = "rating_btn_rate";
+        [SerializeField] private string laterBtnKey = "rating_btn_later";
+        [SerializeField] private string neverBtnKey = "rating_btn_never";
+
+        [Header("Popup Text — Fallbacks (si localización no está lista)")]
+        [SerializeField] private string fallbackTitle   = "Enjoying Slothy's Bakery?";
+        [SerializeField] private string fallbackBody    = "Your review helps us keep improving the game.";
+        [SerializeField] private string fallbackRate    = "⭐  Rate Now";
+        [SerializeField] private string fallbackLater   = "Later";
+        [SerializeField] private string fallbackNever   = "No, thanks";
 
         [Header("Theme Colors")]
         [SerializeField] private Color accentColor   = new Color(0.98f, 0.76f, 0.10f);
@@ -160,6 +168,15 @@ namespace INART.SlothyBakery.Rating
                 GameLogger.Warning("RatingManager: no store URL configured.", LogCategory.System);
         }
 
+        // ── Localization helpers ───────────────────────────────────────────────
+
+        private string L(string key, string fallback)
+        {
+            if (LocalizationManager.Instance != null && LocalizationManager.Instance.IsInitialized)
+                return LocalizationManager.Instance.GetString(key, LocalizationManager.TABLE_UI);
+            return fallback;
+        }
+
         // ── Runtime UI builder ─────────────────────────────────────────────────
         // Generates the popup entirely at runtime — no prefab needed.
         // Customize colors via Inspector fields.
@@ -199,29 +216,29 @@ namespace INART.SlothyBakery.Rating
                 new Vector2(0f, 0.75f), new Vector2(1f, 0.96f));
 
             // Title
-            CreateText(card.transform, "Title", titleText,
+            CreateText(card.transform, "Title", L(titleKey, fallbackTitle),
                 30, Color.white,
                 new Vector2(0.05f, 0.57f), new Vector2(0.95f, 0.76f));
 
             // Body
-            CreateText(card.transform, "Body", bodyText,
+            CreateText(card.transform, "Body", L(bodyKey, fallbackBody),
                 22, new Color(0.78f, 0.78f, 0.78f),
                 new Vector2(0.06f, 0.35f), new Vector2(0.94f, 0.57f));
 
             // Rate button (primary)
-            var rateBtn = CreateButton(card.transform, "BtnRate", rateBtnText,
+            var rateBtn = CreateButton(card.transform, "BtnRate", L(rateBtnKey, fallbackRate),
                 accentColor, new Color(0.12f, 0.10f, 0.08f), 24,
                 new Vector2(0.07f, 0.17f), new Vector2(0.93f, 0.33f));
             rateBtn.onClick.AddListener(OnRateClicked);
 
             // Later button
-            var laterBtn = CreateButton(card.transform, "BtnLater", laterBtnText,
+            var laterBtn = CreateButton(card.transform, "BtnLater", L(laterBtnKey, fallbackLater),
                 new Color(0.28f, 0.28f, 0.28f), new Color(0.88f, 0.88f, 0.88f), 20,
                 new Vector2(0.07f, 0.02f), new Vector2(0.50f, 0.15f));
             laterBtn.onClick.AddListener(OnLaterClicked);
 
             // Never button
-            var neverBtn = CreateButton(card.transform, "BtnNever", neverBtnText,
+            var neverBtn = CreateButton(card.transform, "BtnNever", L(neverBtnKey, fallbackNever),
                 new Color(0.20f, 0.20f, 0.20f), new Color(0.50f, 0.50f, 0.50f), 20,
                 new Vector2(0.52f, 0.02f), new Vector2(0.93f, 0.15f));
             neverBtn.onClick.AddListener(OnNeverClicked);

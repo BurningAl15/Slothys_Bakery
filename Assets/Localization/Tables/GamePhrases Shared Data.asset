@@ -1,0 +1,216 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: GamePhrases Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: GamePhrases
+  m_TableCollectionNameGuidString: 38d8bb6c2314d407db9e62d32835d7be
+  m_Entries:
+  - m_Id: 462622285824
+    m_Key: bakery_mg1_intro_0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 578611568640
+    m_Key: bakery_mg1_intro_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 604620447744
+    m_Key: bakery_mg1_intro_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 634181902336
+    m_Key: bakery_mg1_intro_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 654406836224
+    m_Key: bakery_mg1_intro_4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 666222190592
+    m_Key: bakery_mg1_intro_5
+    m_Metadata:
+      m_Items: []
+  - m_Id: 683053932544
+    m_Key: bakery_mg1_intro_6
+    m_Metadata:
+      m_Items: []
+  - m_Id: 696001748992
+    m_Key: bakery_mg1_intro_7
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726378663936
+    m_Key: bakery_mg1_intro_8
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858240
+    m_Key: bakery_mg1_congrat_0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858241
+    m_Key: bakery_mg1_congrat_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858242
+    m_Key: bakery_mg1_congrat_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858243
+    m_Key: bakery_mg1_congrat_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858244
+    m_Key: bakery_mg1_end_0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858245
+    m_Key: bakery_mg1_end_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858246
+    m_Key: bakery_mg1_end_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858247
+    m_Key: bakery_mg1_end_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858248
+    m_Key: bakery_mg2_intro_0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858249
+    m_Key: bakery_mg2_intro_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052544
+    m_Key: bakery_mg2_intro_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052545
+    m_Key: bakery_mg2_intro_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052546
+    m_Key: bakery_mg2_intro_4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052547
+    m_Key: bakery_mg2_intro_5
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052548
+    m_Key: bakery_mg2_intro_6
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052549
+    m_Key: bakery_mg2_intro_7
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052550
+    m_Key: bakery_mg2_intro_8
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052551
+    m_Key: bakery_mg2_intro_9
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052552
+    m_Key: bakery_mg2_congrat_0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052553
+    m_Key: bakery_mg2_congrat_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052554
+    m_Key: bakery_mg2_congrat_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052555
+    m_Key: bakery_mg2_congrat_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052556
+    m_Key: bakery_mg2_end_0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052557
+    m_Key: bakery_mg2_end_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052558
+    m_Key: bakery_mg2_end_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052559
+    m_Key: bakery_mg3_intro_0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052560
+    m_Key: bakery_mg3_intro_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246848
+    m_Key: bakery_mg3_intro_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246849
+    m_Key: bakery_mg3_intro_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246850
+    m_Key: bakery_mg3_congrat_0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246851
+    m_Key: bakery_mg3_congrat_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246852
+    m_Key: bakery_mg3_congrat_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246853
+    m_Key: bakery_mg3_congrat_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246854
+    m_Key: bakery_mg3_congrat_4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441152
+    m_Key: bakery_mg3_congrat_5
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441153
+    m_Key: bakery_mg3_end_0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441154
+    m_Key: bakery_mg3_end_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441155
+    m_Key: bakery_mg3_end_2
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 6396074228411531541
+  references:
+    version: 2
+    RefIds:
+    - rid: 6396074228411531541
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1782946730903

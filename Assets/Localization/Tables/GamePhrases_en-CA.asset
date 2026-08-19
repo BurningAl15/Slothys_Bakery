@@ -1,0 +1,231 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: GamePhrases_en-CA
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en-CA
+  m_SharedData: {fileID: 11400000, guid: 38d8bb6c2314d407db9e62d32835d7be, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 462622285824
+    m_Localized: Welcome to Slothy's Bakery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 578611568640
+    m_Localized: My name is Slothy, and I'm the baker.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 604620447744
+    m_Localized: Thank you for choosing Slothy's Bakery as your first workplace.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 634181902336
+    m_Localized: Today I need your help comparing pieces of cakes and desserts.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 654406836224
+    m_Localized: So I would like to explain a little about the magic of comparing
+      fractions.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 666222190592
+    m_Localized: You can compare two fractions by checking their numerators and denominators.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 683053932544
+    m_Localized: This helps you determine whether a fraction is greater than, less
+      than, or equal to another, even when their numerators or denominators are different.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 696001748992
+    m_Localized: For this task, you need to analyze the denominators of the fractions
+      to determine whether they can be compared.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726378663936
+    m_Localized: I will give you an example.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858240
+    m_Localized: Great work!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858241
+    m_Localized: As you could see, we cannot directly compare 1/2 and 3/4, so we
+      must multiply 1/2 by 2/2, which is a fraction equal to 1, turning it into 2/4.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858242
+    m_Localized: The fractions 2/4 and 3/4 have the same denominator, so they can
+      be compared directly by comparing their numerators.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858243
+    m_Localized: Let's practice a little more!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858244
+    m_Localized: Amazing job!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858245
+    m_Localized: 'This is the first step in comparing fractions: we must check whether
+      their denominators can be compared or are equal.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858246
+    m_Localized: If they cannot be compared, we must multiply them to get fractions
+      with comparable denominators.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858247
+    m_Localized: For the next step, we can compare the numerators and determine whether
+      the result is greater than, less than, or equal.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858248
+    m_Localized: For the next step, I need your help with some orders.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858249
+    m_Localized: As we saw in the first task, we must follow some steps to compare
+      fractions.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052544
+    m_Localized: Check their denominators to see whether they can be compared directly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052545
+    m_Localized: If they are equal, the numerators will determine which fraction
+      is greater and which is less.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052546
+    m_Localized: If they are not equal, we must multiply the numerator and denominator
+      of the fraction by a value.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052547
+    m_Localized: This will turn the fraction into a comparable fraction.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052548
+    m_Localized: In this task, we must follow these steps.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052549
+    m_Localized: Take a pencil and a piece of paper and convert the fractions if
+      needed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052550
+    m_Localized: Then drag and drop one of the signs <, >, or = and press the button
+      to check whether we are correct.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052551
+    m_Localized: Let's do it!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052552
+    m_Localized: WOW! Amazing skills!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052553
+    m_Localized: The larger piece was 1/3.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052554
+    m_Localized: As you can see, 1/3 has larger pieces.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052555
+    m_Localized: Let's continue comparing fractions!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052556
+    m_Localized: Excellent job!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052557
+    m_Localized: You followed the steps perfectly and have almost mastered comparing
+      fractions.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052558
+    m_Localized: Thank you for helping me with this task.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052559
+    m_Localized: Good work! You are almost an expert at analyzing fractions of desserts
+      and cakes.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052560
+    m_Localized: Thank you for helping me with the first two tasks.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246848
+    m_Localized: For this step, we will do a final check of the orders that will
+      be delivered, so you must pay attention to the questions to confirm that each
+      order is correct.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246849
+    m_Localized: Let's put your skills to the test once more.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246850
+    m_Localized: Incredible!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246851
+    m_Localized: You are correct!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246852
+    m_Localized: If we want to understand it better, we check their denominators
+      and see that they are not comparable.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246853
+    m_Localized: We convert 1/2 into a comparable fraction by multiplying both its
+      numerator and denominator by the same number.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246854
+    m_Localized: That is how we got a fraction that is equal to 1/2.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441152
+    m_Localized: Let's continue.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441153
+    m_Localized: What a wonderful job!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441154
+    m_Localized: Now that you have shown your skills by comparing all these fractions,
+      I am impressed with your knowledge.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441155
+    m_Localized: I think you deserve to become my star assistant from now on.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

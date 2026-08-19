@@ -56,6 +56,7 @@ ExportedObj/
 sysinfo.txt
 
 # Builds
+/[Bb]uilds/
 *.apk
 *.aab
 *.unitypackage
@@ -70,3 +71,12 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Local signing and secrets
+/[Aa]ssets/[Ee]ditor/BuildConfig.local.json
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+secrets.env
+*.credentials.json

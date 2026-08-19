@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-String-Tables-Spanish (Guatemala) (es-GT)
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-String-Tables-Spanish (Guatemala) (es-GT)
+  m_GUID: 7e389d8ace8764551a784a08b22330c0
+  m_SerializeEntries:
+  - m_GUID: 0e3383d68b88b4e23b94e7b80f2660aa
+    m_Address: GamePhrases_es-GT
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es-GT
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82a9f4c5b87054c29bb6f9c83e6169f0
+    m_Address: UI_es-GT
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es-GT
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b2a32fd3e1dda41d4b668f09f056fe2e
+    m_Address: Notifications_es-GT
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es-GT
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 41cc14c4c2f09431ca54119971beec23, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 5a37271964e4a40cea8aa159d559cff7, type: 2}
+    - {fileID: 11400000, guid: bbc3d7d6919d3413babc42e4fc378a6a, type: 2}

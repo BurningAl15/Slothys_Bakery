@@ -44,11 +44,17 @@ namespace INART.SlothyBakery.Notifications
 
         // ── Inspector ──────────────────────────────────────────────────────────
         [Header("Notification Content")]
-        [Tooltip("Title shown in the device notification tray.")]
-        [SerializeField] private string notificationTitle = "¡Slothy te está esperando! 🦥";
+        [Tooltip("Localization key for the notification title in the 'Notifications' StringTable.")]
+        [SerializeField] private string notificationTitleKey = "notif_title";
 
-        [Tooltip("Body text of the push notification.")]
-        [SerializeField] private string notificationBody  = "El horno de Slothy necesita tu ayuda. ¡Ven a hornear!";
+        [Tooltip("Localization key for the notification body in the 'Notifications' StringTable.")]
+        [SerializeField] private string notificationBodyKey  = "notif_body";
+
+        [Tooltip("Fallback title used if LocalizationManager is not ready.")]
+        [SerializeField] private string fallbackTitle = "Slothy's Bakery misses you! 🥐";
+
+        [Tooltip("Fallback body used if LocalizationManager is not ready.")]
+        [SerializeField] private string fallbackBody  = "New desserts are ready to compare. Come back and help Slothy!";
 
         [Tooltip("Hours after the player exits before the notification fires.")]
         [SerializeField] private float  delayHours        = 24f;
@@ -83,8 +89,9 @@ namespace INART.SlothyBakery.Notifications
 #endif
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             if (SettingsManager.Instance != null)
                 SettingsManager.Instance.OnNotificationsChanged -= OnNotificationsSettingChanged;
         }
@@ -143,6 +150,24 @@ namespace INART.SlothyBakery.Notifications
             GameLogger.Log($"Notification setting changed → {enabled}", LogCategory.Settings);
         }
 
+        // ── Localization helpers ───────────────────────────────────────────────
+
+        private string GetTitle()
+        {
+            if (LocalizationManager.Instance != null && LocalizationManager.Instance.IsInitialized)
+                return LocalizationManager.Instance.GetString(notificationTitleKey,
+                    LocalizationManager.TABLE_NOTIFICATIONS);
+            return fallbackTitle;
+        }
+
+        private string GetBody()
+        {
+            if (LocalizationManager.Instance != null && LocalizationManager.Instance.IsInitialized)
+                return LocalizationManager.Instance.GetString(notificationBodyKey,
+                    LocalizationManager.TABLE_NOTIFICATIONS);
+            return fallbackBody;
+        }
+
         // ── Internal scheduling ────────────────────────────────────────────────
 
         private void ScheduleReEngagementNotification()
@@ -179,8 +204,8 @@ namespace INART.SlothyBakery.Notifications
 
             var notification = new AndroidNotification
             {
-                Title     = notificationTitle,
-                Text      = notificationBody,
+                Title     = GetTitle(),
+                Text      = GetBody(),
                 FireTime  = DateTime.Now.AddHours(delayHours),
                 SmallIcon = "icon_0",
                 LargeIcon = "icon_1"
@@ -227,8 +252,8 @@ namespace INART.SlothyBakery.Notifications
             var notification = new iOSNotification
             {
                 Identifier               = "slothys_bakery_reengage",
-                Title                    = notificationTitle,
-                Body                     = notificationBody,
+                Title                    = GetTitle(),
+                Body                     = GetBody(),
                 ShowInForeground         = false,
                 ForegroundPresentationOption =
                     PresentationOption.Alert | PresentationOption.Sound | PresentationOption.Badge,

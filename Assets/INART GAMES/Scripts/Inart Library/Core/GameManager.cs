@@ -87,8 +87,9 @@ namespace INART.SlothyBakery.Core
             _currentCoroutine ??= StartCoroutine(StartGame(1f));
         }
 
-        private void OnApplicationQuit()
+        protected override void OnApplicationQuit()
         {
+            base.OnApplicationQuit();
             ServiceLocator.ShutdownAll();
         }
 

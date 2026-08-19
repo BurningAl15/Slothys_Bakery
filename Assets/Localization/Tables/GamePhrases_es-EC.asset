@@ -1,0 +1,233 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: GamePhrases_es-EC
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: es-EC
+  m_SharedData: {fileID: 11400000, guid: 38d8bb6c2314d407db9e62d32835d7be, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 462622285824
+    m_Localized: "Bienvenido a la panader\xEDa de Slothy"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 578611568640
+    m_Localized: Mi nombre es Slothy, y soy el panadero.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 604620447744
+    m_Localized: "Gracias por elegir la panader\xEDa de Slothy para empezar a trabajar."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 634181902336
+    m_Localized: Hoy necesito tu ayuda para comparar porciones de pasteles o postres.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 654406836224
+    m_Localized: "As\xED que me gustar\xEDa explicarte un poco sobre la magia de
+      comparar fracciones."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 666222190592
+    m_Localized: Puedes comparar dos fracciones revisando sus numeradores y denominadores.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 683053932544
+    m_Localized: "Con esto, puedes determinar qu\xE9 fracci\xF3n es mayor, menor
+      o igual que otra, sin importar si sus denominadores o numeradores son iguales."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 696001748992
+    m_Localized: Para esta tarea, necesitas analizar el denominador de las fracciones
+      para determinar si se pueden comparar.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726378663936
+    m_Localized: "Te dar\xE9 un ejemplo."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858240
+    m_Localized: "\xA1Gran trabajo!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858241
+    m_Localized: "Como pudiste ver, no podemos comparar directamente 1/2 y 3/4, as\xED
+      que debemos multiplicar 1/2 por 2/2, que es una fracci\xF3n equivalente a 1,
+      convirti\xE9ndola en 2/4."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858242
+    m_Localized: "Las fracciones 2/4 y 3/4 tienen el mismo denominador, as\xED que
+      pueden compararse directamente comparando sus numeradores."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858243
+    m_Localized: "\xA1Practiquemos un poco m\xE1s!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858244
+    m_Localized: "\xA1Trabajo incre\xEDble!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858245
+    m_Localized: 'Este es el primer paso para comparar fracciones: debemos revisar
+      si sus denominadores se pueden comparar o si son iguales.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858246
+    m_Localized: "Si no se pueden comparar, debemos multiplicarlas para obtener una
+      fracci\xF3n con un denominador comparable."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858247
+    m_Localized: Para el siguiente paso, podemos comparar los numeradores y obtener
+      un resultado que puede ser mayor, menor o igual.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858248
+    m_Localized: Para el siguiente paso, necesito tu ayuda con algunos pedidos.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858249
+    m_Localized: Como vimos en la primera tarea, debemos seguir algunos pasos para
+      comparar fracciones.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052544
+    m_Localized: Revisa sus denominadores para saber si se pueden comparar directamente.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052545
+    m_Localized: "Si son iguales, los numeradores determinar\xE1n cu\xE1l es mayor
+      y cu\xE1l es menor."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052546
+    m_Localized: "Si no son iguales, debemos multiplicar el numerador y el denominador
+      de la fracci\xF3n por un valor."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052547
+    m_Localized: "As\xED la fracci\xF3n se convertir\xE1 en una fracci\xF3n comparable."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052548
+    m_Localized: En esta tarea debemos seguir estos pasos.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052549
+    m_Localized: "Toma un l\xE1piz y una hoja de papel y convierte las fracciones
+      si es necesario."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052550
+    m_Localized: "Luego arrastra y suelta uno de los signos <, > o = y presiona el
+      bot\xF3n para comprobar si estamos en lo correcto."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052551
+    m_Localized: "\xA1Vamos a hacerlo!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052552
+    m_Localized: "\xA1WOW! \xA1Habilidades incre\xEDbles!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052553
+    m_Localized: "La porci\xF3n m\xE1s grande era 1/3."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052554
+    m_Localized: "Como puedes ver, 1/3 tiene porciones m\xE1s grandes."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052555
+    m_Localized: "\xA1Sigamos comparando fracciones!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052556
+    m_Localized: "\xA1Excelente trabajo!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052557
+    m_Localized: "Seguiste los pasos perfectamente y casi dominas la comparaci\xF3n
+      de fracciones."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052558
+    m_Localized: Gracias por ayudarme con esta tarea.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052559
+    m_Localized: "\xA1Buen trabajo! Ya casi eres un experto analizando fracciones
+      de postres y pasteles."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052560
+    m_Localized: Gracias por ayudarme con las dos primeras tareas.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246848
+    m_Localized: "Para este paso, haremos una revisi\xF3n final de los pedidos que
+      ser\xE1n entregados, as\xED que debes prestar atenci\xF3n a las preguntas para
+      confirmar que el pedido est\xE1 bien."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246849
+    m_Localized: "Pongamos a prueba tus habilidades una vez m\xE1s."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246850
+    m_Localized: "\xA1Incre\xEDble!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246851
+    m_Localized: "\xA1Est\xE1s en lo correcto!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246852
+    m_Localized: Si queremos entenderlo mejor, revisamos sus denominadores y vemos
+      que no son comparables.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246853
+    m_Localized: "Convertimos 1/2 en una fracci\xF3n comparable multiplic\xE1ndola
+      por un n\xFAmero en el denominador y en el numerador."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246854
+    m_Localized: "As\xED obtuvimos una fracci\xF3n que es igual a 1/2."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441152
+    m_Localized: Continuemos.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441153
+    m_Localized: "\xA1Qu\xE9 trabajo tan maravilloso!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441154
+    m_Localized: Ahora que demostraste tus habilidades comparando todas estas fracciones,
+      estoy impresionado con tu conocimiento.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441155
+    m_Localized: Siento que mereces convertirte en mi asistente estrella de ahora
+      en adelante.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

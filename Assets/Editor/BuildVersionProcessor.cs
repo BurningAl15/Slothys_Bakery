@@ -11,6 +11,7 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
 
     private const string INITIAL_VERSION = "1.0.1.0";
     private const string CONFIG_FILE_PATH = "Assets/Editor/BuildConfig.json";
+    private const string LOCAL_CONFIG_FILE_PATH = "Assets/Editor/BuildConfig.local.json";
     
     [SerializeField] private bool isMajorUpdate = false;
     
@@ -18,12 +19,19 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
     {
         Debug.Log("[BuildReport] === Build Version Processor Started ===");
         
-        // 1. Update version string
-        string currentVersion = FindCurrentVersion();
-        UpdateVersion(currentVersion, isMajorUpdate);
-        
-        // 2. Update Android bundle version code
-        UpdateBundleVersionCode();
+        if (ShouldSkipVersionBump())
+        {
+            Debug.Log("[BuildReport] Version bump skipped by FATCAT_SKIP_VERSION_BUMP.");
+        }
+        else
+        {
+            // 1. Update version string
+            string currentVersion = FindCurrentVersion();
+            UpdateVersion(currentVersion, isMajorUpdate);
+            
+            // 2. Update Android bundle version code
+            UpdateBundleVersionCode();
+        }
         
         // 3. Configure Android signing (if Android build)
         if (report.summary.platform == BuildTarget.Android)
@@ -41,6 +49,12 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
     {
         string[] currentVersion = PlayerSettings.bundleVersion.Split('[', ']');
         return currentVersion.Length == 1 ? INITIAL_VERSION : currentVersion[1];
+    }
+
+    private bool ShouldSkipVersionBump()
+    {
+        string value = Environment.GetEnvironmentVariable("FATCAT_SKIP_VERSION_BUMP");
+        return value == "1" || string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
     }
 
     private void UpdateVersion(string version, bool isMajorUpdate = false)
@@ -75,14 +89,22 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
     
     private void ConfigureAndroidSigning()
     {
-        BuildConfig config = LoadBuildConfig();
+        BuildConfig config = LoadBuildConfig(out string configPath);
         
         if (config == null)
         {
-            Debug.LogWarning("[BuildReport] ⚠️ BuildConfig.json not found. Creating default config...");
+            Debug.LogWarning("[BuildReport] ⚠️ BuildConfig.local.json and BuildConfig.json not found. Creating default legacy config...");
             CreateDefaultBuildConfig();
-            config = LoadBuildConfig();
+            config = LoadBuildConfig(out configPath);
         }
+
+        if (config == null)
+        {
+            Debug.LogError("[BuildReport] ❌ Android signing config could not be loaded.");
+            return;
+        }
+
+        Debug.Log($"[BuildReport] 🔐 Using Android signing config: {configPath}");
         
         // Validate keystore file exists
         if (!string.IsNullOrEmpty(config.keystorePath))
@@ -107,7 +129,7 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
         PlayerSettings.Android.keyaliasPass = GetAliasPassword(config);
         
         Debug.Log($"[BuildReport] ✅ Keystore configured:");
-        Debug.Log($"[BuildReport]    - Alias: {config.keyAlias}");
+        Debug.Log($"[BuildReport]    - Alias: {(string.IsNullOrEmpty(config.keyAlias) ? "❌ NOT SET" : "✅ SET")}");
         Debug.Log($"[BuildReport]    - Keystore Pass: {(string.IsNullOrEmpty(PlayerSettings.Android.keystorePass) ? "❌ NOT SET" : "✅ SET")}");
         Debug.Log($"[BuildReport]    - Alias Pass: {(string.IsNullOrEmpty(PlayerSettings.Android.keyaliasPass) ? "❌ NOT SET" : "✅ SET")}");
     }
@@ -188,13 +210,23 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
         }
     }
     
-    private BuildConfig LoadBuildConfig()
+    private BuildConfig LoadBuildConfig(out string configPath)
     {
+        if (File.Exists(LOCAL_CONFIG_FILE_PATH))
+        {
+            configPath = LOCAL_CONFIG_FILE_PATH;
+            string json = File.ReadAllText(LOCAL_CONFIG_FILE_PATH);
+            return JsonUtility.FromJson<BuildConfig>(json);
+        }
+
         if (File.Exists(CONFIG_FILE_PATH))
         {
+            configPath = CONFIG_FILE_PATH;
             string json = File.ReadAllText(CONFIG_FILE_PATH);
             return JsonUtility.FromJson<BuildConfig>(json);
         }
+
+        configPath = "";
         return null;
     }
     
