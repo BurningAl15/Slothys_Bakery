@@ -158,7 +158,7 @@ namespace INART.SlothyBakery.Rating
         private void OpenStore()
         {
 #if UNITY_IOS
-            string url = !string.IsNullOrEmpty(appStoreUrl) ? appStoreUrl : playStoreUrl;
+            string url = appStoreUrl;
 #else
             string url = playStoreUrl;
 #endif
@@ -277,7 +277,7 @@ namespace INART.SlothyBakery.Rating
             tmp.fontSize           = fontSize;
             tmp.color              = color;
             tmp.alignment          = TextAlignmentOptions.Center;
-            tmp.enableWordWrapping = true;
+            tmp.textWrappingMode = TextWrappingModes.Normal;
             return tmp;
         }
 
@@ -316,7 +316,7 @@ namespace INART.SlothyBakery.Rating
             tmp.color              = textColor;
             tmp.alignment          = TextAlignmentOptions.Center;
             tmp.fontStyle          = FontStyles.Bold;
-            tmp.enableWordWrapping = false;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
 
             return btn;
         }
