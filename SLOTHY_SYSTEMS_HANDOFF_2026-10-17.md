@@ -1,5 +1,12 @@
 # Slothy's Bakery — sistemas reutilizables y siguiente corte
 
+## Checkpoint posterior — 2026-10-17
+
+- El trabajo previo está respaldado en `backup/bakery-pending-2026-10-17` (`64b6230`). Esta corrección vive en la rama nueva `fix/dynamic-question-ui-validation`; los artefactos `.utmp` modificados/generados se dejan locales y fuera de Git.
+- `BakeryQuestionController` ya no acepta un payload con más opciones que botones de prefab, sin texto de pregunta, con alguna opción/botón nulo o sin texto de opción. En vez de dejar un nivel aparentemente activo pero imposible de responder, registra error y detiene el adaptador. No crea UI ni toca los minijuegos originales.
+- Solo se revisó el código y `git diff --check`; no hay prefab/escena dinámica conectada para ejecutarlo y Unity Editor sigue inaccesible. Esta corrección reduce un bloqueo futuro, **no** vuelve jugable el daily challenge ni demuestra un build.
+- El objetivo de prueba inmediata sigue siendo abrir Bakery 6000.6.0f1, revisar Console, juego legacy/rating y el estado de la escena DEV; la integración del adaptador en un prefab de Edit Mode es trabajo posterior.
+
 Fecha de inspección: 2026-10-17. Rama creada para el siguiente cambio: `feat/bakery-prefab-rating`. Este documento registra estado y alcance; **no certifica un build ni una release**.
 
 ## Objetivo de producto indicado por el dueño

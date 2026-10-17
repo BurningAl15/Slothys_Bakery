@@ -21,6 +21,8 @@ namespace Fatcat.Slothy.Bakery.DynamicMinigames.Controllers
 
         private void Awake()
         {
+            if (optionButtons == null)
+                return;
             for (var i = 0; i < optionButtons.Count; i++)
             {
                 var index = i;
@@ -37,9 +39,10 @@ namespace Fatcat.Slothy.Bakery.DynamicMinigames.Controllers
             mistakes = 0;
             answered = false;
 
-            if (payload == null || !payload.IsValid)
+            if (payload == null || !payload.IsValid || !HasRequiredUi())
             {
-                Debug.LogError($"[SlothyBakery] Invalid question payload for '{context.Definition?.levelId}'.");
+                Debug.LogError($"[SlothyBakery] Invalid question payload or missing authored UI for '{context.Definition?.levelId}'.");
+                IsRunning = false;
                 SetButtons(false);
                 return;
             }
@@ -101,8 +104,23 @@ namespace Fatcat.Slothy.Bakery.DynamicMinigames.Controllers
 
         private void SetButtons(bool interactable)
         {
+            if (optionButtons == null)
+                return;
             for (var i = 0; i < optionButtons.Count; i++)
                 if (optionButtons[i] != null) optionButtons[i].interactable = interactable;
+        }
+
+        private bool HasRequiredUi()
+        {
+            if (promptLabel == null || optionButtons == null || optionButtons.Count < payload.options.Count)
+                return false;
+
+            for (var i = 0; i < payload.options.Count; i++)
+                if (payload.options[i] == null || optionButtons[i] == null ||
+                    optionButtons[i].GetComponentInChildren<Text>(true) == null)
+                    return false;
+
+            return true;
         }
     }
 }
