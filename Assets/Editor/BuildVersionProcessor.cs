@@ -9,7 +9,7 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
 {
     public int callbackOrder => 0;
 
-    private const string INITIAL_VERSION = "1.0.1.0";
+    private const string INITIAL_VERSION = "1.0.1";
     private const string CONFIG_FILE_PATH = "Assets/Editor/BuildConfig.json";
     private const string LOCAL_CONFIG_FILE_PATH = "Assets/Editor/BuildConfig.local.json";
     
@@ -29,8 +29,11 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
             string currentVersion = FindCurrentVersion();
             UpdateVersion(currentVersion, isMajorUpdate);
             
-            // 2. Update Android bundle version code
-            UpdateBundleVersionCode();
+            // 2. Build numbers are platform-specific; never alter Android's code for an iOS export.
+            if (report.summary.platform == BuildTarget.Android)
+                UpdateBundleVersionCode();
+            else if (report.summary.platform == BuildTarget.iOS)
+                UpdateIosBuildNumber();
         }
         
         // 3. Configure Android signing (if Android build)
@@ -47,8 +50,19 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
 
     private string FindCurrentVersion()
     {
-        string[] currentVersion = PlayerSettings.bundleVersion.Split('[', ']');
-        return currentVersion.Length == 1 ? INITIAL_VERSION : currentVersion[1];
+        string currentVersion = PlayerSettings.bundleVersion;
+        int open = currentVersion.IndexOf('[');
+        int close = currentVersion.IndexOf(']', open + 1);
+        if (open >= 0 && close > open)
+            currentVersion = currentVersion.Substring(open + 1, close - open - 1);
+
+        string[] parts = currentVersion.Split('.');
+        if (parts.Length < 3 ||
+            !int.TryParse(parts[0], out _) ||
+            !int.TryParse(parts[1], out _) ||
+            !int.TryParse(parts[2], out _))
+            return INITIAL_VERSION;
+        return string.Join(".", parts, 0, 3);
     }
 
     private bool ShouldSkipVersionBump()
@@ -59,21 +73,20 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
 
     private void UpdateVersion(string version, bool isMajorUpdate = false)
     {
-        string[] versionParts = version.Split(".");
-        string date = DateTime.Now.ToString("d");
+        string[] versionParts = version.Split('.');
         
         if (isMajorUpdate)
         {
-            versionParts[2] = $"{int.Parse(versionParts[2]) + 1}";
-            versionParts[3] = "0";
+            versionParts[1] = (int.Parse(versionParts[1]) + 1).ToString();
+            versionParts[2] = "0";
         }
         else
         {
-            versionParts[3] = $"{int.Parse(versionParts[3]) + 1}";
+            versionParts[2] = (int.Parse(versionParts[2]) + 1).ToString();
         }
         
         string newVersion = string.Join(".", versionParts);
-        PlayerSettings.bundleVersion = $"Version [{newVersion}] - {date}";
+        PlayerSettings.bundleVersion = newVersion;
         
         Debug.Log($"[BuildReport] ✅ Version updated: {PlayerSettings.bundleVersion}");
     }
@@ -85,6 +98,13 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
         PlayerSettings.Android.bundleVersionCode = currentBundleCode + 1;
         
         Debug.Log($"[BuildReport] ✅ Bundle Version Code updated: {currentBundleCode} → {PlayerSettings.Android.bundleVersionCode}");
+    }
+
+    private void UpdateIosBuildNumber()
+    {
+        int currentBuildNumber = int.TryParse(PlayerSettings.iOS.buildNumber, out int parsed) ? parsed : 0;
+        PlayerSettings.iOS.buildNumber = (currentBuildNumber + 1).ToString();
+        Debug.Log($"[BuildReport] iOS build number updated: {currentBuildNumber} -> {PlayerSettings.iOS.buildNumber}");
     }
     
     private void ConfigureAndroidSigning()
