@@ -167,6 +167,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.FatCatGameStudio.SlothysBakery
     Standalone: com.FatCatGameStudio.SlothysBakery
+    iPhone: com.FatCatGameStudio.SlothysBakery
   buildNumber:
     Standalone: 0
     VisionOS: 0
