@@ -25,9 +25,17 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
         }
         else
         {
-            // 1. Update version string
-            string currentVersion = FindCurrentVersion();
-            UpdateVersion(currentVersion, isMajorUpdate);
+            // A paired Android+iOS release increments the marketing version once, then
+            // increments each platform's native build number independently.
+            if (!ShouldSkipMarketingVersionBump())
+            {
+                string currentVersion = FindCurrentVersion();
+                UpdateVersion(currentVersion, isMajorUpdate);
+            }
+            else
+            {
+                Debug.Log("[BuildReport] Marketing version bump skipped by FATCAT_SKIP_MARKETING_VERSION_BUMP.");
+            }
             
             // 2. Build numbers are platform-specific; never alter Android's code for an iOS export.
             if (report.summary.platform == BuildTarget.Android)
@@ -68,6 +76,12 @@ public class BuildVersionProcessor : IPreprocessBuildWithReport
     private bool ShouldSkipVersionBump()
     {
         string value = Environment.GetEnvironmentVariable("FATCAT_SKIP_VERSION_BUMP");
+        return value == "1" || string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool ShouldSkipMarketingVersionBump()
+    {
+        string value = Environment.GetEnvironmentVariable("FATCAT_SKIP_MARKETING_VERSION_BUMP");
         return value == "1" || string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
     }
 

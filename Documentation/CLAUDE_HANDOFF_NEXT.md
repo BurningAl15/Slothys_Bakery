@@ -1,6 +1,18 @@
 # Bakery — progreso y siguiente bloque
 
-Fecha: 2026-11-25. Tarea FastTask: `e5a8dded-fc07-47b6-b2ee-24336181d5ad` (`b41c92f0-7c18-4f2d-9b1e-3a72f5c018d4` en `testing`).
+Fecha: 2026-11-26. Tarea FastTask: `e5a8dded-fc07-47b6-b2ee-24336181d5ad` (`b41c92f0-7c18-4f2d-9b1e-3a72f5c018d4` en `testing`).
+
+## Preparación iOS y verificación de Xcode / TestFlight (Antigravity, 2026-11-26)
+
+- **Paridad iOS completada en Bakery:**
+  - Creado `Assets/Editor/IosPlistPostprocessor.cs` (+ `.meta`): declara `ITSAppUsesNonExemptEncryption = false` en `Info.plist` y enlaza `StoreKit.framework` + `AppTrackingTransparency.framework` (weak) en `UnityFramework` (obligatorio por `com.fatcat.mobile` 0.4.0).
+  - Creado `ProjectSettings/NativeShare.json`: texto bilingüe ES/EN para `NSPhotoLibraryUsageDescription` y `NSPhotoLibraryAddUsageDescription` al guardar el diploma en Fotos.
+  - Actualizado `Assets/Editor/BuildVersionProcessor.cs`: soporte de `FATCAT_SKIP_MARKETING_VERSION_BUMP` para mantener alineada la versión pública en lanzamientos conjuntos Android+iOS.
+  - Actualizado `CurrentlyWorkin/scripts/fastlane/Fastfile`: alinea firma con `SlothysCafe/fastlane/Fastfile` usando la cuenta Apple firmada en Xcode por defecto (`IOS_SIGN_WITH_API_KEY=1` opcional) para evitar `Cloud signing permission error` con la API key `R6DA76UX3G`.
+- **Verificación iOS ejecutada:**
+  - `scripts/build-ios.sh slothys-bakery` -> **exit 0** (`Result: Succeeded`, `Errors: 0`; `1.0.2`, iOS build `7`; `Icon-Store-1024.png` `1024x1024` sin alfa; `StoreKit`, `AppTrackingTransparency` y `UserNotifications` enlazados; plist con compliance y permisos de Fotos).
+  - `scripts/upload-ios-testflight.sh slothys-bakery --archive-only` (corrido previo al ajuste de `Fastfile`): Xcode compiló y enlazó hasta **`** ARCHIVE SUCCEEDED **`**; `-exportArchive` falló por falta de perfil App Store para `com.FatCatGameStudio.SlothysBakery` (la app aún no existe en Apple Developer / App Store Connect) y permiso de cloud signing en la API key.
+- **Bloqueos externos para publicar en iOS:** crear los App IDs y fichas en Apple Developer / App Store Connect para `com.FatCatGameStudio.SlothysBakery` y `com.FatCatGameStudio.PizzaMaster`, verificar cuenta Team Admin iniciada en Xcode (`Settings > Accounts`, Team `4UBGTX27U5`), y luego correr `scripts/upload-ios-testflight.sh slothys-bakery` (nota: `SlothysPizzaMaster` tiene en paralelo `fastlane/Fastfile` sin el guardia `IOS_SIGN_WITH_API_KEY=1` y sin `ProjectSettings/NativeShare.json`; no se tocó por trabajo concurrente).
 
 ## Diploma, FinalCutscene, FeedbackStamp y polish MG1–MG3 (Antigravity, 2026-11-25)
 
