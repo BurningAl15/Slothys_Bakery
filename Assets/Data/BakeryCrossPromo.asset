@@ -73,6 +73,21 @@ MonoBehaviour:
     iosUrl: 
     order: 3
     hidden: 0
+  - id: slothys-cafe
+    displayName: "Slothy's Caf\xE9"
+    genreEs: "Fracciones en la cafeter\xEDa"
+    genreEn: "A cozy caf\xE9"
+    taglineEs: "Fracciones en la cafeter\xEDa"
+    taglineEn: "A cozy caf\xE9"
+    icon: {fileID: 21300000, guid: e01bdf1cabc904d5dac1de114d6520d7, type: 3}
+    initials: 
+    placeholderColor: {r: 0.9, g: 0.87, b: 0.96, a: 1}
+    androidPackage: com.FatCatGameStudio.SlothysCafe
+    iosAppId: 
+    androidUrl: 
+    iosUrl: 
+    order: 4
+    hidden: 0
   - id: lazy-lovers
     displayName: Snuggle Sloths
     genreEs: Habilidad y equilibrio
@@ -86,7 +101,22 @@ MonoBehaviour:
     iosAppId: 
     androidUrl: 
     iosUrl: 
-    order: 4
+    order: 5
+    hidden: 0
+  - id: match-the-runes
+    displayName: 'Memorama: Match the Runes'
+    genreEs: Memoria y runas
+    genreEn: Memory and runes
+    taglineEs: Memoria y runas
+    taglineEn: Memory and runes
+    icon: {fileID: 21300000, guid: da8be630c60314bc48ed83dc85369f55, type: 3}
+    initials: 
+    placeholderColor: {r: 0.9, g: 0.87, b: 0.96, a: 1}
+    androidPackage: com.FatCatGameStudio.MatchTheRunes
+    iosAppId: 
+    androidUrl: 
+    iosUrl: 
+    order: 6
     hidden: 0
   playDeveloperName: FatCat Game Studio
   appStoreDeveloperId: 

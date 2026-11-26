@@ -1052,7 +1052,18 @@ namespace FatCat.Slothy.Tools
                 AssetDatabase.CreateAsset(catalog, CatalogPath);
             }
 
-            Sprite Art(string f) => AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/Art/OtherGames/{f}.png");
+            Sprite Art(string f)
+            {
+                string path = $"Assets/Art/OtherGames/{f}.png";
+                var ti = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (ti != null && ti.textureType != TextureImporterType.Sprite)
+                {
+                    ti.textureType = TextureImporterType.Sprite;
+                    ti.spriteImportMode = SpriteImportMode.Single;
+                    ti.SaveAndReimport();
+                }
+                return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            }
             CrossPromoGame G(string id, string name, string pkg, string es, string en, string icon, int order) => new CrossPromoGame
             {
                 id = id,
@@ -1068,11 +1079,13 @@ namespace FatCat.Slothy.Tools
 
             catalog.games = new List<CrossPromoGame>
             {
-                G("slothys-bakery",       "Slothy's Bakery",       "com.FatCatGameStudio.SlothysBakery", "Fracciones en la panadería", "Fractions at the bakery", "SlothysBakery", 0),
-                G("mix2word",             "Mix2Word",              "com.FatCatGame.Mix2Word",            "Juego de palabras",          "Word puzzle",             "Mix2Word", 1),
-                G("pig-year-food-fight",  "Pig Year: Food Fight",  "com.FatCatGameStudio.PigYearFF",     "Arcade divertido",           "Chaotic arcade",          "PigYear", 2),
-                G("slothys-pizza-master", "Slothy's Pizza Master", "com.FatCatGameStudio.PizzaMaster",   "Fracciones con pizza",       "Fractions with pizza",    "SlothysPizzaMaster", 3),
-                G("lazy-lovers",          "Snuggle Sloths",        "com.FatCatGameStudio.LazyLovers",    "Habilidad y equilibrio",     "Skill and balance",       "SnuggleSloths", 4),
+                G("slothys-bakery",       "Slothy's Bakery",       "com.FatCatGameStudio.SlothysBakery",  "Fracciones en la panadería", "Fractions at the bakery", "SlothysBakery", 0),
+                G("mix2word",             "Mix2Word",              "com.FatCatGame.Mix2Word",             "Juego de palabras",          "Word puzzle",             "Mix2Word", 1),
+                G("pig-year-food-fight",  "Pig Year: Food Fight",  "com.FatCatGameStudio.PigYearFF",      "Arcade divertido",           "Chaotic arcade",          "PigYear", 2),
+                G("slothys-pizza-master", "Slothy's Pizza Master", "com.FatCatGameStudio.PizzaMaster",    "Fracciones con pizza",       "Fractions with pizza",    "SlothysPizzaMaster", 3),
+                G("slothys-cafe",         "Slothy's Café",         "com.FatCatGameStudio.SlothysCafe",    "Fracciones en la cafetería", "A cozy café",             "SlothysCafe", 4),
+                G("lazy-lovers",          "Snuggle Sloths",        "com.FatCatGameStudio.LazyLovers",     "Habilidad y equilibrio",     "Skill and balance",       "SnuggleSloths", 5),
+                G("match-the-runes",      "Memorama: Match the Runes", "com.FatCatGameStudio.MatchTheRunes", "Memoria y runas",        "Memory and runes",        "MatchTheRunes", 6),
             };
             catalog.playDeveloperName = "FatCat Game Studio";
             catalog.remoteCatalogUrl = "https://fatcat-app-registry.vercel.app/games.json";
