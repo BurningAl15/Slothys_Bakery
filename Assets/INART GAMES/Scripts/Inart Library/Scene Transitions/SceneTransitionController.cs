@@ -24,8 +24,8 @@ namespace INART.SlothyBakery.SceneTransition
 
         #region Private Fields
         private Image uiImage;
-        private Image _overlayFadeImage;
-        private GameObject _overlayCanvasGo;
+        private static Image _overlayFadeImage;
+        private static GameObject _overlayCanvasGo;
         private Coroutine currentCoroutine = null;
         private bool endAnimation = true;
         #endregion
@@ -44,6 +44,11 @@ namespace INART.SlothyBakery.SceneTransition
         #region Unity Lifecycle
         protected override void OnAwake()
         {
+            if (transform.parent != null)
+            {
+                transform.SetParent(null, false);
+                DontDestroyOnLoad(gameObject);
+            }
             uiImage = GetComponent<Image>();
             if (uiImage != null)
             {
