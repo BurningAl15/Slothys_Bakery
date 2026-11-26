@@ -76,6 +76,7 @@ namespace INART.SlothyBakery.Core
 
         private void Start()
         {
+            Fatcat.Slothy.Bakery.Modes.BakerySession.ResetChapterCounters();
             GameStates.Instance.Set_GameState_Load();
             miniGame.Init();
 
@@ -97,10 +98,16 @@ namespace INART.SlothyBakery.Core
 
         private IEnumerator StartGame(float delayDuration)
         {
-            yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_IN());
+            if (SceneTransitionController.Instance != null && SceneTransitionController.Instance.gameObject.activeInHierarchy)
+                yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_IN());
 
-            yield return StartCoroutine(
-                CanvasAnimator.Instance.CanvasAnimation(canvasAnimationDuration, PhraseUtils.PhraseType.INTRO));
+            bool skipGreeting = Fatcat.Slothy.Bakery.Modes.BakerySession.OffStory &&
+                (Fatcat.Slothy.Bakery.Modes.BakerySession.Restarted ||
+                 Fatcat.Slothy.Bakery.Modes.BakerySession.Mode != Fatcat.Slothy.Bakery.Modes.BakeryModeKind.Afternoon);
+
+            if (CanvasAnimator.Instance != null && !skipGreeting)
+                yield return StartCoroutine(
+                    CanvasAnimator.Instance.CanvasAnimation(canvasAnimationDuration, PhraseUtils.PhraseType.INTRO));
 
             if (runAnimation)
             {

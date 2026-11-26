@@ -74,14 +74,49 @@ namespace INART.SlothyBakery.Base
         [SerializeField] private float waitTime_UntilNextRow;
 
         private bool isTurnedOn = false;
+        private bool contentReady;
+        private bool answerAccepted;
 
         void Start()
         {
+            contentReady = ValidateContent();
+            if (!contentReady)
+            {
+                Debug.LogError("Minigame2 has incomplete round or animation data. Gameplay is disabled.", this);
+                if (button != null) button.interactable = false;
+                return;
+            }
+
             text_Color = leftText.color;
             for (int i = 0; i < rounds.Count; i++)
                 rounds[i]._spriteControl.Init();
-            SaveLoadState.Instance.SetActualState(1);
-            SaveLoadState.Instance.Save();
+            SaveLoadState.Instance?.EnterMinigame(1, SceneUtils.SecondMinigameScene);
+        }
+
+        private bool ValidateContent()
+        {
+            if (rounds == null || rounds.Count == 0 || leftText == null || rightText == null || button == null ||
+                leftObject == null || rightObject == null || !HasWaypoints(leftObject) || !HasWaypoints(rightObject) ||
+                _animationCurve == null || _animationCurve.length == 0 || timeScaler <= 0f ||
+                float.IsNaN(timeScaler) || float.IsInfinity(timeScaler))
+                return false;
+
+            for (int i = 0; i < rounds.Count; i++)
+            {
+                Minigame4_Round round = rounds[i];
+                if (round == null || round.parentObject == null || round._spriteControl == null ||
+                    round.objectLeft == null || round.objectRight == null || round.correctAnswer < 0 || round.correctAnswer > 2 ||
+                    string.IsNullOrWhiteSpace(round.fractionValue_Left) || string.IsNullOrWhiteSpace(round.fractionValue_Right))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool HasWaypoints(Minigame4_Waypoints waypoints)
+        {
+            return waypoints != null && waypoints.startPosition != null && waypoints.midPosition != null &&
+                   waypoints.endPosition != null;
         }
 
         private void Update()
@@ -93,7 +128,8 @@ namespace INART.SlothyBakery.Base
 
         void InitializeNewObjectInfo()
         {
-            rounds[index].parentObject.SetActive(true);
+            for (int i = 0; i < rounds.Count; i++)
+                rounds[i].parentObject.SetActive(i == index);
 
             ManageAlpha(0, Side.Both);
 
@@ -106,17 +142,46 @@ namespace INART.SlothyBakery.Base
 
         public override void Init()
         {
+            contentReady = ValidateContent();
+            if (!contentReady)
+            {
+                Debug.LogError("Minigame2 cannot initialize because its round data is incomplete.", this);
+                if (button != null) button.interactable = false;
+                return;
+            }
+
+            if (Fatcat.Slothy.Bakery.Modes.BakerySession.OffStory &&
+                Fatcat.Slothy.Bakery.Modes.BakerySession.Seed.HasValue)
+                Fatcat.Slothy.Bakery.Modes.BakerySession.ShuffleWithSeed(
+                    rounds, Fatcat.Slothy.Bakery.Modes.BakerySession.Seed.Value ^ 0x202);
+
+            int resumeIdx = SaveLoadState.Instance != null ? SaveLoadState.Instance.GetRoundCheckpoint(1) : 0;
+            index = Mathf.Clamp(resumeIdx, 0, rounds.Count - 1);
+            next = false;
+            isTurnedOn = false;
+            answerAccepted = false;
+            text_Color = leftText.color;
             //Set the initial settings
             //Give the parent of the elements that will be draggable
             //Set the initial position of the draggables that are active for that round
             button.interactable = false;
             InitializeNewObjectInfo();
+            ProgressionCanvas.Instance?.ApplyCompletedRounds(index);
+            if (SignManager.Instance == null)
+            {
+                contentReady = false;
+                Debug.LogError("Minigame2 requires a SignManager in its scene.", this);
+                return;
+            }
+
             SignManager.Instance.Initialize();
             SignManager.Instance.DisableColliders();
         }
 
         public override IEnumerator TurnOnGame(float _delay)
         {
+            if (!contentReady || index < 0 || index >= rounds.Count || currentCoroutine != null) yield break;
+
             yield return new WaitForSeconds(.2f);
 
             var scaledTime = Time.fixedDeltaTime * timeScaler;
@@ -142,6 +207,11 @@ namespace INART.SlothyBakery.Base
             }
 
             SetValues();
+            if (!isTurnedOn && rounds[index]._spriteControl != null)
+            {
+                rounds[index]._spriteControl.TurnOnSprites();
+                isTurnedOn = true;
+            }
 
             animationTime = 0;
             while (animationTime <= moveDelay)
@@ -168,6 +238,13 @@ namespace INART.SlothyBakery.Base
 
         protected override IEnumerator Change(float _delay)
         {
+            if (!contentReady || index < 0 || index >= rounds.Count || timeScaler <= 0f || _delay <= 0f ||
+                SignManager.Instance == null || ValueManager._instance == null)
+            {
+                currentCoroutine = null;
+                yield break;
+            }
+
             yield return new WaitForSeconds(.25f);
             var scaledTime = Time.fixedDeltaTime * timeScaler;
             var tempText = "";
@@ -182,9 +259,13 @@ namespace INART.SlothyBakery.Base
                 ProgressionCanvas.Instance.FillBar(index, ProgressionCanvas.ProgressionType.One));
             yield return StartCoroutine(ProgressionCanvas.Instance.UnlockStuff(index));
 
-            // Analytics + Daily Challenge
+            // Analytics + Daily Challenge + Checkpoint before transition delay
             AnalyticsManager.Instance?.TrackLevelCompleted($"minigame2_round_{index}", true);
             DailyChallengeManager.Instance?.AddProgress("complete_rounds", 1);
+            if (index < rounds.Count - 1)
+                SaveLoadState.Instance?.SaveRoundCheckpoint(1, SceneUtils.SecondMinigameScene, index + 1);
+            else
+                SaveLoadState.Instance?.CompleteStoryChapter(2, SceneUtils.ThirdMinigameScene, false);
 
             yield return new WaitForSeconds(waitTime_UntilNextRow);
 
@@ -239,6 +320,7 @@ namespace INART.SlothyBakery.Base
             if (index < rounds.Count - 1)
             {
                 index++;
+                answerAccepted = false;
 
                 if (index == 1)
                 {
@@ -267,6 +349,11 @@ namespace INART.SlothyBakery.Base
                 }
 
                 SetValues();
+            if (!isTurnedOn && rounds[index]._spriteControl != null)
+            {
+                rounds[index]._spriteControl.TurnOnSprites();
+                isTurnedOn = true;
+            }
 
                 animationTime = 0;
                 while (animationTime <= _delay)
@@ -296,7 +383,8 @@ namespace INART.SlothyBakery.Base
             {
                 yield return StartCoroutine(CanvasAnimator.Instance.InstructionsAnimation(false));
                 yield return StartCoroutine(CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
-                yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
+                if (SceneTransitionController.Instance != null && SceneTransitionController.Instance.gameObject.activeInHierarchy)
+                    yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
                 SceneUtils.ToNextScene();
             }
 
@@ -333,8 +421,13 @@ namespace INART.SlothyBakery.Base
 
         public void CheckValue()
         {
+            if (!contentReady || answerAccepted || currentCoroutine != null || index < 0 || index >= rounds.Count ||
+                ValueManager._instance == null || SignManager.Instance == null)
+                return;
+
             if (ValueManager._instance.GetValue() == rounds[index].correctAnswer)
             {
+                answerAccepted = true;
                 MessageManager.Instance.Animate_Message(true);
                 button.interactable = false;
 
@@ -343,9 +436,16 @@ namespace INART.SlothyBakery.Base
 
                 SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
                 AnalyticsManager.Instance?.TrackAnswerCorrect(index);
+                Fatcat.Slothy.Bakery.Modes.BakerySession.RecordAnswer(true);
+                Fatcat.Slothy.Bakery.Shell.BakeryFeedbackHooks.ShowAnswerStamp(true, SignManager.Instance != null ? SignManager.Instance.transform.position : Vector3.zero);
             }
             else
             {
+                if (ValueManager._instance.GetValue() != -1)
+                {
+                    Fatcat.Slothy.Bakery.Modes.BakerySession.RecordAnswer(false);
+                    Fatcat.Slothy.Bakery.Shell.BakeryFeedbackHooks.ShowAnswerStamp(false, SignManager.Instance != null ? SignManager.Instance.transform.position : Vector3.zero);
+                }
                 MessageManager.Instance.Animate_Message(false);
                 if (!isTurnedOn)
                 {
@@ -355,6 +455,7 @@ namespace INART.SlothyBakery.Base
 
                 SignManager.Instance.ResetAll();
                 ValueManager._instance.ResetValue();
+                answerAccepted = false;
                 SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
                 AnalyticsManager.Instance?.TrackAnswerWrong(index);
             }

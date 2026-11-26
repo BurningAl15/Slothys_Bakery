@@ -33,9 +33,9 @@ namespace INART.SlothyBakery.ProgressionCanvas
         // ── Inspector ──────────────────────────────────────────────────────────
 
         [Header("Bars & Locks")]
-        [UnityEngine.Serialization.FormerlySerializedAs("bars")]
+        [UnityEngine.Serialization.FormerlySerializedAs("Bars")]
         [SerializeField] private List<Image> bars  = new List<Image>();
-        [UnityEngine.Serialization.FormerlySerializedAs("locks")]
+        [UnityEngine.Serialization.FormerlySerializedAs("Locks")]
         [SerializeField] private List<Image> locks = new List<Image>();
         [SerializeField] private Sprite  unlockSprite;
 
@@ -60,6 +60,22 @@ namespace INART.SlothyBakery.ProgressionCanvas
         protected override void OnAwake()
         {
             _fillValues = new float[bars.Count];
+        }
+
+        /// <summary>Synchronously fills bars and unlock icons up to completedRounds (used on checkpoint resume).</summary>
+        public void ApplyCompletedRounds(int completedRounds)
+        {
+            if (_fillValues == null || _fillValues.Length != bars.Count)
+                _fillValues = new float[bars.Count];
+
+            int clamped = Mathf.Clamp(completedRounds, 0, bars.Count);
+            for (int i = 0; i < clamped; i++)
+            {
+                _fillValues[i] = 1f;
+                if (bars[i] != null) bars[i].fillAmount = 1f;
+                if (i < locks.Count && locks[i] != null && unlockSprite != null)
+                    locks[i].sprite = unlockSprite;
+            }
         }
 
         // ── Public API — all coroutines so minigames can yield on them ─────────

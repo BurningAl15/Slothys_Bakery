@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+                <defs>
+                  <pattern id="candy" width="28" height="28" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
+                    <rect width="14" height="28" fill="#F9C6D7"/>
+                    <rect x="14" width="14" height="28" fill="#FFF7FA"/>
+                  </pattern>
+                </defs>
+                <rect x="4" y="4" width="248" height="244" rx="34" fill="#3D2038" fill-opacity="0.24"/>
+                <rect x="4" y="4" width="248" height="238" rx="34" fill="url(#candy)" stroke="#583553" stroke-width="7"/>
+                <rect x="18" y="18" width="220" height="210" rx="24" fill="#FFF9F0" stroke="#F29FBC" stroke-width="4"/>
+                <g fill="#F3D6C1">
+                  <circle cx="32" cy="32" r="3"/><circle cx="224" cy="32" r="3"/>
+                  <circle cx="32" cy="214" r="3"/><circle cx="224" cy="214" r="3"/>
+                </g>
+                </svg>

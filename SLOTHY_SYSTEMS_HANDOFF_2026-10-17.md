@@ -64,3 +64,34 @@ Estado comprobado por inspección estática (sin Play Mode ni build actual):
 **Contrato objetivo, no implementación existente:** una receta diaria ordenada con fecha/seed/versión y varias entradas `{minigameId, levelId o payload, dificultad, reglas}`, seleccionadas entre variantes compatibles; un orquestador que inicie cada entrada, reciba su resultado, limpie la instancia y avance a la siguiente; persistencia de receta/progreso para que el reto de un día no cambie a mitad de partida; intro, instrucciones, resultados y recompensas mediante prefabs/escenas editados en Edit Mode. Cada variante dinámica necesita aceptar una entrada de contenido y devolver un resultado de forma consistente. La cantidad de entradas, política de repetición, dificultad y si la selección diaria será igual para todos o específica por jugador siguen **sin decidir**. No afirmar que este modo está listo hasta probar una sesión completa en Unity y dispositivo.
 
 **Continuación del 2026-10-17:** se inició un prototipo multi-minijuego en Cafe; detalles y validaciones pendientes en `../SlothysCafe/DAILY_CHALLENGE_HANDOFF_2026-10-17.md`. Está cableado solo en escena DEV, sin Play Mode validado ni UI final; no trasladar todavía a Bakery como feature terminada.
+
+
+## FatCat Studio splash — 2026-11-20
+
+- Task: `87dad55b-dc6d-47f3-91ac-ba8cacd96cb3` (`FastTask/tasks.json`), estado `testing`.
+- Copiada sin modificaciones la carpeta `Assets/FatCatStudio/Splash` de Snuggle Sloths, con los mismos GUIDs y arte.
+- `EditorBuildSettings.asset` inicia con `Assets/FatCatStudio/Splash/FatCatSplash.unity`; la siguiente escena sigue siendo `Assets/INART GAMES/Scenes/1. Main Screen.unity`.
+- Validación estática: 20 archivos presentes byte-idénticos y escena en índice 0.
+- Pendiente: importar/compilar con Unity 6000.6.0f1, verificar transición en Play Mode y en dispositivo.
+
+## Revisión de mecánicas y modos — 2026-11-24
+
+Análisis estático de los tres controladores activos, el guardado y su adaptación a Historia, Práctica, Diario, Turno y Chef en [REVISION_MECANICAS_Y_MODOS.md](Documentation/REVISION_MECANICAS_Y_MODOS.md). Incluye defectos de parseo de fracciones en MG3, pruebas pendientes y una secuencia de implementación. No se ejecutó Play Mode en esta revisión.
+
+## Estandarización Slothy's Academy (P0, MG1-MG3, Pausa, Checkpoints, Modos y Adult Gate) — 2026-11-24 (Antigravity)
+
+- **P0 (`e5a8dded-fc07-47b6-b2ee-24336181d5ad` -> `done`)**:
+  - Reparado `BakeryShellBuilder.cs` (bindings completos de `SettingsScreenView`, `LocalePickerController`, `BakerySettingsBackend`, `BakeryLanguageGate`, `BakeryLanguageLabel`, glifos españoles completos en `LiberationSans SDF` con cierre `×`, filas `RowBox` de alto contraste, cableado de `SoundBtn`).
+  - Deshabilitada `DEV_ModularMinigame.unity` en `EditorBuildSettings.asset`; `InitialMenuManager` ejecuta `PlayIntroSequence()` tras `SaveLoadState.InitMenuButtons()` en `Start()` para que `ContinueBtn` anime correctamente cuando hay guardado; `UI_Transition_Button` y `SceneTransitionController` protegidos contra referencias nulas.
+- **MG1–MG3 dinámicos (`58597408-1a77-4a59-83b2-ca67ae21798a` -> `done`)**:
+  - Corregido `SignSelectable.FindDropTarget` en Unity 6 (`CS0034` cast a `Vector2`), `SoundManager` null-safe (`_sfxCache`, `musicSource`, `sfxSource`), `Minigame1_Logic`/`Minigame3_B` null-safe sobre `SaveLoadState.Instance`, `Minigame3_B` tolerancia ajustada (`< 1e-4d`) y `CanvasAnimator.SkipForTests`.
+- **Checkpoints, HUD de pausa, Modalidades y Adult Gate (`b41c92f0-7c18-4f2d-9b1e-3a72f5c018d4` -> `testing`)**:
+  - `SaveLoadState` + `BakeryProgressData`: añade `currentRoundIndex` y `currentSceneName` (compatible con JSON legacy), `ApplyCompletedRounds` en `ProgressionCanvas`, checkpoint guardado antes del delay de transición en MG1/MG2/MG3 y completado hacia `SceneUtils.ToNextScene()`.
+  - `BakeryPauseOverlay`: overlay `ScreenSpaceOverlay` (`PauseButton` + modal Pausa/Continuar/Reiniciar/Confirmación de menú) con `Time.timeScale = 0` y bloqueo en `GameStates`.
+  - `BakerySession` + `BakeryStats` + `BakeryModesView`: soporte unificado de **Práctica por tema** (`mg1/mg2/mg3`), **Reto diario** determinista por fecha, **Turno** (desbloqueado tras Historia) y **Modo Chef** (desbloqueado tras Turno), resumen con aciertos/errores/estrellas (`RunSummaryScreen`) y `AchievementsScreen`, manteniendo intacto el guardado de Historia en PlayerPrefs.
+  - `BakeryParentalGate` + `Assets/Resources/UI/ParentalGate.prefab`: puerta de multiplicación para adultos conectada a `rate`, `share` (`FatCat.Share`) y `more_games`.
+- **Verificación Unity `6000.6.0f1`**:
+  - `BakeryShellBuilder.RunCi`: exit 0.
+  - Suite completa EditMode + PlayMode (`Fatcat.Slothy.Bakery.Tests`): **12/12 Passed, 0 Failed, 0 Skipped** usando perfil aislado (`BakeryTestPrefsScope`) e inspección visual real a 16:9 (`1920x1080`) y 20:9 (`2340x1080`) de Menú (sin/con Continuar), Selector de idioma, Ajustes ES/EN, MG1/MG2/MG3, Modal de Modos, Pausa, Resumen, Puerta para adultos y Logros.
+- **Pendiente (Etapa 3 / Dispositivo)**:
+  - Localización interna de textos/escenas legacy en `2. Minigame1`, `3. Minigame2`, `4. Minigame3`, integración de `NarratorFace` / `com.fatcat.feedback` dentro de rondas, Diploma, Recordatorios, Repisa/Postal de amigos y QA en dispositivo físico Android/iOS.

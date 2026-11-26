@@ -75,6 +75,7 @@ namespace INART.SlothyBakery.CanvasAnimator
         // ── Runtime ────────────────────────────────────────────────────────────
 
         private bool _isTesting;
+        public static bool SkipForTests;
         private bool _finishInstructions;
         private Vector3 _dynamicStartPosition;
 
@@ -132,7 +133,7 @@ namespace INART.SlothyBakery.CanvasAnimator
         /// </summary>
         public IEnumerator CanvasAnimation(float animationDuration, PhraseUtils.PhraseType phraseType)
         {
-            if (_isTesting) yield break;
+            if (_isTesting || SkipForTests || !HasPhrases(phraseType)) yield break;
 
             // Check reduced-motion accessibility setting
             bool reducedMotion = INART.Framework.Core.SettingsManager.Instance != null
@@ -269,22 +270,32 @@ namespace INART.SlothyBakery.CanvasAnimator
 
         // ── TypeWrite — kept as coroutine (text logic, not animation) ──────────
 
+        private bool HasPhrases(PhraseUtils.PhraseType phraseType)
+        {
+            List<string> phrases = GetPhrases(phraseType);
+            return phrases != null && phrases.Count > 0;
+        }
+
+        private List<string> GetPhrases(PhraseUtils.PhraseType phraseType) => phraseType switch
+        {
+            PhraseUtils.PhraseType.INTRO   => _introDialogSo != null ? _introDialogSo.Phrases : null,
+            PhraseUtils.PhraseType.CONGRAT => _midDialogSo != null ? _midDialogSo.Phrases : null,
+            PhraseUtils.PhraseType.END     => _endDialogSo != null ? _endDialogSo.Phrases : null,
+            _                              => null
+        };
+
         private IEnumerator TypeWrite(PhraseUtils.PhraseType phraseType)
         {
-            List<string> phrases = phraseType switch
-            {
-                PhraseUtils.PhraseType.INTRO  => _introDialogSo.Phrases,
-                PhraseUtils.PhraseType.CONGRAT => _midDialogSo.Phrases,
-                PhraseUtils.PhraseType.END    => _endDialogSo.Phrases,
-                _                              => new List<string>()
-            };
+            List<string> phrases = GetPhrases(phraseType);
+            if (phrases == null || phrases.Count == 0 || speechText == null)
+                yield break;
 
             string tempText  = "";
             int    wordIndex = 0;
 
             while (wordIndex < phrases.Count)
             {
-                characterAnimator.SetBool(TalkHash, true);
+                if (characterAnimator != null) characterAnimator.SetBool(TalkHash, true);
 
                 // Type out each character
                 for (int i = 0; i < phrases[wordIndex].Length; i++)
@@ -295,18 +306,19 @@ namespace INART.SlothyBakery.CanvasAnimator
                 }
 
                 // Wait for tap/click to advance
-                characterAnimator.SetBool(TalkHash, false);
-                waitingImage.gameObject.SetActive(true);
+                if (characterAnimator != null) characterAnimator.SetBool(TalkHash, false);
+                if (waitingImage != null) waitingImage.gameObject.SetActive(true);
 
                 yield return new WaitUntil(
-                    () => Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0));
+                    () => SkipForTests || Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0));
+                if (SkipForTests) yield break;
 
-                waitingImage.gameObject.SetActive(false);
+                if (waitingImage != null) waitingImage.gameObject.SetActive(false);
                 wordIndex++;
                 tempText = "";
             }
 
-            characterAnimator.SetBool(TalkHash, false);
+            if (characterAnimator != null) characterAnimator.SetBool(TalkHash, false);
             yield return new WaitForSeconds(PhraseUtils.waitUntilPrevious);
         }
     }

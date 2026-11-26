@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-Spanish (El Salvador) (es-SV)
   m_GUID: e68abd2223e594f5d9bc8b02ef10219a
   m_SerializeEntries:
+  - m_GUID: 5fd68b2665c5245d39fdb056c5632663
+    m_Address: BakeryShell_es-SV
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es-SV
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6e36d5f12c7094ee5aa4e6c2221d5dea
     m_Address: GamePhrases_es-SV
     m_ReadOnly: 1

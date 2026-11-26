@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="80" viewBox="0 0 256 80">
+                <defs>
+                  <linearGradient id="pill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#F38BAE"/>
+                    <stop offset="100%" stop-color="#D45580"/>
+                  </linearGradient>
+                </defs>
+                <rect x="4" y="8" width="248" height="68" rx="34" fill="#583553"/>
+                <rect x="4" y="4" width="248" height="68" rx="34" fill="url(#pill)" stroke="#583553" stroke-width="5"/>
+                <ellipse cx="32" cy="20" rx="10" ry="5" transform="rotate(-16 32 20)" fill="#FFFFFF" fill-opacity="0.45"/>
+                </svg>

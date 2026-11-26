@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bffe3da64708464fa3a2967a74c85df, type: 3}
+  m_Name: BakeryCrossPromo
+  m_EditorClassIdentifier: FatCat.Mobile::FatCat.CrossPromo.CrossPromoCatalog
+  games:
+  - id: slothys-bakery
+    displayName: Slothy's Bakery
+    genreEs: "Fracciones en la panader\xEDa"
+    genreEn: Fractions at the bakery
+    taglineEs: "Fracciones en la panader\xEDa"
+    taglineEn: Fractions at the bakery
+    icon: {fileID: 21300000, guid: f0eeed36cce0542f080d202223493b82, type: 3}
+    initials: 
+    placeholderColor: {r: 0.9, g: 0.87, b: 0.96, a: 1}
+    androidPackage: com.FatCatGameStudio.SlothysBakery
+    iosAppId: 
+    androidUrl: 
+    iosUrl: 
+    order: 0
+    hidden: 0
+  - id: mix2word
+    displayName: Mix2Word
+    genreEs: Juego de palabras
+    genreEn: Word puzzle
+    taglineEs: Juego de palabras
+    taglineEn: Word puzzle
+    icon: {fileID: 21300000, guid: cca4f5f3553d548b581680283335b64c, type: 3}
+    initials: 
+    placeholderColor: {r: 0.9, g: 0.87, b: 0.96, a: 1}
+    androidPackage: com.FatCatGame.Mix2Word
+    iosAppId: 
+    androidUrl: 
+    iosUrl: 
+    order: 1
+    hidden: 0
+  - id: pig-year-food-fight
+    displayName: 'Pig Year: Food Fight'
+    genreEs: Arcade divertido
+    genreEn: Chaotic arcade
+    taglineEs: Arcade divertido
+    taglineEn: Chaotic arcade
+    icon: {fileID: 21300000, guid: 48777e8022daf481e94fce1c7619c842, type: 3}
+    initials: 
+    placeholderColor: {r: 0.9, g: 0.87, b: 0.96, a: 1}
+    androidPackage: com.FatCatGameStudio.PigYearFF
+    iosAppId: 
+    androidUrl: 
+    iosUrl: 
+    order: 2
+    hidden: 0
+  - id: slothys-pizza-master
+    displayName: Slothy's Pizza Master
+    genreEs: Fracciones con pizza
+    genreEn: Fractions with pizza
+    taglineEs: Fracciones con pizza
+    taglineEn: Fractions with pizza
+    icon: {fileID: 21300000, guid: 636080824d9654f7399a4fed147e2a2f, type: 3}
+    initials: 
+    placeholderColor: {r: 0.9, g: 0.87, b: 0.96, a: 1}
+    androidPackage: com.FatCatGameStudio.PizzaMaster
+    iosAppId: 
+    androidUrl: 
+    iosUrl: 
+    order: 3
+    hidden: 0
+  - id: lazy-lovers
+    displayName: Snuggle Sloths
+    genreEs: Habilidad y equilibrio
+    genreEn: Skill and balance
+    taglineEs: Habilidad y equilibrio
+    taglineEn: Skill and balance
+    icon: {fileID: 21300000, guid: a635dac84939340d7b7d9bf7099c6ec9, type: 3}
+    initials: 
+    placeholderColor: {r: 0.9, g: 0.87, b: 0.96, a: 1}
+    androidPackage: com.FatCatGameStudio.LazyLovers
+    iosAppId: 
+    androidUrl: 
+    iosUrl: 
+    order: 4
+    hidden: 0
+  playDeveloperName: FatCat Game Studio
+  appStoreDeveloperId: 
+  remoteCatalogUrl: https://fatcat-app-registry.vercel.app/games.json

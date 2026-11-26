@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using INART.SlothyBakery.SceneTransition;
 
 namespace INART.SlothyBakery.Base
 {
@@ -19,19 +20,45 @@ namespace INART.SlothyBakery.Base
 
         private IEnumerator ToNextScene(string _sceneName)
         {
-            //Do something or run a shader
-            yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
-            if (_sceneName == "0")
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-            else if (_sceneName == "1" || _sceneName == "2" || _sceneName == "3")
-                SceneManager.LoadScene("Minigame" + _sceneName);
-            else
-                SceneManager.LoadScene(_sceneName);
+            var fade = SceneTransitionController.Instance;
+            if (fade != null && fade.gameObject.activeInHierarchy)
+                yield return StartCoroutine(fade.FadeEffect_OUT());
+            var destination = ResolveSceneName(_sceneName);
+            if (string.IsNullOrEmpty(destination))
+            {
+                Debug.LogError($"[Bakery] Unknown menu scene route '{_sceneName}'.", this);
+                currentCoroutine = null;
+                yield break;
+            }
+
+            SceneUtils.LoadScene(destination);
             currentCoroutine = null;
         }
 
+        public static string ResolveSceneName(string requested)
+        {
+            switch (requested)
+            {
+                case "0": return SceneUtils.FirstMinigameScene;
+                case "1": return SceneUtils.FirstMinigameScene;
+                case "2": return SceneUtils.SecondMinigameScene;
+                case "3": return SceneUtils.ThirdMinigameScene;
+                case "4":
+                case "FinalCutscene": return SceneUtils.FinalScene;
+                case "StartScreen":
+                case "MainScreen": return SceneUtils.MainMenuScene;
+                default: return requested;
+            }
+        }
+
+        public static string ResolveContinueSceneName()
+            => SceneUtils.SceneForProgress(SaveLoadState.Instance != null
+                ? SaveLoadState.Instance.GetActualState() : 0);
+
         public void ToScene()
         {
+            Fatcat.Slothy.Bakery.Modes.BakerySession.SetStoryMode();
+            SaveLoadState.Instance?.ResetForNewStoryGame();
             if (currentCoroutine == null) currentCoroutine = StartCoroutine(ToNextScene("0"));
         }
 
@@ -42,21 +69,9 @@ namespace INART.SlothyBakery.Base
 
         public void BtnIntroToScene()
         {
-            // print(SaveLoadState.Instance.GetActualState());
-            switch (SaveLoadState.Instance.GetActualState())
-            {
-                case 0:
-                    if (currentCoroutine == null) currentCoroutine = StartCoroutine(ToNextScene("1"));
-                    break;
-                case 1:
-                    if (currentCoroutine == null) currentCoroutine = StartCoroutine(ToNextScene("2"));
-                    break;
-                case 2:
-                    if (currentCoroutine == null) currentCoroutine = StartCoroutine(ToNextScene("3"));
-                    break;
-                default:
-                    break;
-            }
+            Fatcat.Slothy.Bakery.Modes.BakerySession.SetStoryMode();
+            if (currentCoroutine == null)
+                currentCoroutine = StartCoroutine(ToNextScene(ResolveContinueSceneName()));
         }
 
         public void BtnToIntroScene()

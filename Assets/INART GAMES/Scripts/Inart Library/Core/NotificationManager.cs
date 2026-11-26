@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using INART.Framework.Core;
+using UnityEngine.Localization.Settings;
 
 #if UNITY_ANDROID
 using Unity.Notifications.Android;
@@ -19,13 +20,12 @@ namespace INART.SlothyBakery.Notifications
     /// Re-engagement push notification manager (Unity Mobile Notifications 2.4+).
     ///
     /// Behavior:
-    ///   App goes to background / quits  → schedules a "come back and play" notification
-    ///   App reopens                      → cancels the pending notification
+    ///   App goes to background / quits  → schedules up to three gentle return reminders
+    ///   App reopens                      → cancels pending reminders
     ///
     /// Integration with SettingsManager:
-    ///   Reads SettingsManager.Instance.NotificationsEnabled before scheduling.
-    ///   Subscribes to OnNotificationsChanged so it reacts to the player toggling
-    ///   the setting at runtime — no scene reload needed.
+    ///   Reads SettingsManager.Instance.NotificationsEnabled before scheduling. OS permission is requested
+    ///   only after the player enables reminders from Settings or completes the first daily activity.
     ///
     /// SETUP:
     ///   1. Install "Mobile Notifications" from the Unity Package Manager.
@@ -33,7 +33,7 @@ namespace INART.SlothyBakery.Notifications
     ///      (same one as SettingsManager / AnalyticsManager).
     ///   3. For iOS: add your app icon to the iOS Notification icon set in
     ///      Edit → Project Settings → Mobile Notifications.
-    ///   4. Customize NotificationTitle, NotificationBody, and DelayHours in Inspector.
+    ///   4. Keep the localized title/body entries in the BakeryShell String Table.
     ///   5. Set ANDROID_CHANNEL_ID to something unique per game
     ///      (e.g. "slothys_bakery_main").
     /// </summary>
@@ -66,7 +66,7 @@ namespace INART.SlothyBakery.Notifications
         [SerializeField] private string androidChannelDesc = "Recordatorios para volver a jugar Slothy's Bakery";
 
         // ── PlayerPrefs ────────────────────────────────────────────────────────
-        private const string KEY_NOTIF_ID = "last_notification_id";
+        private const string AskedKey = "bakery.reminders.asked";
 
         // ── Lifecycle ──────────────────────────────────────────────────────────
 
@@ -83,10 +83,6 @@ namespace INART.SlothyBakery.Notifications
         {
             // Player just opened the app — cancel any pending reminder
             CancelAllPendingNotifications();
-
-#if UNITY_IOS
-            StartCoroutine(RequestiOSPermission());
-#endif
         }
 
         protected override void OnDestroy()
@@ -127,6 +123,16 @@ namespace INART.SlothyBakery.Notifications
             ScheduleReEngagementNotification();
         }
 
+        /// <summary>First-daily opt-in, matching Café's reminder consent timing.</summary>
+        public static void AskAfterFirstDaily()
+        {
+            if (PlayerPrefs.GetInt(AskedKey, 0) == 1 || PlayerPrefs.GetInt("cfg_notif_enabled", 1) == 0)
+                return;
+            PlayerPrefs.SetInt(AskedKey, 1);
+            PlayerPrefs.Save();
+            RequestEnable();
+        }
+
         /// <summary>Cancels every pending notification this manager scheduled.</summary>
         public void CancelAllPendingNotifications()
         {
@@ -154,27 +160,90 @@ namespace INART.SlothyBakery.Notifications
 
         private string GetTitle()
         {
-            if (LocalizationManager.Instance != null && LocalizationManager.Instance.IsInitialized)
-                return LocalizationManager.Instance.GetString(notificationTitleKey,
-                    LocalizationManager.TABLE_NOTIFICATIONS);
-            return fallbackTitle;
+            string fallback = IsSpanishLocale() ? "¡Slothy te espera en la panadería!" : fallbackTitle;
+            return GetLocalizedText("reminder.title", fallback);
         }
 
-        private string GetBody()
+        private string GetBody(int index)
         {
-            if (LocalizationManager.Instance != null && LocalizationManager.Instance.IsInitialized)
-                return LocalizationManager.Instance.GetString(notificationBodyKey,
-                    LocalizationManager.TABLE_NOTIFICATIONS);
-            return fallbackBody;
+            string key = index == 1 ? "reminder.miss" : index == 2 ? "reminder.comeback" : "reminder.daily";
+            bool spanish = IsSpanishLocale();
+            string fallback = index == 1
+                ? spanish ? "Slothy extraña tu ayuda con los pedidos." : "Slothy misses your help with today's orders."
+                : index == 2
+                    ? spanish ? "La panadería sigue abierta. Slothy guardó algo para ti." : "The bakery is still open. Slothy saved something for you."
+                    : spanish ? "Hay una nueva actividad de fracciones para ti. ¿Te animas?" : fallbackBody;
+            return GetLocalizedText(key, fallback);
+        }
+
+        private static bool IsSpanishLocale()
+        {
+            var locale = LocalizationSettings.SelectedLocale;
+            return locale == null || locale.Identifier.Code.StartsWith("es", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string GetLocalizedText(string key, string fallback)
+            => Fatcat.Slothy.Bakery.Shell.BakeryPromptLocalization.GetLocalizedOrFallback(key, fallback);
+
+        /// <summary>Called by the settings toggle so system permission is requested only after opt-in.</summary>
+        public static void RequestEnable(Action<bool> completed = null)
+        {
+            if (Instance == null)
+            {
+                completed?.Invoke(false);
+                return;
+            }
+            Instance.StartCoroutine(Instance.RequestPermission(completed));
+        }
+
+        private IEnumerator RequestPermission(Action<bool> completed)
+        {
+            bool granted = true;
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (AndroidNotificationCenter.UserPermissionToPost != PermissionStatus.Allowed)
+            {
+                var request = new PermissionRequest();
+                while (request.Status == PermissionStatus.RequestPending) yield return null;
+                granted = request.Status == PermissionStatus.Allowed;
+            }
+#elif UNITY_IOS && !UNITY_EDITOR
+            using (var request = new AuthorizationRequest(AuthorizationOption.Alert | AuthorizationOption.Sound, false))
+            {
+                while (!request.IsFinished) yield return null;
+                granted = request.Granted;
+            }
+#endif
+            if (SettingsManager.Instance != null)
+                SettingsManager.Instance.NotificationsEnabled = granted;
+            else
+            {
+                PlayerPrefs.SetInt("cfg_notif_enabled", granted ? 1 : 0);
+                PlayerPrefs.Save();
+            }
+            completed?.Invoke(granted);
+            yield break;
         }
 
         // ── Internal scheduling ────────────────────────────────────────────────
 
         private void ScheduleReEngagementNotification()
         {
-#if UNITY_ANDROID
+            var settings = SettingsManager.Instance;
+            if (settings != null && !settings.NotificationsEnabled)
+            {
+                CancelAllPendingNotifications();
+                return;
+            }
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (AndroidNotificationCenter.UserPermissionToPost != PermissionStatus.Allowed)
+            {
+                if (settings != null) settings.NotificationsEnabled = false;
+                return;
+            }
+#endif
+#if UNITY_ANDROID && !UNITY_EDITOR
             ScheduleAndroid();
-#elif UNITY_IOS
+#elif UNITY_IOS && !UNITY_EDITOR
             ScheduleiOS();
 #endif
         }
@@ -201,67 +270,52 @@ namespace INART.SlothyBakery.Notifications
         {
 #if UNITY_ANDROID
             AndroidNotificationCenter.CancelAllScheduledNotifications();
-
-            var notification = new AndroidNotification
+            foreach (var plan in BakeryReminderPlan.Series(DateTime.Now,
+                         Fatcat.Slothy.Bakery.Modes.BakeryStats.IsDailyCompleted(DateTime.Now)))
             {
-                Title     = GetTitle(),
-                Text      = GetBody(),
-                FireTime  = DateTime.Now.AddHours(delayHours),
-                SmallIcon = "icon_0",
-                LargeIcon = "icon_1"
-            };
-
-            int id = AndroidNotificationCenter.SendNotification(notification, androidChannelId);
-            PlayerPrefs.SetInt(KEY_NOTIF_ID, id);
-            PlayerPrefs.Save();
-
-            GameLogger.Log($"Android notification scheduled in {delayHours}h (id={id}).",
-                LogCategory.System);
+                var notification = new AndroidNotification
+                {
+                    Title = GetTitle(),
+                    Text = GetBody(plan.Index),
+                    FireTime = plan.FireAt,
+                    SmallIcon = "bakery_notif_small",
+                    LargeIcon = "bakery_notif_large"
+                };
+                AndroidNotificationCenter.SendNotification(notification, androidChannelId);
+            }
+            GameLogger.Log("Android return reminders scheduled for the next three planned dates.", LogCategory.System);
 #endif
         }
 
         // ── iOS ────────────────────────────────────────────────────────────────
 
 #if UNITY_IOS
-        private IEnumerator RequestiOSPermission()
-        {
-            var req = new AuthorizationRequest(
-                AuthorizationOption.Alert | AuthorizationOption.Badge | AuthorizationOption.Sound,
-                registerForRemoteNotifications: false);
-
-            yield return new WaitUntil(() => req.IsFinished);
-
-            GameLogger.Log($"iOS notification permission: {(req.Granted ? "granted" : "denied")}",
-                LogCategory.System);
-
-            // If the player denied, mirror that in SettingsManager
-            if (!req.Granted && SettingsManager.Instance != null)
-                SettingsManager.Instance.NotificationsEnabled = false;
-        }
-
         private void ScheduleiOS()
         {
             iOSNotificationCenter.RemoveAllScheduledNotifications();
-
-            var trigger = new iOSNotificationTimeIntervalTrigger
+            foreach (var plan in BakeryReminderPlan.Series(DateTime.Now,
+                         Fatcat.Slothy.Bakery.Modes.BakeryStats.IsDailyCompleted(DateTime.Now)))
             {
-                TimeInterval = TimeSpan.FromHours(delayHours),
-                Repeats      = false
-            };
-
-            var notification = new iOSNotification
-            {
-                Identifier               = "slothys_bakery_reengage",
-                Title                    = GetTitle(),
-                Body                     = GetBody(),
-                ShowInForeground         = false,
-                ForegroundPresentationOption =
-                    PresentationOption.Alert | PresentationOption.Sound | PresentationOption.Badge,
-                Trigger                  = trigger
-            };
-
-            iOSNotificationCenter.ScheduleNotification(notification);
-            GameLogger.Log($"iOS notification scheduled in {delayHours}h.", LogCategory.System);
+                var notification = new iOSNotification
+                {
+                    Identifier = "slothys_bakery_return_" + plan.Index,
+                    Title = GetTitle(),
+                    Body = GetBody(plan.Index),
+                    ShowInForeground = false,
+                    ForegroundPresentationOption = PresentationOption.Alert | PresentationOption.Sound,
+                    Trigger = new iOSNotificationCalendarTrigger
+                    {
+                        Year = plan.FireAt.Year,
+                        Month = plan.FireAt.Month,
+                        Day = plan.FireAt.Day,
+                        Hour = plan.FireAt.Hour,
+                        Minute = plan.FireAt.Minute,
+                        Repeats = false
+                    }
+                };
+                iOSNotificationCenter.ScheduleNotification(notification);
+            }
+            GameLogger.Log("iOS return reminders scheduled for the next three planned dates.", LogCategory.System);
         }
 #endif
     }

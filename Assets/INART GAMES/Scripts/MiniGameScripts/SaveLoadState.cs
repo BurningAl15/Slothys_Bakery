@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Fatcat.Slothy.Bakery.Modes;
+using UnityEngine;
 using UnityEngine.UI;
 using INART.Framework.Core;
 
@@ -21,6 +22,10 @@ namespace INART.SlothyBakery.Base
         public int  completions    = 0;
         /// <summary>ISO-8601 timestamp of the last session (UTC).</summary>
         public string lastPlayedUtc = "";
+        /// <summary>Saved round index within the active Story chapter (0-based).</summary>
+        public int currentRoundIndex = 0;
+        /// <summary>Last active Story scene name.</summary>
+        public string currentSceneName = "";
     }
 
     // ── Manager ────────────────────────────────────────────────────────────────
@@ -59,6 +64,7 @@ namespace INART.SlothyBakery.Base
         /// <summary>Persists the current progress to PlayerPrefs.</summary>
         public void Save()
         {
+            if (BakerySession.OffStory) return;
             _progress.lastPlayedUtc = System.DateTime.UtcNow.ToString("o");
             string json = JsonUtility.ToJson(_progress);
             PlayerPrefs.SetString(GameConstants.PREFS_PLAYER_PROGRESS, json);
@@ -72,7 +78,7 @@ namespace INART.SlothyBakery.Base
             string json = PlayerPrefs.GetString(GameConstants.PREFS_PLAYER_PROGRESS, "");
             _progress = string.IsNullOrEmpty(json)
                 ? new BakeryProgressData()
-                : JsonUtility.FromJson<BakeryProgressData>(json);
+                : JsonUtility.FromJson<BakeryProgressData>(json) ?? new BakeryProgressData();
         }
 
         /// <summary>Wipes all saved progress (use for "New Game" option).</summary>
@@ -84,9 +90,76 @@ namespace INART.SlothyBakery.Base
             GameLogger.Log("Progress deleted.", LogCategory.Save);
         }
 
-        /// <summary>True if a saved game exists.</summary>
+        /// <summary>Resets active chapter & round checkpoint for a fresh Story run while preserving completions.</summary>
+        public void ResetForNewStoryGame()
+        {
+            if (BakerySession.OffStory) return;
+            _progress ??= new BakeryProgressData();
+            _progress.unlockedState = 0;
+            _progress.currentRoundIndex = 0;
+            _progress.currentSceneName = INART.SlothyBakery.SceneTransition.SceneUtils.FirstMinigameScene;
+            Save();
+        }
+
+        /// <summary>Records chapter entry on Story without clobbering an existing round checkpoint for the same chapter.</summary>
+        public void EnterMinigame(int chapterState, string sceneName)
+        {
+            if (BakerySession.OffStory) return;
+            _progress ??= new BakeryProgressData();
+            bool sameChapter = HasSavedProgress() && _progress.unlockedState == chapterState;
+            _progress.unlockedState = chapterState;
+            _progress.currentSceneName = sceneName;
+            if (!sameChapter)
+                _progress.currentRoundIndex = 0;
+            Save();
+        }
+
+        /// <summary>Persists round checkpoint inside the active Story chapter.</summary>
+        public void SaveRoundCheckpoint(int chapterState, string sceneName, int nextRoundIndex)
+        {
+            if (BakerySession.OffStory) return;
+            _progress ??= new BakeryProgressData();
+            _progress.unlockedState = chapterState;
+            _progress.currentSceneName = sceneName;
+            _progress.currentRoundIndex = Mathf.Max(0, nextRoundIndex);
+            Save();
+        }
+
+        /// <summary>Returns saved round index if playing Story in the matching chapter; 0 in OffStory modes.</summary>
+        public int GetRoundCheckpoint(int expectedChapterState)
+        {
+            if (BakerySession.OffStory || _progress == null || !HasSavedProgress())
+                return 0;
+            return _progress.unlockedState == expectedChapterState ? Mathf.Max(0, _progress.currentRoundIndex) : 0;
+        }
+
+        /// <summary>Advances Story progress when the last round of a chapter completes.</summary>
+        public void CompleteStoryChapter(int nextChapterState, string nextSceneName, bool finishedStory)
+        {
+            if (BakerySession.OffStory) return;
+            _progress ??= new BakeryProgressData();
+            if (finishedStory)
+            {
+                _progress.completions = Mathf.Max(0, _progress.completions) + 1;
+                _progress.unlockedState = 0;
+                _progress.currentRoundIndex = 0;
+                _progress.currentSceneName = INART.SlothyBakery.SceneTransition.SceneUtils.FirstMinigameScene;
+                BakeryStats.Add("story.finished");
+            }
+            else
+            {
+                _progress.unlockedState = nextChapterState;
+                _progress.currentRoundIndex = 0;
+                _progress.currentSceneName = nextSceneName;
+            }
+            Save();
+        }
+
+        /// <summary>True if an in-progress Story run exists beyond the very first unplayed exercise.</summary>
         public bool HasSavedProgress()
-            => !string.IsNullOrEmpty(PlayerPrefs.GetString(GameConstants.PREFS_PLAYER_PROGRESS, ""));
+            => _progress != null
+               && !string.IsNullOrEmpty(PlayerPrefs.GetString(GameConstants.PREFS_PLAYER_PROGRESS, ""))
+               && (_progress.unlockedState > 0 || _progress.currentRoundIndex > 0);
 
         // ── Legacy compatibility API ───────────────────────────────────────────
         // Keep these so existing minigame scripts don't need to change yet.
@@ -97,6 +170,9 @@ namespace INART.SlothyBakery.Base
         /// <summary>Sets the current unlocked state. Use Progress.unlockedState for new code.</summary>
         public void SetActualState(int state)
         {
+            if (BakerySession.OffStory) return;
+            if (_progress.unlockedState != state)
+                _progress.currentRoundIndex = 0;
             _progress.unlockedState = state;
         }
 
@@ -109,8 +185,8 @@ namespace INART.SlothyBakery.Base
         public static void InitMenuButtons(Button newGameButton, Button continueButton)
         {
             bool hasSave = Instance != null && Instance.HasSavedProgress();
-            newGameButton.gameObject.SetActive(true);
-            continueButton.gameObject.SetActive(hasSave);
+            if (newGameButton != null) newGameButton.gameObject.SetActive(true);
+            if (continueButton != null) continueButton.gameObject.SetActive(hasSave);
         }
     }
 }

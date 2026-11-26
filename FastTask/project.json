@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "projectId": "6ac9935f-7255-484a-97fd-2e47472f796f",
+  "name": "Slothy's Bakery",
+  "createdAt": "2026-11-20T23:23:46-05:00",
+  "handoffPath": "SLOTHY_SYSTEMS_HANDOFF_2026-10-17.md",
+  "relatedHandoffPaths": [
+    "../docs/slothy-core/handoff.md",
+    "Documentation/REVISION_ACADEMY_2026-11-24.md",
+    "Documentation/REVISION_MECANICAS_Y_MODOS.md",
+    "Documentation/CLAUDE_HANDOFF_NEXT.md",
+    "Documentation/IMPLEMENTACION_MINIJUEGOS_DINAMICOS_2026-11-24.md"
+  ],
+  "updatedAt": "2026-11-25T07:34:00-05:00"
+}

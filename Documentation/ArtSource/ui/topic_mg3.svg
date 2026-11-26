@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><g stroke="#583553" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round">
+                <rect x="20" y="34" width="44" height="32" rx="10" fill="#9BE089"/>
+                <rect x="64" y="34" width="44" height="32" rx="10" fill="#6F666C" fill-opacity="0.45"/>
+                <circle cx="34" cy="48" r="5" fill="#EA5A6E" stroke="none"/>
+                <circle cx="50" cy="48" r="5" fill="#EA5A6E" stroke="none"/>
+                <rect x="24" y="80" width="80" height="26" rx="9" fill="#FFFFFF"/>
+                <text x="64" y="100" text-anchor="middle" font-family="sans-serif" font-weight="800" font-size="20" fill="#D45580" stroke="none">1/2 = 2/4</text>
+                </g></svg>

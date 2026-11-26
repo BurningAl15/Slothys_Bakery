@@ -21,6 +21,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-es-EC
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1d73ffbe976d945ae96b1858b919633d
+    m_Address: BakeryShell_es-EC
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es-EC
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2d1777d954fea4554a859dfbd3d76ec0
     m_Address: GamePhrases_es-EC
     m_ReadOnly: 1

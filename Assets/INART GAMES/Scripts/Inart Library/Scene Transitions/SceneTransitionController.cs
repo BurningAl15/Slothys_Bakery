@@ -24,15 +24,10 @@ namespace INART.SlothyBakery.SceneTransition
 
         #region Private Fields
         private Image uiImage;
-        private float floorValue = 0;
-        private float currentValue = 0;
+        private Image _overlayFadeImage;
+        private GameObject _overlayCanvasGo;
         private Coroutine currentCoroutine = null;
         private bool endAnimation = true;
-        #endregion
-
-        #region Shader Property IDs
-        private static readonly int EdgeSmoothing = Shader.PropertyToID("_EdgeSmoothing");
-        private static readonly int Cutoff = Shader.PropertyToID("_Cutoff");
         #endregion
 
         #region Properties
@@ -50,11 +45,35 @@ namespace INART.SlothyBakery.SceneTransition
         protected override void OnAwake()
         {
             uiImage = GetComponent<Image>();
+            if (uiImage != null)
+            {
+                uiImage.enabled = false;
+                uiImage.raycastTarget = false;
+            }
+            EnsureOverlay();
+        }
 
-            floorValue = uiImage.material.GetFloat(EdgeSmoothing);
-            float clearValue = 1 + floorValue;
-            uiImage.material.SetFloat(Cutoff, clearValue);
-            currentValue = uiImage.material.GetFloat(Cutoff);
+        private void EnsureOverlay()
+        {
+            if (_overlayFadeImage != null) return;
+
+            _overlayCanvasGo = new GameObject("BakeryFadeOverlay", typeof(RectTransform), typeof(Canvas), typeof(GraphicRaycaster));
+            DontDestroyOnLoad(_overlayCanvasGo);
+            var c = _overlayCanvasGo.GetComponent<Canvas>();
+            c.renderMode = RenderMode.ScreenSpaceOverlay;
+            c.sortingOrder = 999;
+
+            var imgGo = new GameObject("Fade", typeof(RectTransform), typeof(Image));
+            imgGo.transform.SetParent(_overlayCanvasGo.transform, false);
+            var rt = (RectTransform)imgGo.transform;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+
+            _overlayFadeImage = imgGo.GetComponent<Image>();
+            _overlayFadeImage.color = new Color(0f, 0f, 0f, 0f);
+            _overlayFadeImage.raycastTarget = false;
         }
         #endregion
 
@@ -82,25 +101,26 @@ namespace INART.SlothyBakery.SceneTransition
         /// </summary>
         public IEnumerator FadeEffect_OUT()
         {
-            var step = transitionSpeed * Time.deltaTime;
-
-            var init = 1 + floorValue; //Color
-            var end = -floorValue; //Black
-
-            uiImage.material.SetFloat(Cutoff, init);
-
-            yield return new WaitForSeconds(.5f);
-
-            float timer = maxTimer;
-            
-            while (timer >= 0)
+            EnsureOverlay();
+            if (_overlayFadeImage == null || transitionSpeed <= 0f)
             {
-                timer -= Time.deltaTime * transitionSpeed;
-                uiImage.material.SetFloat(Cutoff, Mathf.InverseLerp(end, init, _animationCurve.Evaluate(timer)));
-                yield return Time.deltaTime;
+                endAnimation = true;
+                yield break;
             }
-            
-            uiImage.material.SetFloat(Cutoff, end);
+
+            _overlayFadeImage.raycastTarget = true;
+            float dur = maxTimer > 0f ? Mathf.Clamp(maxTimer / transitionSpeed, 0.15f, 0.55f) : 0.35f;
+            yield return null;
+            float elapsed = 0f;
+            while (elapsed < dur)
+            {
+                elapsed += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+                float a = Mathf.Clamp01(elapsed / dur);
+                _overlayFadeImage.color = new Color(0f, 0f, 0f, a);
+                yield return null;
+            }
+
+            _overlayFadeImage.color = new Color(0f, 0f, 0f, 1f);
             currentCoroutine = null;
             endAnimation = true;
         }
@@ -110,25 +130,26 @@ namespace INART.SlothyBakery.SceneTransition
         /// </summary>
         public IEnumerator FadeEffect_IN()
         {
-            var step = transitionSpeed * Time.deltaTime;
-
-            var init = -floorValue;
-            var end = 1 + floorValue;
-
-            uiImage.material.SetFloat(Cutoff, init);
-
-            yield return new WaitForSeconds(.5f);
-
-            float timer = 0;
-            
-            while (timer <= maxTimer)
+            EnsureOverlay();
+            if (_overlayFadeImage == null || transitionSpeed <= 0f)
             {
-                timer += Time.deltaTime * transitionSpeed;
-                uiImage.material.SetFloat(Cutoff, Mathf.InverseLerp( init,end, _animationCurve.Evaluate(timer)));
-                yield return Time.deltaTime;
+                endAnimation = true;
+                yield break;
             }
-            
-            uiImage.material.SetFloat(Cutoff, end);
+
+            float dur = maxTimer > 0f ? Mathf.Clamp(maxTimer / transitionSpeed, 0.15f, 0.55f) : 0.35f;
+            yield return null;
+            float elapsed = 0f;
+            while (elapsed < dur)
+            {
+                elapsed += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+                float a = 1f - Mathf.Clamp01(elapsed / dur);
+                _overlayFadeImage.color = new Color(0f, 0f, 0f, a);
+                yield return null;
+            }
+
+            _overlayFadeImage.color = new Color(0f, 0f, 0f, 0f);
+            _overlayFadeImage.raycastTarget = false;
             currentCoroutine = null;
             endAnimation = true;
         }

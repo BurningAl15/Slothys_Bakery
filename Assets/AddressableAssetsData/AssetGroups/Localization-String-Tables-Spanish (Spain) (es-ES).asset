@@ -21,6 +21,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-es-ES
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9679e552deff043278cafbe6f127ee77
+    m_Address: BakeryShell_es-ES
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es-ES
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d99f8c6c1488244d4a8eb6193f71be75
     m_Address: Notifications_es-ES
     m_ReadOnly: 1

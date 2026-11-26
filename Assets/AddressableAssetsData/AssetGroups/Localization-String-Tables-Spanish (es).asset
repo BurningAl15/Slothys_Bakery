@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-Spanish (es)
   m_GUID: 97b097795d06b41e0a2ec689ba03e0b2
   m_SerializeEntries:
+  - m_GUID: 3c70a5dee46a14e9c86c9477be7addd9
+    m_Address: BakeryShell_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ce5016c8a3d824ab7b6c00414e526235
     m_Address: UI_es
     m_ReadOnly: 1

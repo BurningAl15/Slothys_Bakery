@@ -5,6 +5,8 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using INART.Framework.Utils;
+using INART.SlothyBakery.SceneTransition;
+using FatCat.SettingsUI;
 
 namespace INART.SlothyBakery.Base
 {
@@ -62,7 +64,27 @@ namespace INART.SlothyBakery.Base
         {
             CachePositions();
             ResetToHidden();
-            PlayIntroSequence();
+        }
+
+        private void Start()
+        {
+            Button newGameBtn = startButtons != null && startButtons.Length > 0 ? startButtons[0] : null;
+            SaveLoadState.InitMenuButtons(newGameBtn, continueButton);
+            if (!Fatcat.Slothy.Bakery.Shell.BakeryLanguageGate.NeedsChoice)
+                PlayIntroSequence();
+        }
+
+        /// <summary>Runs the menu entrance once the initial language picker has been confirmed.</summary>
+        public void BeginDeferredIntro()
+        {
+            if (_sequence == null)
+                PlayIntroSequence();
+        }
+
+        private void OnDestroy()
+        {
+            _sequence?.Kill();
+            _sequence = null;
         }
 
         // ── Public API ─────────────────────────────────────────────────────────
@@ -76,6 +98,12 @@ namespace INART.SlothyBakery.Base
         public void Call_SoundSettings()
         {
             if (_sequence != null && _sequence.IsPlaying()) return;
+            var sharedSettings = FindFirstObjectByType<SettingsScreenView>(FindObjectsInactive.Include);
+            if (sharedSettings != null)
+            {
+                sharedSettings.Open();
+                return;
+            }
             PlaySoundSettingsSequence();
         }
 
@@ -103,13 +131,21 @@ namespace INART.SlothyBakery.Base
                 titleImg.DOLocalMoveX(_titleEnd.x, elementDuration).SetEase(_animationCurve));
 
             // 3. Start buttons scale in (joined so they all animate together)
+            bool appendedStartButton = false;
             for (int i = 0; i < startButtons.Length; i++)
             {
+                if (startButtons[i] == null || !startButtons[i].gameObject.activeSelf) continue;
                 var btn = startButtons[i].GetComponent<RectTransform>();
-                if (i == 0)
+                btn.DOKill();
+                if (!appendedStartButton)
+                {
                     _sequence.Append(btn.DOScale(1f, elementDuration).SetEase(Ease.OutBack));
+                    appendedStartButton = true;
+                }
                 else
+                {
                     _sequence.Join(btn.DOScale(1f, elementDuration).SetEase(Ease.OutBack));
+                }
             }
 
             // 4. Sound button scales in
@@ -117,16 +153,8 @@ namespace INART.SlothyBakery.Base
                 soundButton.GetComponent<RectTransform>()
                            .DOScale(1f, elementDuration).SetEase(Ease.OutBack));
 
-            // 5. Enable button animators when done
-            _sequence.OnComplete(() =>
-            {
-                foreach (var btn in startButtons)
-                {
-                    var anim = btn.GetComponent<Animator>();
-                    if (anim != null) anim.enabled = true;
-                }
-                _sequence = null;
-            });
+            // 5. Keep legacy Animator disabled so buttons do not replay an intro animation twice
+            _sequence.OnComplete(() => { _sequence = null; });
         }
 
         /// <summary>
@@ -213,8 +241,9 @@ namespace INART.SlothyBakery.Base
                 yield return new WaitWhile(() => clickSource.isPlaying);
             }
 
-            yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            if (SceneTransitionController.Instance != null)
+                yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
+            SceneUtils.ToNextScene();
         }
 
         // ── Helpers ────────────────────────────────────────────────────────────

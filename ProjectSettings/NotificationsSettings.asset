@@ -17,7 +17,7 @@
                 "UnityAddTimeSensitiveEntitlement"
             ],
             "m_Values": [
-                "True",
+                "False",
                 "7",
                 "False",
                 "False",
@@ -41,6 +41,25 @@
                 "com.unity3d.player.UnityPlayerActivity"
             ]
         },
-        "DrawableResources": []
+        "DrawableResources": [
+            {
+                "Id": "bakery_notif_small",
+                "Type": 0,
+                "Asset": {
+                    "fileID": 2800000,
+                    "guid": "569f680ad0c7547149a3bdb87908adc3",
+                    "type": 3
+                }
+            },
+            {
+                "Id": "bakery_notif_large",
+                "Type": 1,
+                "Asset": {
+                    "fileID": 2800000,
+                    "guid": "d79897f271df44894912157626c0dbfc",
+                    "type": 3
+                }
+            }
+        ]
     }
 }

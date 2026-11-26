@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-Spanish (Paraguay) (es-PY)
   m_GUID: 21174cd82a3ec4a71a4e95305908e461
   m_SerializeEntries:
+  - m_GUID: 39320d41f3b7049d5b0db9af93c23430
+    m_Address: BakeryShell_es-PY
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es-PY
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5799d654e19b544dcb7105dd9d6f36cb
     m_Address: GamePhrases_es-PY
     m_ReadOnly: 1

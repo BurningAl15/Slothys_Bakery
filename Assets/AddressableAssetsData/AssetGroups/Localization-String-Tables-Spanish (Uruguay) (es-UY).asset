@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-Spanish (Uruguay) (es-UY)
   m_GUID: abb4b5c6b0932497c996da945ec4b65b
   m_SerializeEntries:
+  - m_GUID: 02d768e76d0084ffeb599f8651a4a47e
+    m_Address: BakeryShell_es-UY
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es-UY
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3dcbdf360988e433a9d3a2b1d2f6c570
     m_Address: UI_es-UY
     m_ReadOnly: 1

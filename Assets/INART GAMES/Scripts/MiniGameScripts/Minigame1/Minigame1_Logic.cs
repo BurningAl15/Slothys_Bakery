@@ -5,6 +5,7 @@ using INART.SlothyBakery.Base;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Fatcat.Slothy.Bakery.Shell;
 
 namespace INART.SlothyBakery.Base
 {
@@ -58,23 +59,28 @@ namespace INART.SlothyBakery.Base
         private Sign value;
 
         private AnimationCurve _animationCurve;
+        private int activeQuestionIndex;
 
         [SerializeField] private bool isCorrect = false;
         public bool IsCorrect => isCorrect;
+        public bool HasRequiredQuestionPrompts => questions != null && questions.Count >= 3 &&
+            questionText != null && _buttonMenu != null && _inputFieldMenu != null &&
+            _signButtonMenu != null && inputField != null && _rectTransform != null && positionPoints != null;
 
 
         public void Init(AnimationCurve animationCurve)
         {
             _rectTransform.localPosition = positionPoints.InitialPos;
             _animationCurve = animationCurve;
+            isCorrect = false;
 
-            questionText.text = questions[0];
+            SetQuestionPrompt(0);
+            StartCoroutine(LoadLocalizedQuestionPrompts());
 
             Interact(_buttonMenu, false);
             Interact(_inputFieldMenu, false);
             Interact(_signButtonMenu, false);
-            SaveLoadState.Instance.SetActualState(0);
-            SaveLoadState.Instance.Save();
+            SaveLoadState.Instance?.EnterMinigame(0, SceneTransition.SceneUtils.FirstMinigameScene);
         }
 
         public IEnumerator MoveMenu(bool run)
@@ -114,7 +120,7 @@ namespace INART.SlothyBakery.Base
             TurnOffButtonMenu(_signButtonMenu);
             TurnOnButtonMenu(_buttonMenu);
             CanvasAnimator.Instance.TurnButton(true);
-            questionText.text = questions[0];
+            SetQuestionPrompt(0);
 
             fraction = _fraction;
 
@@ -148,6 +154,7 @@ namespace INART.SlothyBakery.Base
             }
             else
             {
+                Fatcat.Slothy.Bakery.Modes.BakerySession.RecordAnswer(false);
                 SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
                 fraction._left._fraction.UpdateColor(wrong);
                 MessageManager.Instance.Animate_Message(false);
@@ -160,38 +167,43 @@ namespace INART.SlothyBakery.Base
         //Step 2 - Check in Input
         public void CheckInputValue()
         {
-            // int tempVal = GetInputValue();
-            (int, int) tempFraction = GetInputValueTuple();
-
-            if (tempFraction.Item1 == tempFraction.Item2)
+            if (!TryGetInputTuple(out int numeratorMultiplier, out int denominatorMultiplier) ||
+                numeratorMultiplier <= 0 || denominatorMultiplier <= 0 ||
+                numeratorMultiplier != denominatorMultiplier)
             {
-                fraction._left._fraction.MultiplyWith(tempFraction.Item2);
-                int tempDenominator1 = fraction._left._fraction.Denominator * fraction._left._fraction.MultiplyVal;
-                if (IsEquals(tempDenominator1, denominator2))
-                {
-                    inputField.text = "";
-                    SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
-                    fraction._left._fraction.UpdateColor(success);
-                    TurnOn_SignButtonMenu();
-                    Interact(_signButtonMenu, true);
-                    MessageManager.Instance.Animate_Message(true);
-                    CanvasAnimator.Instance.TurnButton(false);
-                }
-                else
-                {
-                    SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
-                    fraction._left._fraction.UpdateColor(wrong);
-                    MessageManager.Instance.Animate_Message(false);
-                    inputField.text = "";
-                }
+                RejectMultiplierInput();
+                return;
+            }
+
+            fraction._left._fraction.MultiplyWith(denominatorMultiplier);
+            int tempDenominator1 = fraction._left._fraction.Denominator * fraction._left._fraction.MultiplyVal;
+            if (IsEquals(tempDenominator1, denominator2))
+            {
+                inputField.text = "";
+                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
+                fraction._left._fraction.UpdateColor(success);
+                TurnOn_SignButtonMenu();
+                Interact(_signButtonMenu, true);
+                MessageManager.Instance.Animate_Message(true);
+                CanvasAnimator.Instance.TurnButton(false);
             }
             else
             {
+                Fatcat.Slothy.Bakery.Modes.BakerySession.RecordAnswer(false);
                 SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
                 fraction._left._fraction.UpdateColor(wrong);
                 MessageManager.Instance.Animate_Message(false);
                 inputField.text = "";
             }
+        }
+
+        private void RejectMultiplierInput()
+        {
+            Fatcat.Slothy.Bakery.Modes.BakerySession.RecordAnswer(false);
+            SoundManager.Instance?.Run_SFX(SoundManager.SoundType.Wrong);
+            fraction._left._fraction.UpdateColor(wrong);
+            MessageManager.Instance?.Animate_Message(false);
+            inputField.text = "";
         }
 
         public void Reset()
@@ -204,9 +216,13 @@ namespace INART.SlothyBakery.Base
         //Step 3 - Comparing by signs
         public void CheckSignInput(int _sign)
         {
+            if (isCorrect) return;
+
             if (_sign == (int)value)
             {
                 isCorrect = true;
+                Fatcat.Slothy.Bakery.Modes.BakerySession.RecordAnswer(true);
+                Fatcat.Slothy.Bakery.Shell.BakeryFeedbackHooks.ShowAnswerStamp(true, fraction != null && fraction._left != null ? fraction._left.plate.transform.position : Vector3.zero);
                 SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
                 Interact(_buttonMenu, false);
                 Interact(_inputFieldMenu, false);
@@ -223,6 +239,8 @@ namespace INART.SlothyBakery.Base
             }
             else if (_sign != (int)value)
             {
+                Fatcat.Slothy.Bakery.Modes.BakerySession.RecordAnswer(false);
+                Fatcat.Slothy.Bakery.Shell.BakeryFeedbackHooks.ShowAnswerStamp(false, fraction != null && fraction._right != null ? fraction._right.plate.transform.position : Vector3.zero);
                 SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
                 MessageManager.Instance.Animate_Message(false);
 
@@ -242,7 +260,7 @@ namespace INART.SlothyBakery.Base
             TurnOffButtonMenu(_buttonMenu);
             TurnOnButtonMenu(_inputFieldMenu);
             HintManager.Instance.TurnOn();
-            questionText.text = questions[1];
+            SetQuestionPrompt(1);
         }
 
         public void TurnOn_IfDenominatorsEquals_InputFieldMenu()
@@ -254,10 +272,11 @@ namespace INART.SlothyBakery.Base
                 TurnOffButtonMenu(_buttonMenu);
                 TurnOnButtonMenu(_inputFieldMenu);
                 HintManager.Instance.TurnOn();
-                questionText.text = questions[1];
+                SetQuestionPrompt(1);
             }
             else
             {
+                Fatcat.Slothy.Bakery.Modes.BakerySession.RecordAnswer(false);
                 SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
                 fraction._left._fraction.UpdateColor(wrong);
                 MessageManager.Instance.Animate_Message(false);
@@ -270,7 +289,7 @@ namespace INART.SlothyBakery.Base
             TurnOffButtonMenu(_inputFieldMenu);
             TurnOnButtonMenu(_signButtonMenu);
             HintManager.Instance.TurnOff();
-            questionText.text = questions[2];
+            SetQuestionPrompt(2);
         }
 
         public void TurnOff_InputFieldMenu()
@@ -279,7 +298,27 @@ namespace INART.SlothyBakery.Base
             TurnOffButtonMenu(_inputFieldMenu);
             HintManager.Instance.TurnOff();
             Reset();
-            questionText.text = questions[0];
+            SetQuestionPrompt(0);
+        }
+
+        private void SetQuestionPrompt(int index)
+        {
+            if (questions == null || index < 0 || index >= questions.Count || questionText == null) return;
+            activeQuestionIndex = index;
+            BakeryPromptLocalization.SetText(questionText, questions[index]);
+        }
+
+        private IEnumerator LoadLocalizedQuestionPrompts()
+        {
+            string[] keys = { "minigame.mg1.prompt.0", "minigame.mg1.prompt.1", "minigame.mg1.prompt.2" };
+            int count = Mathf.Min(keys.Length, questions.Count);
+            for (int i = 0; i < count; i++)
+            {
+                int promptIndex = i;
+                yield return BakeryPromptLocalization.Resolve(keys[i], questions[i], value => questions[promptIndex] = value);
+            }
+
+            SetQuestionPrompt(activeQuestionIndex);
         }
 
 
@@ -314,7 +353,7 @@ namespace INART.SlothyBakery.Base
 
         //Not Used
         // int GetInputValue()
-        // {            
+        // {
         //     string content = inputField.text;
         //     string[] split=content.Split(new char[] {' ','/'});
 
@@ -330,24 +369,35 @@ namespace INART.SlothyBakery.Base
         //     return 0;
         // }
 
-        (int, int) GetInputValueTuple()
+        bool TryGetInputTuple(out int numeratorMultiplier, out int denominatorMultiplier)
         {
-            string content = inputField.text;
-            string[] split = content.Split(new char[] { ' ', '/' });
+            numeratorMultiplier = 0;
+            denominatorMultiplier = 0;
+            if (string.IsNullOrWhiteSpace(inputField.text)) return false;
 
-            if (split.Length >= 2)
+            string trimmed = inputField.text.Trim();
+            string[] split;
+            if (trimmed.IndexOf('/') >= 0)
             {
-                int a, b;
-
-                if (int.TryParse(split[0], out a) && int.TryParse(split[1], out b))
+                if (trimmed.IndexOf('/') != trimmed.LastIndexOf('/')) return false;
+                split = trimmed.Split('/');
+                if (split.Length == 2)
                 {
-                    if (split.Length >= 2)
-                    {
-                        return (a, b);
-                    }
+                    split[0] = split[0].Trim();
+                    split[1] = split[1].Trim();
                 }
             }
-            return (1, 1);
+            else
+            {
+                split = trimmed.Split(new[] { ' ', '\t', '\r', '\n' },
+                    System.StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            return split.Length == 2 &&
+                int.TryParse(split[0], System.Globalization.NumberStyles.Integer,
+                    System.Globalization.CultureInfo.InvariantCulture, out numeratorMultiplier) &&
+                int.TryParse(split[1], System.Globalization.NumberStyles.Integer,
+                    System.Globalization.CultureInfo.InvariantCulture, out denominatorMultiplier);
         }
 
     }

@@ -33,12 +33,12 @@ public class SignSelectable : MonoBehaviour
     
     public void Collider_Deactivate()
     {
-        collider.enabled = false;
+        if (collider != null) collider.enabled = false;
     }
     
     public void Collider_Activate()
     {
-        collider.enabled = true;
+        if (collider != null) collider.enabled = true;
     }
     
     public void Initialize()
@@ -49,7 +49,7 @@ public class SignSelectable : MonoBehaviour
     
     private void OnMouseDown()
     {
-        if (_state == SignState.Placed)
+        if (_state == SignState.Placed && SignManager.Instance != null && SignManager.Instance.main != null)
         {
             SignManager.Instance.SetSelectable_Active(this);
             screenSpace = SignManager.Instance.main.WorldToScreenPoint(signPos.position);
@@ -62,7 +62,7 @@ public class SignSelectable : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        if (_state == SignState.Active)
+        if (_state == SignState.Active && SignManager.Instance != null && SignManager.Instance.main != null)
         {
             var currentScreenSpace = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenSpace.z);
             
@@ -74,29 +74,32 @@ public class SignSelectable : MonoBehaviour
     
     private void OnMouseUp()
     {
-        if (_state == SignState.Active)
+        if (_state == SignState.Active && SignManager.Instance != null)
         {
             if (currentCoroutine == null)
+            {
+                Physics2D.SyncTransforms();
                 currentCoroutine = StartCoroutine(Checking(OverlapChecking()));
+            }
         }
         else if (_state == SignState.OnPlate)
         {
             //Reset by coroutine
             signPos.localScale = Vector2.one * SignUtils.maxScale;
-            if (currentCoroutine == null)
-                currentCoroutine = StartCoroutine(Reset(SignManager.Instance.GetInitialPos(Sign)));
+            if (currentCoroutine == null && SignManager.Instance != null)
+                currentCoroutine = StartCoroutine(Reset(SignManager.Instance.GetInitialPos(this)));
         }
     }
 
     public void _Reset(Sign _sign)
     {
-        if (currentCoroutine == null)
-            currentCoroutine = StartCoroutine(Reset(SignManager.Instance.GetInitialPos(_sign)));
+        if (currentCoroutine == null && SignManager.Instance != null)
+            currentCoroutine = StartCoroutine(Reset(SignManager.Instance.GetInitialPos(this)));
     }
     
     Vector3 OverlapChecking()
     {
-        Collider2D tempCollider = Physics2D.OverlapCircle(signPos.position, SignUtils.collisionRadius, SignManager.Instance.collisionLayer);
+        Collider2D tempCollider = FindDropTarget();
         if (tempCollider)
             return tempCollider.transform.position;
 
@@ -105,7 +108,27 @@ public class SignSelectable : MonoBehaviour
 
     bool OverlapChecking_ResetCheck()
     {
-        return Physics2D.OverlapCircle(signPos.position, SignUtils.collisionRadius, SignManager.Instance.collisionLayer);
+        return FindDropTarget() != null;
+    }
+
+    private Collider2D FindDropTarget()
+    {
+        if (SignManager.Instance == null || collider == null) return null;
+
+        Physics2D.SyncTransforms();
+        Bounds itemBounds = collider.bounds;
+        Vector2 margin = Vector2.one * SignUtils.collisionRadius;
+        Collider2D[] candidates = Physics2D.OverlapAreaAll((Vector2)itemBounds.min - margin,
+            (Vector2)itemBounds.max + margin, SignManager.Instance.collisionLayer);
+
+        for (int i = 0; i < candidates.Length; i++)
+        {
+            Collider2D candidate = candidates[i];
+            if (candidate == null || candidate == collider) continue;
+            if (candidate.bounds.Intersects(itemBounds)) return candidate;
+        }
+
+        return null;
     }
 
     void IsFull()
@@ -116,7 +139,8 @@ public class SignSelectable : MonoBehaviour
         if (temp != null)
         {
             SignSelectable tempSelectable = temp.gameObject.GetComponent<SignSelectable>();
-            SignManager.Instance.ResetSelectable(tempSelectable);
+            if (tempSelectable != null && tempSelectable != this)
+                SignManager.Instance.ResetSelectable(tempSelectable);
         }
     }
 
@@ -128,7 +152,7 @@ public class SignSelectable : MonoBehaviour
         yield return Translate(targetPos);
         yield return Scale(true);
 
-        ValueManager._instance.SetValue(Sign);
+        if (ValueManager._instance != null) ValueManager._instance.SetValue(Sign);
         // SoundManager.Instance.Run_SFX(SoundManager.SoundType.Selection1);
         
         if (OverlapChecking_ResetCheck())
@@ -138,7 +162,7 @@ public class SignSelectable : MonoBehaviour
         }
         else
         {
-            yield return Translate(SignManager.Instance.GetInitialPos(_sign));
+            yield return Translate(SignManager.Instance.GetInitialPos(this));
             _state = SignState.Placed;
             gameObject.layer = SignUtils.resetLayer;
         }

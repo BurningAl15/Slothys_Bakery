@@ -32,6 +32,7 @@ public class FractionValue : MonoBehaviour
    {
        numerator = _numerator;
        denominator = _denominator;
+       multiplyWith = 1;
        UpdateText();
        UpdateAlpha(0);
    }

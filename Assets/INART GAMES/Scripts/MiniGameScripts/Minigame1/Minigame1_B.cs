@@ -50,12 +50,20 @@ namespace INART.SlothyBakery.Base
 
         public void Initialize()
         {
+            if (_fraction == null || _sprites == null)
+            {
+                Debug.LogError("[Bakery MG1] Fraction renderer is missing its fraction or piece sprites.");
+                return;
+            }
+
             _fraction.InitializeFraction(numerator, denominator);
             for (int i = 0; i < _sprites.Count; i++)
-                _sprites[i].color = new Color(.25f, .25f, .25f, .25f);
+                if (_sprites[i] != null)
+                    _sprites[i].color = new Color(.25f, .25f, .25f, .25f);
 
-            for (int i = 0; i < numerator; i++)
-                _sprites[i].color = new Color(1, 1, 1, 1);
+            for (int i = 0; i < Mathf.Min(numerator, _sprites.Count); i++)
+                if (_sprites[i] != null)
+                    _sprites[i].color = new Color(1, 1, 1, 1);
         }
 
         public void UpdateAlpha(float _alpha)
@@ -131,6 +139,7 @@ namespace INART.SlothyBakery.Base
 
         private Coroutine currentCoroutine = null;
         private bool next = false;
+        private bool contentReady;
 
         [SerializeField] private InstructiveState _instructive;
 
@@ -140,8 +149,11 @@ namespace INART.SlothyBakery.Base
 
         void Awake()
         {
-            for (int i = 0; i < signRenderers.Count; i++)
-                spriteDictionary.Add(signRenderers[i]._sign, signRenderers[i]._sprite);
+            for (int i = 0; signRenderers != null && i < signRenderers.Count; i++)
+            {
+                if (signRenderers[i] == null || signRenderers[i]._sprite == null) continue;
+                spriteDictionary[signRenderers[i]._sign] = signRenderers[i]._sprite;
+            }
 
             _instructive = InstructiveState.Start;
         }
@@ -190,6 +202,16 @@ namespace INART.SlothyBakery.Base
 
         public override void Init()
         {
+            contentReady = ValidateContent();
+            minigame1_Index = 0;
+            _instructive = InstructiveState.Start;
+            if (!contentReady) return;
+
+            if (Fatcat.Slothy.Bakery.Modes.BakerySession.OffStory &&
+                Fatcat.Slothy.Bakery.Modes.BakerySession.Seed.HasValue)
+                Fatcat.Slothy.Bakery.Modes.BakerySession.ShuffleWithSeed(
+                    compareFractions, Fatcat.Slothy.Bakery.Modes.BakerySession.Seed.Value ^ 0x101);
+
             for (int i = 0; i < compareFractions.Count; i++)
             {
                 compareFractions[i].Initialize();
@@ -198,10 +220,54 @@ namespace INART.SlothyBakery.Base
                 compareFractions[i].SetInitialColor(_logic.normal);
             }
             _logic.Init(_animationCurve);
+
+            int resumeIdx = SaveLoadState.Instance != null ? SaveLoadState.Instance.GetRoundCheckpoint(0) : 0;
+            minigame1_Index = Mathf.Clamp(resumeIdx, 0, compareFractions.Count - 1);
+            ProgressionCanvas.Instance?.ApplyCompletedRounds(minigame1_Index);
+        }
+
+        private bool ValidateContent()
+        {
+            if (compareFractions == null || compareFractions.Count == 0 || _logic == null ||
+                !_logic.HasRequiredQuestionPrompts || positions_Left == null || positions_Left.Count < 2 ||
+                positions_Right == null || positions_Right.Count < 2 ||
+                positions_Center == null || positions_Center.Count < 2 || _animationCurve == null ||
+                _animationCurve.length == 0)
+            {
+                Debug.LogError("[Bakery MG1] Missing rounds, prompts, waypoints, or scene references.", this);
+                return false;
+            }
+
+            for (int i = 0; i < compareFractions.Count; i++)
+            {
+                CompareFraction round = compareFractions[i];
+                if (round == null || round._sprite == null || !spriteDictionary.ContainsKey(round._value) ||
+                    !IsValidFraction(round._left) || !IsValidFraction(round._right))
+                {
+                    Debug.LogError($"[Bakery MG1] Invalid authored data at round {i}.", this);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool IsValidFraction(FractionRenderer fraction)
+        {
+            if (fraction == null || fraction._fraction == null || fraction.plate == null ||
+                fraction.denominator <= 0 || fraction.numerator < 0 || fraction._sprites == null ||
+                fraction.numerator > fraction._sprites.Count)
+                return false;
+
+            for (int i = 0; i < fraction.numerator; i++)
+                if (fraction._sprites[i] == null) return false;
+
+            return true;
         }
 
         public override IEnumerator TurnOnGame(float _delay)
         {
+            if (!contentReady) yield break;
             yield return new WaitForSeconds(Utils_Minigame1_Settings.waitTime);
 
             compareFractions[minigame1_Index].TurnOn_FractionAlpha();
@@ -246,9 +312,13 @@ namespace INART.SlothyBakery.Base
             //Run Unlock when Progression Finishes
             yield return StartCoroutine(ProgressionCanvas.Instance.UnlockStuff(minigame1_Index));
 
-            // Analytics + Daily Challenge
+            // Analytics + Daily Challenge + Checkpoint before transition delay
             AnalyticsManager.Instance?.TrackLevelCompleted($"minigame1_round_{minigame1_Index}", true);
             DailyChallengeManager.Instance?.AddProgress("complete_rounds", 1);
+            if (minigame1_Index < compareFractions.Count - 1)
+                SaveLoadState.Instance?.SaveRoundCheckpoint(0, SceneUtils.FirstMinigameScene, minigame1_Index + 1);
+            else
+                SaveLoadState.Instance?.CompleteStoryChapter(1, SceneUtils.SecondMinigameScene, false);
 
             //This should be a coroutine to make it soft but fast
             movement = 0;
@@ -338,7 +408,8 @@ namespace INART.SlothyBakery.Base
                 ProgressionCanvas.Instance.RunPartyParticles();
                 yield return StartCoroutine(CanvasAnimator.Instance.InstructionsAnimation(false, false, true));
                 yield return StartCoroutine(CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
-                yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
+                if (SceneTransitionController.Instance != null && SceneTransitionController.Instance.gameObject.activeInHierarchy)
+                    yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
                 SceneUtils.ToNextScene();
             }
 

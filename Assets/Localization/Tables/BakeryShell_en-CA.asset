@@ -1,0 +1,603 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: BakeryShell_en-CA
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en-CA
+  m_SharedData: {fileID: 11400000, guid: acc2a1be61816493db3ae601aca7e8d7, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1513086976
+    m_Localized: Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058496
+    m_Localized: Sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058497
+    m_Localized: Music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058498
+    m_Localized: Effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058499
+    m_Localized: Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058500
+    m_Localized: Vibration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058501
+    m_Localized: Daily reminder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058502
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058503
+    m_Localized: Change
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058504
+    m_Localized: More
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058505
+    m_Localized: Achievements
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058506
+    m_Localized: Rate us
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058507
+    m_Localized: Share
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058508
+    m_Localized: More games
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058509
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058510
+    m_Localized: Choose your language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058511
+    m_Localized: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058512
+    m_Localized: Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058513
+    m_Localized: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058514
+    m_Localized: Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058515
+    m_Localized: More games
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058516
+    m_Localized: More games from FatCat Game Studio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058517
+    m_Localized: More games coming soon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058518
+    m_Localized: Ask a grown-up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058519
+    m_Localized: "What is {0} \xD7 {1}?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058520
+    m_Localized: This opens a page outside the game.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058521
+    m_Localized: Only for grown-ups
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434031906816
+    m_Localized: Modes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684032
+    m_Localized: Game Modes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684033
+    m_Localized: Practice by topic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684034
+    m_Localized: Challenges
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684035
+    m_Localized: Step comparison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684036
+    m_Localized: Choose sign
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684037
+    m_Localized: Write fraction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684038
+    m_Localized: Daily challenge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684039
+    m_Localized: Afternoon shift
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684040
+    m_Localized: Chef Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684041
+    m_Localized: Achievements
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684042
+    m_Localized: View in store
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684043
+    m_Localized: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659044601856
+    m_Localized: Practice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573376
+    m_Localized: Achievements unlocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573377
+    m_Localized: Achievement unlocked!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573378
+    m_Localized: "Streak \xD7{0}!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573379
+    m_Localized: Unlocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573380
+    m_Localized: First Order
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573381
+    m_Localized: Complete your first minigame.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573382
+    m_Localized: Bakery in Motion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573383
+    m_Localized: Complete 10 minigames.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573384
+    m_Localized: Perfect Order
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573385
+    m_Localized: Complete a minigame without mistakes.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573386
+    m_Localized: First Practice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573387
+    m_Localized: Complete a topic practice.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573388
+    m_Localized: Try Every Recipe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573389
+    m_Localized: Practice all three minigames.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573390
+    m_Localized: Daily Baker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573391
+    m_Localized: Complete a daily challenge.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573392
+    m_Localized: Regular Customer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573393
+    m_Localized: Complete five daily challenges.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573394
+    m_Localized: Afternoon Shift
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573395
+    m_Localized: Complete an afternoon shift.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573396
+    m_Localized: Chef's Choice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573397
+    m_Localized: Complete a Chef Mode run.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573398
+    m_Localized: Back at the Bakery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573399
+    m_Localized: Play on three different days.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573400
+    m_Localized: Slothy is waiting at the bakery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573401
+    m_Localized: There is a new fractions activity for you. Want to try it?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573402
+    m_Localized: Slothy misses your help with today's orders.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573403
+    m_Localized: The bakery is still open. Slothy saved something for you.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573404
+    m_Localized: A gentle reminder to come back and play.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573405
+    m_Localized: <bounce>Are their denominators comparable?</bounce>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573406
+    m_Localized: <bounce>What fraction must we multiply the first fraction by to make the denominators comparable?</bounce>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573407
+    m_Localized: <bounce>What is the correct comparison sign?</bounce>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573408
+    m_Localized: <bounce>What fraction could be equivalent to the pieces of bread shown?</bounce>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573409
+    m_Localized: <bounce>What fraction is greater than the piece of dessert shown?</bounce>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573410
+    m_Localized: <bounce>What fraction is less than the piece of dessert shown?</bounce>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761456922624
+    m_Localized: Reset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699840
+    m_Localized: Understood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699841
+    m_Localized: Yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699842
+    m_Localized: No
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699843
+    m_Localized: Submit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699844
+    m_Localized: What is the equivalent value of ____?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699845
+    m_Localized: Check
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699846
+    m_Localized: Submit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699847
+    m_Localized: Enter a fraction...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782614081536
+    m_Localized: My progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441664
+    m_Localized: Today!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441665
+    m_Localized: View
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441666
+    m_Localized: Pick a topic to practice at your own pace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441667
+    m_Localized: Compare denominators before picking a sign
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441668
+    m_Localized: Pick greater, less, or equal between two trays
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441669
+    m_Localized: Build an equivalent fraction for each recipe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441670
+    m_Localized: My progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441671
+    m_Localized: Story
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441672
+    m_Localized: Afternoon shift
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441673
+    m_Localized: Chef mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441674
+    m_Localized: Daily challenge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441675
+    m_Localized: Practice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441676
+    m_Localized: Achievements
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441677
+    m_Localized: Finished!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441678
+    m_Localized: 'Now: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441679
+    m_Localized: Played {0} times
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441680
+    m_Localized: 'Open: try it!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441681
+    m_Localized: Finish the story to open it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441682
+    m_Localized: Finish the afternoon shift to open it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441683
+    m_Localized: '{0} of {1} earned'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441684
+    m_Localized: See achievements
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441685
+    m_Localized: Earned!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441686
+    m_Localized: '{0} of {1} achievements unlocked'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430929523761152
+    m_Localized: Teacher feedback
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430929536344064
+    m_Localized: Slothy's friends
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430929536344065
+    m_Localized: New!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430929536344066
+    m_Localized: See all games
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575682760704
+    m_Localized: See my diploma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537920
+    m_Localized: CERTIFICATE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537921
+    m_Localized: Star assistant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537922
+    m_Localized: Awarded to
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537923
+    m_Localized: Tap to write your name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537924
+    m_Localized: Play with Slothy!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537925
+    m_Localized: Share
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537926
+    m_Localized: Save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537927
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537928
+    m_Localized: My Slothy's Bakery diploma!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465672902533120
+    m_Localized: Star assistant!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465672919310336
+    m_Localized: You finished Slothy's Bakery story!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465672919310337
+    m_Localized: Back to start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774685708288
+    m_Localized: 'Examples: 2/2, 3/3, 4/4...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291200
+    m_Localized: Fraction must have equal numerator and denominator values
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291201
+    m_Localized: When we want to compare fractions, we must check denominators
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291202
+    m_Localized: 1. If they are equals, then we check the numerator
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291203
+    m_Localized: 2. If they are different, then we search for common denominators
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291204
+    m_Localized: '- Then we compare'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291205
+    m_Localized: <swing>1) Slice the dessert along the cutting line</swing>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291206
+    m_Localized: What fraction must we multiply the first fraction by to match denominators?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291207
+    m_Localized: '<swing>1) Drag a sign to the plate
+
+      2) Tap Check</swing>'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291208
+    m_Localized: '<swing>1) Write the fraction
+
+      2) Tap Submit</swing>'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291209
+    m_Localized: <bounce>What is the equivalence of the pieces shown?</bounce>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291210
+    m_Localized: Right!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291211
+    m_Localized: Try again
+    m_Metadata:
+      m_Items: []
+  - m_Id: 506850981175296
+    m_Localized: Well done!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 506851002146816
+    m_Localized: No mistakes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 506851002146817
+    m_Localized: 1 mistake
+    m_Metadata:
+      m_Items: []
+  - m_Id: 506851002146818
+    m_Localized: '{0} mistakes'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 506851002146819
+    m_Localized: Continue
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

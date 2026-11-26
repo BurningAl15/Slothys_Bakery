@@ -74,7 +74,7 @@ namespace INART.SlothyBakery.SoundManager
 
         public void Initialize()
         {
-            if (_isInitialized) return;
+            if (_isInitialized && _sfxCache != null) return;
 
             BuildCache();
             _isInitialized = true;
@@ -85,6 +85,7 @@ namespace INART.SlothyBakery.SoundManager
         {
             StopMusic();
             _sfxCache?.Clear();
+            _isInitialized = false;
             GameLogger.Log("SoundManager shutdown.", LogCategory.Audio);
         }
 
@@ -106,9 +107,11 @@ namespace INART.SlothyBakery.SoundManager
                 return;
             }
 
-            if (_sfxCache.TryGetValue(soundName.ToLower(), out var clip) && clip != null)
+            if (_sfxCache == null) Initialize();
+
+            if (_sfxCache != null && _sfxCache.TryGetValue(soundName.ToLower(), out var clip) && clip != null)
             {
-                sfxSource.PlayOneShot(clip);
+                if (sfxSource != null) sfxSource.PlayOneShot(clip);
             }
             else
             {
@@ -134,7 +137,10 @@ namespace INART.SlothyBakery.SoundManager
 
         public void PlayMusic(string musicName)
         {
-            if (_sfxCache.TryGetValue(musicName.ToLower(), out var clip) && clip != null)
+            if (string.IsNullOrEmpty(musicName) || musicSource == null) return;
+            if (_sfxCache == null) Initialize();
+
+            if (_sfxCache != null && _sfxCache.TryGetValue(musicName.ToLower(), out var clip) && clip != null)
             {
                 musicSource.clip = clip;
                 musicSource.Play();
@@ -148,20 +154,20 @@ namespace INART.SlothyBakery.SoundManager
 
         public void StopMusic()
         {
-            if (musicSource.isPlaying) musicSource.Stop();
+            if (musicSource != null && musicSource.isPlaying) musicSource.Stop();
         }
 
         public void PauseMusic()
         {
-            if (musicSource.isPlaying) musicSource.Pause();
+            if (musicSource != null && musicSource.isPlaying) musicSource.Pause();
         }
 
         public void ResumeMusic()
         {
-            if (!musicSource.isPlaying && musicSource.clip != null) musicSource.UnPause();
+            if (musicSource != null && !musicSource.isPlaying && musicSource.clip != null) musicSource.UnPause();
         }
 
-        public bool IsMusicPlaying() => musicSource.isPlaying;
+        public bool IsMusicPlaying() => musicSource != null && musicSource.isPlaying;
 
         // ── IAudioService — Volume ────────────────────────────────────────────
 
@@ -179,7 +185,7 @@ namespace INART.SlothyBakery.SoundManager
             volume = Mathf.Clamp01(volume);
             if (mixer != null)
                 mixer.SetFloat(mixerMusicParam, LinearToDecibel(volume));
-            else
+            else if (musicSource != null)
                 musicSource.volume = volume;
         }
 
@@ -188,7 +194,7 @@ namespace INART.SlothyBakery.SoundManager
             volume = Mathf.Clamp01(volume);
             if (mixer != null)
                 mixer.SetFloat(mixerSFXParam, LinearToDecibel(volume));
-            else
+            else if (sfxSource != null)
                 sfxSource.volume = volume;
         }
 

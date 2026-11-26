@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using Fatcat.Slothy.Bakery.Shell;
 
 namespace INART.SlothyBakery.Base
 {
@@ -59,9 +60,12 @@ namespace INART.SlothyBakery.Base
         private Coroutine currentCoroutine = null;
         [SerializeField] private int index = 0;
         private bool next = false;
+        private bool contentReady;
+        private bool answerAccepted;
 
         [SerializeField] private List<string> paragraphs = new List<string>();
         [SerializeField] private TextMeshProUGUI questionText;
+        private Coroutine promptLocalizationRoutine;
 
 
         private void Update()
@@ -74,27 +78,61 @@ namespace INART.SlothyBakery.Base
 
         public void Option()
         {
-            EvaluateInputField();
+            if (!contentReady || answerAccepted || currentCoroutine != null ||
+                index < 0 || index >= optionsGroup.Count || inputField == null)
+                return;
+
+            if (!TryParseFraction(inputField.text, out double answer))
+            {
+                RejectAnswer();
+                return;
+            }
+
+            OptionsPerQuestion question = optionsGroup[index];
+            bool isCorrect = question.currentQuestion == 0
+                ? Math.Abs(answer - question.currentAnswer) < 1e-4d
+                : question.currentQuestion == 1
+                    ? answer > question.currentAnswer
+                    : question.currentQuestion == 2 && answer < question.currentAnswer;
+
+            if (isCorrect)
+                AcceptAnswer();
+            else
+                RejectAnswer();
         }
 
-        double GetInputValue()
+        private static bool TryParseFraction(string content, out double value)
         {
-            string content = inputField.text;
-            string[] split = content.Split(new char[] { ' ', '/' });
+            value = 0d;
+            if (string.IsNullOrWhiteSpace(content)) return false;
 
-            if (split.Length >= 2)
+            string trimmed = content.Trim();
+            string[] parts;
+            if (trimmed.IndexOf('/') >= 0)
             {
-                int a, b;
-
-                if (int.TryParse(split[0], out a) && int.TryParse(split[1], out b))
+                if (trimmed.IndexOf('/') != trimmed.LastIndexOf('/')) return false;
+                parts = trimmed.Split('/');
+                if (parts.Length == 2)
                 {
-                    if (split.Length >= 2)
-                    {
-                        return (double)a / b;
-                    }
+                    parts[0] = parts[0].Trim();
+                    parts[1] = parts[1].Trim();
                 }
             }
-            return 0;
+            else
+            {
+                parts = trimmed.Split(
+                    new[] { ' ', '\t', '\r', '\n' },
+                    StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            if (parts.Length != 2 ||
+                !int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int numerator) ||
+                !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int denominator) ||
+                denominator == 0)
+                return false;
+
+            value = (double)numerator / denominator;
+            return !double.IsNaN(value) && !double.IsInfinity(value);
         }
 
         void ClearInputField()
@@ -102,101 +140,94 @@ namespace INART.SlothyBakery.Base
             inputField.text = "";
         }
 
-        void CheckIfGreater(double _value)
+        private void AcceptAnswer()
         {
-            if (_value > optionsGroup[index].currentAnswer)
-            {
-                if (currentCoroutine == null)
-                    currentCoroutine = StartCoroutine(Change(1f));
-                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
-                MessageManager.Instance.Animate_Message(true);
-                AnalyticsManager.Instance?.TrackAnswerCorrect(index);
-            }
-            else
-            {
-                ClearInputField();
-                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
-                MessageManager.Instance.Animate_Message(false);
-                AnalyticsManager.Instance?.TrackAnswerWrong(index);
-            }
+            answerAccepted = true;
+            inputField.interactable = false;
+            Fatcat.Slothy.Bakery.Modes.BakerySession.RecordAnswer(true);
+            Fatcat.Slothy.Bakery.Shell.BakeryFeedbackHooks.ShowAnswerStamp(true, midPosition != null ? midPosition.position : Vector3.zero);
+            SoundManager.Instance?.Run_SFX(SoundManager.SoundType.Success);
+            MessageManager.Instance?.Animate_Message(true);
+            AnalyticsManager.Instance?.TrackAnswerCorrect(index);
+            currentCoroutine = StartCoroutine(Change(1f));
         }
 
-        void CheckIfEquals(double _value)
+        private void RejectAnswer()
         {
-            if (Math.Abs(_value - optionsGroup[index].currentAnswer) < .01f && Math.Abs(_value - optionsGroup[index].currentAnswer) > -.01f)
-            {
-                if (currentCoroutine == null)
-                    currentCoroutine = StartCoroutine(Change(1f));
-                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
-                MessageManager.Instance.Animate_Message(true);
-                AnalyticsManager.Instance?.TrackAnswerCorrect(index);
-            }
-            else
-            {
-                ClearInputField();
-                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
-                MessageManager.Instance.Animate_Message(false);
-                AnalyticsManager.Instance?.TrackAnswerWrong(index);
-            }
-        }
-
-        void CheckIfLess(double _value)
-        {
-            if (_value < optionsGroup[index].currentAnswer)
-            {
-                if (currentCoroutine == null)
-                    currentCoroutine = StartCoroutine(Change(1f));
-                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Success);
-                MessageManager.Instance.Animate_Message(true);
-                AnalyticsManager.Instance?.TrackAnswerCorrect(index);
-            }
-            else
-            {
-                ClearInputField();
-                SoundManager.Instance.Run_SFX(SoundManager.SoundType.Wrong);
-                MessageManager.Instance.Animate_Message(false);
-                AnalyticsManager.Instance?.TrackAnswerWrong(index);
-            }
-        }
-
-        void EvaluateInputField()
-        {
-            double decimalValue_Fraction = GetInputValue();
-            // float decimalValue = Convert.ToSingle(decimalValue_Fraction);
-            // print("Decimal Value: "+decimalValue_Fraction);
-            switch (optionsGroup[index].currentQuestion)
-            {
-                //Equals
-                case 0:
-                    CheckIfEquals(decimalValue_Fraction);
-                    break;
-                //Greater
-                case 1:
-                    CheckIfGreater(decimalValue_Fraction);
-                    break;
-                //Less
-                case 2:
-                    CheckIfLess(decimalValue_Fraction);
-                    break;
-            }
+            Fatcat.Slothy.Bakery.Modes.BakerySession.RecordAnswer(false);
+            Fatcat.Slothy.Bakery.Shell.BakeryFeedbackHooks.ShowAnswerStamp(false, midPosition != null ? midPosition.position : Vector3.zero);
+            ClearInputField();
+            SoundManager.Instance?.Run_SFX(SoundManager.SoundType.Wrong);
+            MessageManager.Instance?.Animate_Message(false);
+            AnalyticsManager.Instance?.TrackAnswerWrong(index);
         }
 
 
         public override void Init()
         {
-            SaveLoadState.Instance.SetActualState(2);
-            SaveLoadState.Instance.Save();
+            contentReady = ValidateContent();
+            index = 0;
+            answerAccepted = false;
+            if (!contentReady)
+            {
+                if (inputField != null) inputField.interactable = false;
+                if (buttonsGroup != null)
+                {
+                    buttonsGroup.interactable = false;
+                    buttonsGroup.blocksRaycasts = false;
+                }
+                return;
+            }
+
+            if (Fatcat.Slothy.Bakery.Modes.BakerySession.OffStory &&
+                Fatcat.Slothy.Bakery.Modes.BakerySession.Seed.HasValue)
+                Fatcat.Slothy.Bakery.Modes.BakerySession.ShuffleWithSeed(
+                    optionsGroup, Fatcat.Slothy.Bakery.Modes.BakerySession.Seed.Value ^ 0x303);
+
+            int resumeIdx = SaveLoadState.Instance != null ? SaveLoadState.Instance.GetRoundCheckpoint(2) : 0;
+            index = Mathf.Clamp(resumeIdx, 0, optionsGroup.Count - 1);
+            if (promptLocalizationRoutine != null) StopCoroutine(promptLocalizationRoutine);
+            promptLocalizationRoutine = StartCoroutine(LoadLocalizedQuestionPrompts());
+            SaveLoadState.Instance?.EnterMinigame(2, SceneUtils.ThirdMinigameScene);
+            ProgressionCanvas.Instance?.ApplyCompletedRounds(index);
             CanvasGroupAlpha(0);
             CanvasGroupEnabler(false);
 
             inputField.interactable = false;
 
             for (var i = 0; i < optionsGroup.Count; i++)
-                optionsGroup[i].bread.localPosition = startPosition.localPosition;
+                optionsGroup[i].bread.localPosition = i < index ? endPosition.localPosition : startPosition.localPosition;
+        }
+
+        private bool ValidateContent()
+        {
+            if (optionsGroup == null || optionsGroup.Count == 0 || paragraphs == null ||
+                inputField == null || questionText == null || canvasGroup == null || buttonsGroup == null ||
+                startPosition == null || midPosition == null || endPosition == null || _animationCurve == null ||
+                _animationCurve.length == 0 || timeScaler <= 0f || float.IsNaN(timeScaler) || float.IsInfinity(timeScaler))
+            {
+                Debug.LogError("[Bakery MG3] Missing round content or required scene references.", this);
+                return false;
+            }
+
+            for (int i = 0; i < optionsGroup.Count; i++)
+            {
+                OptionsPerQuestion question = optionsGroup[i];
+                if (question == null || question.bread == null ||
+                    question.currentQuestion < 0 || question.currentQuestion >= paragraphs.Count || question.currentQuestion > 2 ||
+                    double.IsNaN(question.currentAnswer) || double.IsInfinity(question.currentAnswer))
+                {
+                    Debug.LogError($"[Bakery MG3] Invalid authored data at round {i}.", this);
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public override IEnumerator TurnOnGame(float _delay)
         {
+            if (!contentReady) yield break;
             yield return new WaitForSeconds(.2f);
 
             var scaledTime = Time.fixedDeltaTime * timeScaler;
@@ -216,7 +247,7 @@ namespace INART.SlothyBakery.Base
                 yield return null;
             }
 
-            questionText.text = paragraphs[optionsGroup[index].currentQuestion];
+            SetQuestionPrompt(optionsGroup[index].currentQuestion);
 
             animationTime = 0;
             while (animationTime <= _delay)
@@ -249,9 +280,13 @@ namespace INART.SlothyBakery.Base
                 ProgressionCanvas.Instance.FillBar(index, ProgressionCanvas.ProgressionType.One));
             yield return StartCoroutine(ProgressionCanvas.Instance.UnlockStuff(index));
 
-            // Analytics + Daily Challenge
+            // Analytics + Daily Challenge + Checkpoint before transition delay
             AnalyticsManager.Instance?.TrackLevelCompleted($"minigame3_round_{index}", true);
             DailyChallengeManager.Instance?.AddProgress("complete_rounds", 1);
+            if (index < optionsGroup.Count - 1)
+                SaveLoadState.Instance?.SaveRoundCheckpoint(2, SceneUtils.ThirdMinigameScene, index + 1);
+            else
+                SaveLoadState.Instance?.CompleteStoryChapter(0, SceneUtils.FirstMinigameScene, true);
 
             //Slide old bread from center to end
             float animationTime = 0;
@@ -290,6 +325,7 @@ namespace INART.SlothyBakery.Base
             if (index < optionsGroup.Count - 1)
             {
                 index++;
+                answerAccepted = false;
 
                 if (index == 1)
                 {
@@ -311,7 +347,7 @@ namespace INART.SlothyBakery.Base
                     yield return StartCoroutine(
                         CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
 
-                    questionText.text = paragraphs[optionsGroup[index].currentQuestion];
+                    SetQuestionPrompt(optionsGroup[index].currentQuestion);
                     animationTime = 0;
                     while (animationTime <= _delay)
                     {
@@ -327,7 +363,7 @@ namespace INART.SlothyBakery.Base
                     CanvasGroupEnabler(true);
                 }
 
-                questionText.text = paragraphs[optionsGroup[index].currentQuestion];
+                SetQuestionPrompt(optionsGroup[index].currentQuestion);
                 //Slide new bread from start to center
                 animationTime = 0;
 
@@ -384,14 +420,36 @@ namespace INART.SlothyBakery.Base
 
                 yield return StartCoroutine(CanvasAnimator.Instance.InstructionsAnimation(false));
                 yield return StartCoroutine(CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));
-                yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                if (SceneTransitionController.Instance != null && SceneTransitionController.Instance.gameObject.activeInHierarchy)
+                    yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_OUT());
+                SceneUtils.ToNextScene();
             }
 
             currentCoroutine = null;
         }
 
         #region Utils
+
+        private void SetQuestionPrompt(int promptIndex)
+        {
+            if (paragraphs == null || promptIndex < 0 || promptIndex >= paragraphs.Count || questionText == null) return;
+            BakeryPromptLocalization.SetText(questionText, paragraphs[promptIndex]);
+        }
+
+        private IEnumerator LoadLocalizedQuestionPrompts()
+        {
+            string[] keys = { "minigame.mg3.prompt.0", "minigame.mg3.prompt.1", "minigame.mg3.prompt.2" };
+            int count = Mathf.Min(keys.Length, paragraphs.Count);
+            for (int i = 0; i < count; i++)
+            {
+                int promptIndex = i;
+                yield return BakeryPromptLocalization.Resolve(keys[i], paragraphs[i], value => paragraphs[promptIndex] = value);
+            }
+
+            if (index >= 0 && index < optionsGroup.Count)
+                SetQuestionPrompt(optionsGroup[index].currentQuestion);
+            promptLocalizationRoutine = null;
+        }
 
         private void CanvasGroupAlpha(float _alpha)
         {

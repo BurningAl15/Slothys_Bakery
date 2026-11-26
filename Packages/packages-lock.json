@@ -8,11 +8,53 @@
         "com.unity.nuget.newtonsoft-json": "3.2.1"
       }
     },
+    "com.fatcat.feedback": {
+      "version": "file:com.fatcat.feedback",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      }
+    },
+    "com.fatcat.localization-ui": {
+      "version": "file:../../SharedPackages/dist/com.fatcat.localization-ui-0.2.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.unity.localization": "1.5.12",
+        "com.unity.textmeshpro": "3.0.6",
+        "com.unity.ugui": "^2.0.0"
+      }
+    },
+    "com.fatcat.mobile": {
+      "version": "file:../../SharedPackages/dist/com.fatcat.mobile-0.4.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      }
+    },
+    "com.fatcat.settings-ui": {
+      "version": "file:../../SharedPackages/dist/com.fatcat.settings-ui-0.1.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      }
+    },
     "com.fatcat.slothy.core": {
       "version": "file:/Users/aldhairvera/server/projects/UnityProjects/FatcatGameStudio/CurrentlyWorkin/SharedPackages/com.fatcat.slothy.core",
       "depth": 0,
       "source": "local",
       "dependencies": {}
+    },
+    "com.fatcat.transitions": {
+      "version": "file:../../SharedPackages/dist/com.fatcat.transitions-0.1.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      }
     },
     "com.unity.2d.animation": {
       "version": "16.0.0",
@@ -230,7 +272,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.localization": {
-      "version": "1.5.12",
+      "version": "1.5.14",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -297,7 +339,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.performance.profile-analyzer": {
-      "version": "1.3.4",
+      "version": "1.4.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -317,7 +359,7 @@
       "dependencies": {}
     },
     "com.unity.recorder": {
-      "version": "5.1.6",
+      "version": "5.1.8",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -385,30 +427,30 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.authentication": {
-      "version": "3.7.4",
+      "version": "3.9.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
         "com.unity.ugui": "1.0.0",
-        "com.unity.services.core": "1.18.0",
+        "com.unity.services.core": "1.19.0",
         "com.unity.nuget.newtonsoft-json": "3.2.2",
         "com.unity.modules.unitywebrequest": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.services.cloud-build": {
-      "version": "2.0.8",
+      "version": "2.1.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.collab-proxy": "2.11.3",
+        "com.unity.collab-proxy": "2.12.4",
         "com.unity.services.core": "1.16.0",
         "com.unity.nuget.newtonsoft-json": "3.2.2"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.services.core": {
-      "version": "1.18.0",
+      "version": "1.19.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -418,13 +460,31 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.services.deployment": {
+      "version": "1.8.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.services.core": "1.19.0",
+        "com.unity.services.deployment.api": "1.1.3"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.services.deployment.api": {
+      "version": "1.1.3",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.services.leaderboards": {
-      "version": "2.3.4",
+      "version": "2.4.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.services.core": "1.15.1",
-        "com.unity.services.authentication": "3.3.3"
+        "com.unity.services.core": "1.19.0",
+        "com.unity.services.deployment": "1.8.0",
+        "com.unity.services.authentication": "3.9.0"
       },
       "url": "https://packages.unity.com"
     },
@@ -474,6 +534,14 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.textmeshpro": {
+      "version": "5.0.0",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      }
+    },
     "com.unity.timeline": {
       "version": "6.6.0",
       "depth": 0,
@@ -506,6 +574,13 @@
         "com.unity.nuget.newtonsoft-json": "3.2.2"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.yasirkula.nativeshare": {
+      "version": "https://github.com/yasirkula/UnityNativeShare.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "5f3680e2938f59c87b3d01f052980381f62ed9d4"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

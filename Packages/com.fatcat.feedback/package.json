@@ -1,0 +1,12 @@
+{
+  "name": "com.fatcat.feedback",
+  "version": "0.3.0",
+  "displayName": "FatCat Feedback Kit",
+  "description": "Game feel for kids' learning games, animated with DOTween: Juice (pop, hop, shake, squash, arcs, slides), UiChoreography (screen elements enter and leave staggered), FeedbackStamp (right/wrong stamp, sparkles, line with the reason, streaks, peeking character), FeedbackCelebration (end card with stars) and CheckBellButton (counter-bell check button). Requires DOTween (Demigiant) in the project; uses only its core API, so the DOTween modules need no asmdef.",
+  "unity": "6000.0",
+  "dependencies": {
+    "com.unity.ugui": "2.0.0"
+  },
+  "keywords": ["feedback", "juice", "dotween", "ui", "kids"],
+  "author": { "name": "FatCat Game Studio" }
+}

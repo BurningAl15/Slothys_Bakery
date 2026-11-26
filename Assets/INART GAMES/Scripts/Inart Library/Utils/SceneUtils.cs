@@ -9,15 +9,48 @@ namespace INART.SlothyBakery.SceneTransition
     /// </summary>
     public static class SceneUtils
     {
+        public const string MainMenuScene = "1. Main Screen";
+        public const string FirstMinigameScene = "2. Minigame1";
+        public const string SecondMinigameScene = "3. Minigame2";
+        public const string ThirdMinigameScene = "4. Minigame3";
+        public const string FinalScene = "5. FinalCutscene";
+
         // ── Navigation ─────────────────────────────────────────────────────────
 
         /// <summary>Loads scene 0 (usually the splash / main menu).</summary>
         public static void ToInitialScene()
             => SceneManager.LoadScene(0);
 
-        /// <summary>Loads the next scene by build index.</summary>
+        /// <summary>Completes the current minigame chapter (handling Story and OffStory modes cleanly).</summary>
         public static void ToNextScene()
-            => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        {
+            string current = CurrentSceneName;
+            if (Fatcat.Slothy.Bakery.Modes.BakerySession.OffStory
+                || current == FirstMinigameScene
+                || current == SecondMinigameScene
+                || current == ThirdMinigameScene)
+            {
+                Fatcat.Slothy.Bakery.Modes.BakerySession.CompleteCurrentChapter();
+                return;
+            }
+
+            string next = current == MainMenuScene || current == "DEV_ModularMinigame" ? FirstMinigameScene : null;
+            if (string.IsNullOrEmpty(next))
+            {
+                Debug.LogError($"[Bakery] No authored next-scene route from '{current}'.");
+                return;
+            }
+
+            LoadScene(next);
+        }
+
+        /// <summary>Maps legacy menu progress values to stable scene names without changing save data.</summary>
+        public static string SceneForProgress(int unlockedState) => unlockedState switch
+        {
+            <= 0 => FirstMinigameScene,
+            1 => SecondMinigameScene,
+            _ => ThirdMinigameScene
+        };
 
         /// <summary>Loads a scene by its exact build name.</summary>
         public static void LoadScene(string sceneName)
