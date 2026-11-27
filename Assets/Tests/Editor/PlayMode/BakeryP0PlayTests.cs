@@ -311,7 +311,7 @@ namespace Fatcat.Slothy.Bakery.Tests
             CaptureAtAspect(captureDir, "bakery_language_picker");
 
             var toggles = picker.GetComponentsInChildren<Toggle>(true);
-            Assert.AreEqual(2, toggles.Length);
+            Assert.AreEqual(6, toggles.Length);
             toggles[1].isOn = true; // Select English
             yield return null;
             Assert.IsTrue(LocalizationSettings.SelectedLocale.Identifier.Code.StartsWith("en", StringComparison.OrdinalIgnoreCase),

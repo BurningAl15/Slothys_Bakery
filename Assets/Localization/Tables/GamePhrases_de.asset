@@ -1,0 +1,211 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: GamePhrases_de
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: de
+  m_SharedData: {fileID: 11400000, guid: 38d8bb6c2314d407db9e62d32835d7be, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 462622285824
+    m_Localized: "Willkommen in Slothys B\xE4ckerei"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 578611568640
+    m_Localized: "Ich hei\xDFe Slothy und bin der B\xE4cker."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 604620447744
+    m_Localized: "Danke, dass du Slothys B\xE4ckerei als deinen ersten Arbeitsplatz gew\xE4hlt hast."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 634181902336
+    m_Localized: "Heute brauche ich deine Hilfe beim Vergleichen von Kuchen- und Dessertst\xFCcken."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 654406836224
+    m_Localized: "Deshalb m\xF6chte ich dir ein wenig \xFCber die Magie des Bruchrechnens erz\xE4hlen."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 666222190592
+    m_Localized: "Du kannst zwei Br\xFCche vergleichen, indem du Z\xE4hler und Nenner pr\xFCfst."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 683053932544
+    m_Localized: "So erkennst du, ob ein Bruch gr\xF6\xDFer, kleiner oder gleich einem anderen ist."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 696001748992
+    m_Localized: "Analysiere f\xFCr diese Aufgabe die Nenner der Br\xFCche, um zu sehen, ob sie vergleichbar sind."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726378663936
+    m_Localized: Ich gebe dir ein Beispiel.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858240
+    m_Localized: Tolle Arbeit!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858241
+    m_Localized: "Wie du siehst, k\xF6nnen wir 1/2 und 3/4 nicht direkt vergleichen, also multiplizieren wir 1/2 mit 2/2 zu 2/4."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858242
+    m_Localized: "Die Br\xFCche 2/4 und 3/4 haben den gleichen Nenner und lassen sich \xFCber die Z\xE4hler vergleichen."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858243
+    m_Localized: "\xDCben wir noch ein bisschen!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858244
+    m_Localized: Fantastische Arbeit!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858245
+    m_Localized: "Das ist der erste Schritt: pr\xFCfen, ob die Nenner vergleichbar oder gleich sind."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858246
+    m_Localized: Wenn nicht, multiplizieren wir sie, um vergleichbare Nenner zu erhalten.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858247
+    m_Localized: "Danach vergleichen wir die Z\xE4hler f\xFCr gr\xF6\xDFer, kleiner oder gleich."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858248
+    m_Localized: "F\xFCr den n\xE4chsten Schritt brauche ich deine Hilfe bei einigen Bestellungen."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858249
+    m_Localized: "Wie gesehen m\xFCssen wir beim Vergleichen von Br\xFCchen einige Schritte befolgen."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052544
+    m_Localized: "Pr\xFCfe ihre Nenner, ob sie direkt vergleichbar sind."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052545
+    m_Localized: "Sind sie gleich, bestimmen die Z\xE4hler, welcher Bruch gr\xF6\xDFer oder kleiner ist."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052546
+    m_Localized: "Sind sie verschieden, multipliziere Z\xE4hler und Nenner mit demselben Wert."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052547
+    m_Localized: Dadurch wird der Bruch vergleichbar.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052548
+    m_Localized: "Bei dieser Aufgabe m\xFCssen wir diese Schritte befolgen."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052549
+    m_Localized: "Nimm Papier und Stift und wandle die Br\xFCche bei Bedarf um."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052550
+    m_Localized: "Ziehe dann eines der Zeichen <, > oder = und dr\xFCcke zum Pr\xFCfen auf den Button."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052551
+    m_Localized: Los geht's!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052552
+    m_Localized: "WOW! Tolle F\xE4higkeiten!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052553
+    m_Localized: "Das gr\xF6\xDFere St\xFCck war 1/3."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052554
+    m_Localized: "Wie du siehst, hat 1/3 gr\xF6\xDFere St\xFCcke."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052555
+    m_Localized: "Vergleichen wir weiter Br\xFCche!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052556
+    m_Localized: Ausgezeichnete Arbeit!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052557
+    m_Localized: "Du hast alle Schritte perfekt befolgt und beherrschst Br\xFCche schon fast."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052558
+    m_Localized: Danke, dass du mir bei dieser Aufgabe geholfen hast.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052559
+    m_Localized: "Gut gemacht! Du bist fast ein Experte f\xFCr Kuchen- und Dessertbr\xFCche."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052560
+    m_Localized: "Danke f\xFCr deine Hilfe bei den ersten beiden Aufgaben."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246848
+    m_Localized: "In diesem Schritt pr\xFCfen wir ein letztes Mal die Bestellungen vor der Lieferung."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246849
+    m_Localized: "Stellen wir dein K\xF6nnen noch einmal auf die Probe."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246850
+    m_Localized: Unglaublich!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246851
+    m_Localized: Das ist richtig!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246852
+    m_Localized: "Zum besseren Verst\xE4ndnis pr\xFCfen wir die Nenner und sehen, ob sie vergleichbar sind."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246853
+    m_Localized: "Wir wandeln 1/2 um, indem wir Z\xE4hler und Nenner mit derselben Zahl multiplizieren."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246854
+    m_Localized: So erhalten wir einen Bruch, der gleich 1/2 ist.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441152
+    m_Localized: Machen wir weiter.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441153
+    m_Localized: "Was f\xFCr eine wunderbare Arbeit!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441154
+    m_Localized: "Nachdem du all diese Br\xFCche verglichen hast, bin ich von deinem Wissen beeindruckt."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441155
+    m_Localized: Ich denke, du hast es verdient, ab jetzt mein Stern-Assistent zu sein.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

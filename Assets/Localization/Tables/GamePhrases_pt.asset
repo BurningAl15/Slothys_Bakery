@@ -1,0 +1,211 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: GamePhrases_pt
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: pt
+  m_SharedData: {fileID: 11400000, guid: 38d8bb6c2314d407db9e62d32835d7be, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 462622285824
+    m_Localized: "Bem-vindo \xE0 padaria do Slothy"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 578611568640
+    m_Localized: Chamo-me Slothy e sou o padeiro.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 604620447744
+    m_Localized: "Obrigado por escolheres a padaria do Slothy para come\xE7ar."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 634181902336
+    m_Localized: Hoje preciso da tua ajuda para comparar fatias de bolos e sobremesas.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 654406836224
+    m_Localized: "Por isso gostava de te explicar um pouco a magia de comparar fra\xE7\xF5es."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 666222190592
+    m_Localized: "Podes comparar duas fra\xE7\xF5es observando os numeradores e denominadores."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 683053932544
+    m_Localized: "Isto ajuda-te a saber se uma fra\xE7\xE3o \xE9 maior, menor ou igual a outra."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 696001748992
+    m_Localized: "Para esta tarefa, analisa os denominadores das fra\xE7\xF5es para ver se s\xE3o compar\xE1veis."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726378663936
+    m_Localized: Vou dar-te um exemplo.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858240
+    m_Localized: "\xD3timo trabalho!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858241
+    m_Localized: "Como viste, n\xE3o podemos comparar 1/2 e 3/4 diretamente, por isso multiplicamos 1/2 por 2/2 obtendo 2/4."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858242
+    m_Localized: "As fra\xE7\xF5es 2/4 e 3/4 t\xEAm o mesmo denominador, logo podemos comparar os numeradores."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858243
+    m_Localized: Vamos praticar mais um pouco!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858244
+    m_Localized: "Trabalho incr\xEDvel!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858245
+    m_Localized: "Este \xE9 o primeiro passo: verificar se os denominadores s\xE3o compar\xE1veis ou iguais."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858246
+    m_Localized: "Caso contr\xE1rio, multiplicamo-las para obter denominadores compar\xE1veis."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858247
+    m_Localized: "Depois comparamos os numeradores para ver se \xE9 maior, menor ou igual."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858248
+    m_Localized: Para o passo seguinte, preciso da tua ajuda com alguns pedidos.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858249
+    m_Localized: "Como vimos, devemos seguir alguns passos para comparar fra\xE7\xF5es."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052544
+    m_Localized: "Verifica os denominadores para ver se s\xE3o compar\xE1veis diretamente."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052545
+    m_Localized: "Se forem iguais, os numeradores indicam qual fra\xE7\xE3o \xE9 maior ou menor."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052546
+    m_Localized: Se forem diferentes, multiplicamos o numerador e o denominador pelo mesmo valor.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052547
+    m_Localized: "Assim a fra\xE7\xE3o fica compar\xE1vel."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052548
+    m_Localized: Nesta tarefa, devemos seguir estes passos.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052549
+    m_Localized: "Pega num l\xE1pis e papel e converte as fra\xE7\xF5es se precisares."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052550
+    m_Localized: "Depois arrasta um dos sinais <, > ou = e toca no bot\xE3o para verificar."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052551
+    m_Localized: Vamos a isso!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052552
+    m_Localized: UAU! Que talento!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052553
+    m_Localized: A maior fatia era 1/3.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052554
+    m_Localized: "Como v\xEAs, 1/3 tem peda\xE7os maiores."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052555
+    m_Localized: "Vamos continuar a comparar fra\xE7\xF5es!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052556
+    m_Localized: Excelente trabalho!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052557
+    m_Localized: "Seguiste os passos na perfei\xE7\xE3o e quase dominas a compara\xE7\xE3o de fra\xE7\xF5es."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052558
+    m_Localized: Obrigado por me ajudares nesta tarefa.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052559
+    m_Localized: "Bom trabalho! J\xE1 \xE9s quase um especialista em fra\xE7\xF5es de sobremesas e bolos."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052560
+    m_Localized: Obrigado por me ajudares nas duas primeiras tarefas.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246848
+    m_Localized: "Neste passo, vamos fazer a revis\xE3o final dos pedidos antes da entrega."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246849
+    m_Localized: Vamos testar as tuas capacidades mais uma vez.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246850
+    m_Localized: "Incr\xEDvel!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246851
+    m_Localized: "Est\xE1 certo!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246852
+    m_Localized: "Para entender melhor, verificamos os denominadores e vemos que n\xE3o s\xE3o compar\xE1veis."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246853
+    m_Localized: "Convertemos 1/2 multiplicando o numerador e o denominador pelo mesmo n\xFAmero."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246854
+    m_Localized: "Foi assim que obtivemos uma fra\xE7\xE3o igual a 1/2."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441152
+    m_Localized: Vamos continuar.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441153
+    m_Localized: Que trabalho maravilhoso!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441154
+    m_Localized: "Depois de comparares todas estas fra\xE7\xF5es, estou impressionado com o teu conhecimento."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441155
+    m_Localized: Acho que mereces tornar-te o meu assistente estrela a partir de agora.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

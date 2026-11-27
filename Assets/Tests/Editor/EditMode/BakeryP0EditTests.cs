@@ -100,7 +100,7 @@ namespace Fatcat.Slothy.Bakery.Tests
             Assert.IsNotNull(vso.FindProperty("panel").objectReferenceValue);
 
             var pso = new SerializedObject(picker);
-            Assert.AreEqual(2, pso.FindProperty("toggles").arraySize);
+            Assert.AreEqual(6, pso.FindProperty("toggles").arraySize);
             Assert.AreEqual("ES", pso.FindProperty("languageKeys").GetArrayElementAtIndex(0).stringValue);
             Assert.AreEqual("EN", pso.FindProperty("languageKeys").GetArrayElementAtIndex(1).stringValue);
 

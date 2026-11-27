@@ -183,7 +183,9 @@ namespace FatCat.Slothy.Tools
         public static void BuildAndInstall()
         {
             PrepareAssets();
+            BakerySixLanguageInstaller.EnsureSixLanguages();
             EnsureStringTable();
+            BakerySixLanguageInstaller.EnsureSixLanguages();
             EnsurePlayerPrefSelector();
             BuildParentalGate();
             BuildAchievementToast();
@@ -233,6 +235,17 @@ namespace FatCat.Slothy.Tools
         static void PrepareAssets()
         {
             ConfigureKitSprites();
+            foreach (var locFlag in new[] { "Assets/INART GAMES/Art/Localization/DE.png", "Assets/INART GAMES/Art/Localization/PO.png" })
+            {
+                var imp = AssetImporter.GetAtPath(locFlag) as TextureImporter;
+                if (imp != null && imp.textureType != TextureImporterType.Sprite)
+                {
+                    imp.textureType = TextureImporterType.Sprite;
+                    imp.spriteImportMode = SpriteImportMode.Single;
+                    imp.mipmapEnabled = false;
+                    imp.SaveAndReimport();
+                }
+            }
 
             var fallbackPath = AssetDatabase.FindAssets("LiberationSans SDF t:TMP_FontAsset",
                                    new[] { "Assets/INART GAMES/TextMesh Pro" })
@@ -646,27 +659,37 @@ namespace FatCat.Slothy.Tools
             dim.raycastTarget = true;
             var group = s.gameObject.AddComponent<CanvasGroup>();
 
-            var card = Card(s, new Vector2(540, 360), 0);
+            var card = Card(s, new Vector2(600, 420), 0);
             HeaderPill(card, "language.title", 280, -22);
 
             var subtitle = Text(card, "Subtitle", "language.choose", false, 18, PlumMuted, TextAlignmentOptions.Center);
             var srt = (RectTransform)subtitle.transform;
-            Place(srt, new Vector2(0.5f, 1f), new Vector2(460, 28), new Vector2(0, -82));
+            Place(srt, new Vector2(0.5f, 1f), new Vector2(520, 28), new Vector2(0, -82));
 
-            // Language list area
+            // Language list area (2 columns × 3 rows for 6 languages)
             var listArea = Node("LanguageList", card);
-            Place(listArea, new Vector2(0.5f, 0.5f), new Vector2(460, 134), new Vector2(0, -4));
-            Column(listArea, 12, new RectOffset(8, 8, 4, 4));
+            Place(listArea, new Vector2(0.5f, 0.5f), new Vector2(528, 196), new Vector2(0, -4));
+            var glg = listArea.gameObject.AddComponent<GridLayoutGroup>();
+            glg.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            glg.constraintCount = 2;
+            glg.cellSize = new Vector2(252, 54);
+            glg.spacing = new Vector2(12, 12);
+            glg.childAlignment = TextAnchor.MiddleCenter;
             var toggleGroup = listArea.gameObject.AddComponent<ToggleGroup>();
             toggleGroup.allowSwitchOff = false;
 
-            var esFlag = AssetDatabase.LoadAssetAtPath<Sprite>($"{Flags}/Spanish.png");
-            var enFlag = AssetDatabase.LoadAssetAtPath<Sprite>($"{Flags}/UK.png");
-            var spanishToggle = LanguageToggle(listArea, "Spanish", "Español", esFlag, toggleGroup);
-            var englishToggle = LanguageToggle(listArea, "English", "English", enFlag, toggleGroup);
+            var defs = new[]
+            {
+                ("ES", "Spanish",    "Español",   $"{Flags}/Spanish.png"),
+                ("EN", "English",    "English",   $"{Flags}/UK.png"),
+                ("FR", "French",     "Français",  $"{Flags}/French.png"),
+                ("IT", "Italian",    "Italiano",  $"{Flags}/Italian.png"),
+                ("DE", "German",     "Deutsch",   "Assets/INART GAMES/Art/Localization/DE.png"),
+                ("PO", "Portuguese", "Português", "Assets/INART GAMES/Art/Localization/PO.png"),
+            };
 
             // Continue button
-            var btnBtn = BerryCtaButton(card, "ContinueButton", "language.continue", new Vector2(0.5f, 0f), new Vector2(236, 54), new Vector2(0, 24), 22);
+            var btnBtn = BerryCtaButton(card, "ContinueButton", "language.continue", new Vector2(0.5f, 0f), new Vector2(236, 54), new Vector2(0, 22), 22);
 
             var picker = s.gameObject.AddComponent<LocalePickerController>();
             var gate = root.gameObject.AddComponent<BakeryLanguageGate>();
@@ -678,13 +701,17 @@ namespace FatCat.Slothy.Tools
             so.FindProperty("panelRoot").objectReferenceValue = s.gameObject;
             so.FindProperty("toggleGroup").objectReferenceValue = toggleGroup;
             var toggles = so.FindProperty("toggles");
-            toggles.arraySize = 2;
-            toggles.GetArrayElementAtIndex(0).objectReferenceValue = spanishToggle;
-            toggles.GetArrayElementAtIndex(1).objectReferenceValue = englishToggle;
             var languageKeys = so.FindProperty("languageKeys");
-            languageKeys.arraySize = 2;
-            languageKeys.GetArrayElementAtIndex(0).stringValue = "ES";
-            languageKeys.GetArrayElementAtIndex(1).stringValue = "EN";
+            toggles.arraySize = defs.Length;
+            languageKeys.arraySize = defs.Length;
+            for (int i = 0; i < defs.Length; i++)
+            {
+                var (code, id, nativeName, flagPath) = defs[i];
+                var flagSprite = AssetDatabase.LoadAssetAtPath<Sprite>(flagPath);
+                var tog = LanguageToggle(listArea, id, nativeName, flagSprite, toggleGroup);
+                toggles.GetArrayElementAtIndex(i).objectReferenceValue = tog;
+                languageKeys.GetArrayElementAtIndex(i).stringValue = code;
+            }
             so.ApplyModifiedPropertiesWithoutUndo();
 
             // Keep both LoadGame() and button clicks invoking gate.Confirm()
@@ -799,6 +826,10 @@ namespace FatCat.Slothy.Tools
             lso.FindProperty("flag").objectReferenceValue = flagImg;
             lso.FindProperty("spanishFlag").objectReferenceValue = esFlag;
             lso.FindProperty("englishFlag").objectReferenceValue = enFlag;
+            lso.FindProperty("frenchFlag").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>($"{Flags}/French.png");
+            lso.FindProperty("italianFlag").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>($"{Flags}/Italian.png");
+            lso.FindProperty("germanFlag").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/INART GAMES/Art/Localization/DE.png");
+            lso.FindProperty("portugueseFlag").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/INART GAMES/Art/Localization/PO.png");
             lso.ApplyModifiedPropertiesWithoutUndo();
 
             Section(right, "settings.more");

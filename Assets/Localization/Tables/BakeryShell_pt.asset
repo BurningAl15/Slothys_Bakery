@@ -1,0 +1,601 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: BakeryShell_pt
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: pt
+  m_SharedData: {fileID: 11400000, guid: acc2a1be61816493db3ae601aca7e8d7, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1513086976
+    m_Localized: "Defini\xE7\xF5es"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058496
+    m_Localized: Som
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058497
+    m_Localized: "M\xFAsica"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058498
+    m_Localized: Efeitos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058499
+    m_Localized: Jogo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058500
+    m_Localized: "Vibra\xE7\xE3o"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058501
+    m_Localized: "Lembrete di\xE1rio"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058502
+    m_Localized: Idioma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058503
+    m_Localized: Alterar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058504
+    m_Localized: Mais
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058505
+    m_Localized: Conquistas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058506
+    m_Localized: Avaliar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058507
+    m_Localized: Partilhar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058508
+    m_Localized: Mais jogos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058509
+    m_Localized: Idioma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058510
+    m_Localized: Escolhe o teu idioma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058511
+    m_Localized: Continuar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058512
+    m_Localized: Jogar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058513
+    m_Localized: Continuar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058514
+    m_Localized: "Defini\xE7\xF5es"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058515
+    m_Localized: Mais jogos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058516
+    m_Localized: Mais jogos do FatCat Game Studio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058517
+    m_Localized: Mais jogos em breve.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058518
+    m_Localized: Pede ajuda a um adulto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058519
+    m_Localized: "Quanto \xE9 {0} \xD7 {1}?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058520
+    m_Localized: "Isto abre uma p\xE1gina fora do jogo."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1534058521
+    m_Localized: Apenas para adultos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434031906816
+    m_Localized: Modos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684032
+    m_Localized: Modos de jogo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684033
+    m_Localized: "Pr\xE1tica por tema"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684034
+    m_Localized: Desafios
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684035
+    m_Localized: "Compara\xE7\xE3o por passos"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684036
+    m_Localized: Escolher o sinal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684037
+    m_Localized: "Escrever a fra\xE7\xE3o"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684038
+    m_Localized: "Desafio di\xE1rio"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684039
+    m_Localized: Turno da tarde
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684040
+    m_Localized: Modo Chef
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684041
+    m_Localized: Conquistas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684042
+    m_Localized: Ver na loja
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25434048684043
+    m_Localized: Continuar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659044601856
+    m_Localized: "Pr\xE1tica"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573376
+    m_Localized: Conquistas desbloqueadas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573377
+    m_Localized: Conquista desbloqueada!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573378
+    m_Localized: "S\xE9rie \xD7{0}!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573379
+    m_Localized: Desbloqueado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573380
+    m_Localized: Primeiro pedido
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573381
+    m_Localized: Completa o teu primeiro minijogo.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573382
+    m_Localized: Padaria em movimento
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573383
+    m_Localized: Completa 10 minijogos.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573384
+    m_Localized: Pedido perfeito
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573385
+    m_Localized: Completa um minijogo sem erros.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573386
+    m_Localized: "Primeira pr\xE1tica"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573387
+    m_Localized: "Completa uma pr\xE1tica por tema."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573388
+    m_Localized: Experimenta cada receita
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573389
+    m_Localized: "Pratica os tr\xEAs minijogos."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573390
+    m_Localized: "Padeiro di\xE1rio"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573391
+    m_Localized: "Completa um desafio di\xE1rio."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573392
+    m_Localized: Cliente habitual
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573393
+    m_Localized: "Completa cinco desafios di\xE1rios."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573394
+    m_Localized: Turno da tarde
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573395
+    m_Localized: Completa um turno da tarde.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573396
+    m_Localized: Escolha do chef
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573397
+    m_Localized: Completa uma partida no Modo Chef.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573398
+    m_Localized: "De volta \xE0 padaria"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573399
+    m_Localized: "Joga em tr\xEAs dias diferentes."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573400
+    m_Localized: O Slothy espera por ti na padaria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573401
+    m_Localized: "H\xE1 uma nova atividade de fra\xE7\xF5es para ti. Queres tentar?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573402
+    m_Localized: O Slothy sente falta da tua ajuda nos pedidos de hoje.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573403
+    m_Localized: "A padaria ainda est\xE1 aberta. O Slothy guardou algo para ti."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573404
+    m_Localized: "Um lembrete simp\xE1tico para voltares a jogar."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573405
+    m_Localized: "<bounce>Os denominadores s\xE3o compar\xE1veis?</bounce>"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573406
+    m_Localized: "<bounce>Por que fra\xE7\xE3o devemos multiplicar a primeira para tornar os denominadores compar\xE1veis?</bounce>"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573407
+    m_Localized: "<bounce>Qual \xE9 o sinal de compara\xE7\xE3o correto?</bounce>"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573408
+    m_Localized: "<bounce>Que fra\xE7\xE3o pode ser equivalente aos peda\xE7os de p\xE3o mostrados?</bounce>"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573409
+    m_Localized: "<bounce>Que fra\xE7\xE3o \xE9 maior do que a por\xE7\xE3o de sobremesa mostrada?</bounce>"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389659065573410
+    m_Localized: "<bounce>Que fra\xE7\xE3o \xE9 menor do que a por\xE7\xE3o de sobremesa mostrada?</bounce>"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761456922624
+    m_Localized: Reiniciar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699840
+    m_Localized: Entendido
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699841
+    m_Localized: Sim
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699842
+    m_Localized: "N\xE3o"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699843
+    m_Localized: Verificar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699844
+    m_Localized: "Qual \xE9 o valor equivalente de ____?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699845
+    m_Localized: Verificar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699846
+    m_Localized: Verificar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389761473699847
+    m_Localized: "Escreve uma fra\xE7\xE3o..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782614081536
+    m_Localized: Meu progresso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441664
+    m_Localized: Hoje!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441665
+    m_Localized: Ver
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441666
+    m_Localized: Escolhe um tema para praticar sem pressa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441667
+    m_Localized: Compara denominadores antes de escolher o sinal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441668
+    m_Localized: Escolhe maior, menor ou igual entre duas bandejas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441669
+    m_Localized: "Monta a fra\xE7\xE3o equivalente de cada receita"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441670
+    m_Localized: Meu progresso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441671
+    m_Localized: "Hist\xF3ria"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441672
+    m_Localized: Turno da tarde
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441673
+    m_Localized: Modo chef
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441674
+    m_Localized: "Desafio di\xE1rio"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441675
+    m_Localized: "Pr\xE1tica"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441676
+    m_Localized: Conquistas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441677
+    m_Localized: "Conclu\xEDda!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441678
+    m_Localized: 'Agora: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441679
+    m_Localized: Jogado {0} vezes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441680
+    m_Localized: 'Aberto: experimenta!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441681
+    m_Localized: "Termina a hist\xF3ria para abrir"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441682
+    m_Localized: Termina o turno da tarde para abrir
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441683
+    m_Localized: '{0} de {1} ganhos'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441684
+    m_Localized: Ver conquistas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441685
+    m_Localized: "Conclu\xEDdo!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411782643441686
+    m_Localized: '{0} de {1} conquistas desbloqueadas'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430929523761152
+    m_Localized: Ideias de docentes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430929536344064
+    m_Localized: Amigos do Slothy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430929536344065
+    m_Localized: Novo!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430929536344066
+    m_Localized: Ver todos os jogos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575682760704
+    m_Localized: Ver o meu diploma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537920
+    m_Localized: DIPLOMA DE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537921
+    m_Localized: Assistente estrela
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537922
+    m_Localized: Concedido a
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537923
+    m_Localized: Toca e escreve o teu nome
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537924
+    m_Localized: Joga com o Slothy!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537925
+    m_Localized: Partilhar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537926
+    m_Localized: Guardar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537927
+    m_Localized: Fechar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465575699537928
+    m_Localized: O meu diploma de Slothy's Bakery!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465672902533120
+    m_Localized: Assistente estrela!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465672919310336
+    m_Localized: "Terminaste a hist\xF3ria de Slothy's Bakery!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465672919310337
+    m_Localized: "Voltar ao in\xEDcio"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774685708288
+    m_Localized: 'Exemplos: 2/2, 3/3, 4/4...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291200
+    m_Localized: Numerador e denominador devem ser iguais
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291201
+    m_Localized: "Para comparar fra\xE7\xF5es, verificamos primeiro os denominadores"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291202
+    m_Localized: 1. Se forem iguais, comparamos os numeradores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291203
+    m_Localized: 2. Se forem diferentes, procuramos um denominador comum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291204
+    m_Localized: '- Depois comparamos'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291205
+    m_Localized: <swing>1) Corta a sobremesa pela linha pontilhada</swing>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291206
+    m_Localized: "Por que fra\xE7\xE3o multiplicar a primeira para igualar os denominadores?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291207
+    m_Localized: '<swing>1) Arrasta um sinal para o prato
+
+      2) Toca em Verificar</swing>'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291208
+    m_Localized: "<swing>1) Escreve a fra\xE7\xE3o\n2) Toca em Verificar</swing>"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291209
+    m_Localized: "<bounce>Qual \xE9 a equival\xEAncia dos peda\xE7os mostrados?</bounce>"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291210
+    m_Localized: Certo!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465774698291211
+    m_Localized: Tenta outra vez
+    m_Metadata:
+      m_Items: []
+  - m_Id: 506850981175296
+    m_Localized: Muito bem!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 506851002146816
+    m_Localized: Sem erros
+    m_Metadata:
+      m_Items: []
+  - m_Id: 506851002146817
+    m_Localized: 1 erro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 506851002146818
+    m_Localized: '{0} erros'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 506851002146819
+    m_Localized: Continuar
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

@@ -1,0 +1,211 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: GamePhrases_fr
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: fr
+  m_SharedData: {fileID: 11400000, guid: 38d8bb6c2314d407db9e62d32835d7be, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 462622285824
+    m_Localized: "Bienvenue \xE0 la boulangerie de Slothy"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 578611568640
+    m_Localized: Je m'appelle Slothy et je suis le boulanger.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 604620447744
+    m_Localized: Merci d'avoir choisi la boulangerie de Slothy pour commencer.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 634181902336
+    m_Localized: "Aujourd'hui, j'ai besoin de ton aide pour comparer des parts de g\xE2teaux et de desserts."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 654406836224
+    m_Localized: J'aimerais donc t'expliquer un peu la magie de la comparaison des fractions.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 666222190592
+    m_Localized: "Tu peux comparer deux fractions en regardant leurs num\xE9rateurs et leurs d\xE9nominateurs."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 683053932544
+    m_Localized: "Cela t'aide \xE0 savoir si une fraction est plus grande, plus petite ou \xE9gale \xE0 une autre."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 696001748992
+    m_Localized: "Pour cette t\xE2che, analyse les d\xE9nominateurs des fractions pour voir s'ils sont comparables."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726378663936
+    m_Localized: Je vais te donner un exemple.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858240
+    m_Localized: Super travail !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858241
+    m_Localized: Comme tu as pu le voir, on ne peut pas comparer 1/2 et 3/4 directement, donc on multiplie 1/2 par 2/2 pour obtenir 2/4.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858242
+    m_Localized: "Les fractions 2/4 et 3/4 ont le m\xEAme d\xE9nominateur, on peut donc comparer leurs num\xE9rateurs."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858243
+    m_Localized: Pratiquons encore un peu !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858244
+    m_Localized: Travail incroyable !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858245
+    m_Localized: "C'est la premi\xE8re \xE9tape : v\xE9rifier si les d\xE9nominateurs sont comparables ou \xE9gaux."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858246
+    m_Localized: "Sinon, on les multiplie pour obtenir des d\xE9nominateurs comparables."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858247
+    m_Localized: "Ensuite, on compare les num\xE9rateurs pour trouver si c'est plus grand, plus petit ou \xE9gal."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858248
+    m_Localized: "Pour l'\xE9tape suivante, j'ai besoin de ton aide avec quelques commandes."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858249
+    m_Localized: "Comme nous l'avons vu, il faut suivre quelques \xE9tapes pour comparer des fractions."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052544
+    m_Localized: "V\xE9rifie leurs d\xE9nominateurs pour voir s'ils sont directement comparables."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052545
+    m_Localized: "S'ils sont \xE9gaux, les num\xE9rateurs indiquent quelle fraction est plus grande ou plus petite."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052546
+    m_Localized: "S'ils sont diff\xE9rents, multiplie le num\xE9rateur et le d\xE9nominateur par une m\xEAme valeur."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052547
+    m_Localized: Cela rendra la fraction comparable.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052548
+    m_Localized: "Dans cette t\xE2che, nous devons suivre ces \xE9tapes."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052549
+    m_Localized: Prends un crayon et du papier pour convertir les fractions si besoin.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052550
+    m_Localized: "Puis glisse un des signes <, > ou = et appuie sur le bouton pour v\xE9rifier."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052551
+    m_Localized: Allons-y !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052552
+    m_Localized: WAOUH ! Quel talent !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052553
+    m_Localized: "La plus grande part \xE9tait 1/3."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052554
+    m_Localized: Comme tu le vois, 1/3 donne de plus grandes parts.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052555
+    m_Localized: "Continuons \xE0 comparer des fractions !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052556
+    m_Localized: Excellent travail !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052557
+    m_Localized: "Tu as suivi les \xE9tapes parfaitement et tu ma\xEEtrises presque les fractions."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052558
+    m_Localized: "Merci de m'avoir aid\xE9 pour cette t\xE2che."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052559
+    m_Localized: "Bien jou\xE9 ! Tu es presque un expert des fractions de desserts et g\xE2teaux."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052560
+    m_Localized: "Merci de m'avoir aid\xE9 pour les deux premi\xE8res t\xE2ches."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246848
+    m_Localized: "Pour cette \xE9tape, v\xE9rifions une derni\xE8re fois les commandes avant la livraison."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246849
+    m_Localized: "Mettons tes comp\xE9tences \xE0 l'\xE9preuve encore une fois."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246850
+    m_Localized: Incroyable !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246851
+    m_Localized: C'est exact !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246852
+    m_Localized: "Pour mieux comprendre, on v\xE9rifie les d\xE9nominateurs et on voit s'ils sont comparables."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246853
+    m_Localized: "On convertit 1/2 en multipliant son num\xE9rateur et son d\xE9nominateur par le m\xEAme nombre."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246854
+    m_Localized: "C'est ainsi qu'on obtient une fraction \xE9gale \xE0 1/2."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441152
+    m_Localized: Continuons.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441153
+    m_Localized: Quel merveilleux travail !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441154
+    m_Localized: "Apr\xE8s avoir compar\xE9 toutes ces fractions, je suis impressionn\xE9 par tes connaissances."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441155
+    m_Localized: "Je crois que tu m\xE9rites de devenir mon assistant \xE9toile d\xE8s maintenant."
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

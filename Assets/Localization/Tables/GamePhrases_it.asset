@@ -1,0 +1,211 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: GamePhrases_it
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: it
+  m_SharedData: {fileID: 11400000, guid: 38d8bb6c2314d407db9e62d32835d7be, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 462622285824
+    m_Localized: Benvenuto nella panetteria di Slothy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 578611568640
+    m_Localized: Mi chiamo Slothy e sono il panettiere.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 604620447744
+    m_Localized: Grazie per aver scelto la panetteria di Slothy come tuo primo lavoro.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 634181902336
+    m_Localized: Oggi ho bisogno del tuo aiuto per confrontare fette di torte e dolci.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 654406836224
+    m_Localized: Vorrei quindi spiegarti un po' la magia del confronto tra frazioni.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 666222190592
+    m_Localized: Puoi confrontare due frazioni controllando i loro numeratori e denominatori.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 683053932544
+    m_Localized: "Questo ti aiuta a capire se una frazione \xE8 maggiore, minore o uguale a un'altra."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 696001748992
+    m_Localized: Per questo compito, analizza i denominatori delle frazioni per vedere se sono confrontabili.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726378663936
+    m_Localized: "Ti far\xF2 un esempio."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858240
+    m_Localized: Ottimo lavoro!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858241
+    m_Localized: Come hai visto, non possiamo confrontare 1/2 e 3/4 direttamente, quindi moltiplichiamo 1/2 per 2/2 ottenendo 2/4.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858242
+    m_Localized: Le frazioni 2/4 e 3/4 hanno lo stesso denominatore, quindi si confrontano i numeratori.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858243
+    m_Localized: Esercitiamoci ancora un po'!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858244
+    m_Localized: Lavoro incredibile!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858245
+    m_Localized: "Questo \xE8 il primo passo: controllare se i denominatori sono confrontabili o uguali."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858246
+    m_Localized: Altrimenti, li moltiplichiamo per ottenere denominatori confrontabili.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858247
+    m_Localized: "Poi confrontiamo i numeratori per capire se \xE8 maggiore, minore o uguale."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858248
+    m_Localized: Per il passo successivo, ho bisogno del tuo aiuto con alcuni ordini.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726382858249
+    m_Localized: Come abbiamo visto, dobbiamo seguire alcuni passaggi per confrontare le frazioni.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052544
+    m_Localized: Controlla i denominatori per vedere se sono confrontabili direttamente.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052545
+    m_Localized: "Se sono uguali, i numeratori determinano quale frazione \xE8 maggiore o minore."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052546
+    m_Localized: Se non sono uguali, dobbiamo moltiplicare numeratore e denominatore per lo stesso valore.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052547
+    m_Localized: "Cos\xEC la frazione diventer\xE0 confrontabile."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052548
+    m_Localized: In questo compito dobbiamo seguire questi passaggi.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052549
+    m_Localized: Prendi carta e penna e converti le frazioni se necessario.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052550
+    m_Localized: Poi trascina uno dei segni <, > o = e premi il pulsante per verificare.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052551
+    m_Localized: Facciamolo!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052552
+    m_Localized: "WOW! Che abilit\xE0!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052553
+    m_Localized: "La fetta pi\xF9 grande era 1/3."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052554
+    m_Localized: "Come puoi vedere, 1/3 ha fette pi\xF9 grandi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052555
+    m_Localized: Continuiamo a confrontare le frazioni!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052556
+    m_Localized: Ottimo lavoro!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052557
+    m_Localized: Hai seguito i passaggi alla perfezione e ormai padroneggi il confronto tra frazioni.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052558
+    m_Localized: Grazie per avermi aiutato con questo compito.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052559
+    m_Localized: Ben fatto! Sei quasi un esperto nell'analizzare frazioni di dolci e torte.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726387052560
+    m_Localized: Grazie per avermi aiutato nei primi due compiti.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246848
+    m_Localized: Per questo passaggio, faremo un controllo finale degli ordini in consegna.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246849
+    m_Localized: "Mettiamo alla prova le tue abilit\xE0 ancora una volta."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246850
+    m_Localized: Incredibile!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246851
+    m_Localized: Hai ragione!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246852
+    m_Localized: Per capirlo meglio, controlliamo i denominatori e vediamo che non sono confrontabili.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246853
+    m_Localized: Convertiamo 1/2 moltiplicando numeratore e denominatore per lo stesso numero.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726391246854
+    m_Localized: "Cos\xEC abbiamo ottenuto una frazione uguale a 1/2."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441152
+    m_Localized: Continuiamo.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441153
+    m_Localized: Che lavoro meraviglioso!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441154
+    m_Localized: Dopo aver confrontato tutte queste frazioni, sono colpito dalla tua bravura.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726395441155
+    m_Localized: Penso che tu meriti di diventare il mio assistente stella d'ora in poi.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []
