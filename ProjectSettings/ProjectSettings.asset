@@ -149,7 +149,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 1.0.6
+  bundleVersion: 1.0.8
   preloadedAssets:
   - {fileID: 11400000, guid: 004919b8e3fbe4820aaa7ca375e26f81, type: 2}
   metroInputSource: 0
@@ -180,7 +180,7 @@ PlayerSettings:
     iPhone: 7
     tvOS: 0
   overrideDefaultApplicationIdentifier: 0
-  AndroidBundleVersionCode: 15
+  AndroidBundleVersionCode: 17
   AndroidMinSdkVersion: 26
   AndroidTargetSdkVersion: 37
   AndroidPreferredInstallLocation: 1
@@ -473,7 +473,7 @@ PlayerSettings:
   m_BuildTargetDefaultTextureCompressionFormat:
   - serializedVersion: 3
     m_BuildTarget: Android
-    m_Formats: 0100000003000000i
+    m_Formats: 03000000i
   - serializedVersion: 3
     m_BuildTarget: WebGL
     m_Formats: 03000000i
