@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -194,9 +195,27 @@ namespace INART.SlothyBakery.Base
             CanvasGroupEnabler(false);
 
             inputField.interactable = false;
+            ConfigureNumericFractionInput();
 
             for (var i = 0; i < optionsGroup.Count; i++)
                 optionsGroup[i].bread.localPosition = i < index ? endPosition.localPosition : startPosition.localPosition;
+        }
+
+        private void ConfigureNumericFractionInput()
+        {
+            if (inputField == null) return;
+            inputField.contentType = TMP_InputField.ContentType.Custom;
+            inputField.inputType = TMP_InputField.InputType.Standard;
+            inputField.keyboardType = TouchScreenKeyboardType.NumbersAndPunctuation;
+            inputField.characterLimit = 7;
+            inputField.onValidateInput = ValidateFractionChar;
+        }
+
+        private static char ValidateFractionChar(string text, int charIndex, char addedChar)
+        {
+            if (char.IsDigit(addedChar)) return addedChar;
+            if (addedChar == '/' && (string.IsNullOrEmpty(text) || !text.Contains("/"))) return addedChar;
+            return '\0';
         }
 
         private bool ValidateContent()
@@ -230,51 +249,34 @@ namespace INART.SlothyBakery.Base
             if (!contentReady) yield break;
             yield return new WaitForSeconds(.2f);
 
-            var scaledTime = Time.fixedDeltaTime * timeScaler;
+            float moveDelay = 0.65f;
+            float fadeDur = Mathf.Max(0.25f, _delay);
 
-            float animationTime = 0;
-            var moveDelay = 1f;
-
-            while (animationTime <= moveDelay)
+            if (optionsGroup[index].bread != null)
             {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / moveDelay);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                optionsGroup[index].bread.localPosition =
-                    Vector3.Lerp(startPosition.localPosition, midPosition.localPosition, animationCurveValue);
-
-                yield return null;
+                yield return optionsGroup[index].bread
+                    .DOLocalMove(midPosition.localPosition, moveDelay)
+                    .SetEase(Ease.OutCubic)
+                    .WaitForCompletion();
             }
 
             SetQuestionPrompt(optionsGroup[index].currentQuestion);
 
-            animationTime = 0;
-            while (animationTime <= _delay)
+            if (canvasGroup != null)
             {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _delay);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                CanvasGroupAlpha(animationCurveValue);
-
-                yield return null;
+                yield return canvasGroup.DOFade(1f, fadeDur).SetEase(Ease.OutQuad).WaitForCompletion();
             }
 
             CanvasGroupEnabler(true);
             inputField.interactable = true;
 
             currentCoroutine = null;
-
-            // if (index == 0)
-            // {
-            // }
         }
 
         protected override IEnumerator Change(float _delay)
         {
-            yield return new WaitForSeconds(.25f);
-            var scaledTime = Time.fixedDeltaTime * timeScaler;
+            yield return new WaitForSeconds(.2f);
+            float dur = Mathf.Max(0.25f, _delay * 0.6f);
 
             yield return StartCoroutine(
                 ProgressionCanvas.Instance.FillBar(index, ProgressionCanvas.ProgressionType.One));
@@ -288,40 +290,17 @@ namespace INART.SlothyBakery.Base
             else
                 SaveLoadState.Instance?.CompleteStoryChapter(0, SceneUtils.FirstMinigameScene, true);
 
-            //Slide old bread from center to end
-            float animationTime = 0;
-
-            while (animationTime <= _delay)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _delay);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                optionsGroup[index].bread.localPosition =
-                    Vector3.Lerp(midPosition.localPosition, endPosition.localPosition, animationCurveValue);
-
-                yield return null;
-            }
-
-            animationTime = 0;
-
-            while (animationTime <= _delay)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _delay);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                buttonsGroup.alpha = 1f - animationCurveValue;
-
-                yield return null;
-            }
+            // Slide old bread from center to end + fade out buttons with DOTween
+            var outSeq = DOTween.Sequence();
+            if (optionsGroup[index].bread != null)
+                outSeq.Join(optionsGroup[index].bread.DOLocalMove(endPosition.localPosition, dur).SetEase(Ease.InCubic));
+            if (buttonsGroup != null)
+                outSeq.Join(buttonsGroup.DOFade(0f, dur).SetEase(Ease.OutQuad));
+            yield return outSeq.WaitForCompletion();
 
             buttonsGroup.interactable = false;
             buttonsGroup.blocksRaycasts = false;
 
-            //Warning(Aldhair): LolSDK
-            //Here we change the whole stuff
-            //Main Loop
             if (index < optionsGroup.Count - 1)
             {
                 index++;
@@ -330,71 +309,32 @@ namespace INART.SlothyBakery.Base
                 if (index == 1)
                 {
                     CanvasGroupEnabler(false);
-
-                    animationTime = 0;
-
-                    while (animationTime <= _delay)
-                    {
-                        animationTime += scaledTime;
-                        var percent = Mathf.Clamp01(animationTime / _delay);
-                        var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                        CanvasGroupAlpha(1f - animationCurveValue);
-
-                        yield return null;
-                    }
+                    if (canvasGroup != null)
+                        yield return canvasGroup.DOFade(0f, dur).SetEase(Ease.OutQuad).WaitForCompletion();
 
                     yield return StartCoroutine(
                         CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.CONGRAT));
 
                     SetQuestionPrompt(optionsGroup[index].currentQuestion);
-                    animationTime = 0;
-                    while (animationTime <= _delay)
-                    {
-                        animationTime += scaledTime;
-                        var percent = Mathf.Clamp01(animationTime / _delay);
-                        var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                        CanvasGroupAlpha(animationCurveValue);
-
-                        yield return null;
-                    }
+                    if (canvasGroup != null)
+                        yield return canvasGroup.DOFade(1f, dur).SetEase(Ease.OutQuad).WaitForCompletion();
 
                     CanvasGroupEnabler(true);
                 }
 
                 SetQuestionPrompt(optionsGroup[index].currentQuestion);
-                //Slide new bread from start to center
-                animationTime = 0;
-
-                while (animationTime <= _delay)
+                if (optionsGroup[index].bread != null)
                 {
-                    animationTime += scaledTime;
-                    var percent = Mathf.Clamp01(animationTime / _delay);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                    optionsGroup[index].bread.localPosition =
-                        Vector3.Lerp(startPosition.localPosition, midPosition.localPosition, animationCurveValue);
-
-                    yield return null;
+                    yield return optionsGroup[index].bread
+                        .DOLocalMove(midPosition.localPosition, dur)
+                        .SetEase(Ease.OutCubic)
+                        .WaitForCompletion();
                 }
 
-                //Reset button colors and setting the options
                 ClearInputField();
 
-                //Button group appears (alpha 0 - 1)
-                animationTime = 0;
-
-                while (animationTime <= _delay)
-                {
-                    animationTime += scaledTime;
-                    var percent = Mathf.Clamp01(animationTime / _delay);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                    buttonsGroup.alpha = animationCurveValue;
-
-                    yield return null;
-                }
+                if (buttonsGroup != null)
+                    yield return buttonsGroup.DOFade(1f, dur).SetEase(Ease.OutQuad).WaitForCompletion();
 
                 buttonsGroup.interactable = true;
                 buttonsGroup.blocksRaycasts = true;
@@ -402,21 +342,11 @@ namespace INART.SlothyBakery.Base
                 next = true;
                 inputField.interactable = true;
             }
-            //The last one
             else
             {
-                animationTime = 0;
-
-                //Deactivate canvas group and dissapears
                 CanvasGroupEnabler(false);
-                while (animationTime <= _delay)
-                {
-                    animationTime += scaledTime;
-                    var percent = Mathf.Clamp01(animationTime / _delay);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-                    CanvasGroupAlpha(1f - animationCurveValue);
-                    yield return null;
-                }
+                if (canvasGroup != null)
+                    yield return canvasGroup.DOFade(0f, dur).SetEase(Ease.OutQuad).WaitForCompletion();
 
                 yield return StartCoroutine(CanvasAnimator.Instance.InstructionsAnimation(false));
                 yield return StartCoroutine(CanvasAnimator.Instance.CanvasAnimation(.6f, PhraseUtils.PhraseType.END));

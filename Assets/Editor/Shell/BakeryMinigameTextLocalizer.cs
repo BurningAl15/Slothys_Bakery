@@ -174,9 +174,16 @@ namespace FatCat.Slothy.Tools
                 if (button.name.Equals("ResetButton", StringComparison.OrdinalIgnoreCase) &&
                     button.transform is RectTransform rrt)
                 {
-                    var sz = rrt.sizeDelta;
-                    rrt.sizeDelta = new Vector2(Mathf.Max(sz.x, 128f), Mathf.Max(sz.y, 40f));
+                    rrt.sizeDelta = new Vector2(116f, 34f);
+                    rrt.anchoredPosition = new Vector2(rrt.anchoredPosition.x, -26f);
                     MarkDirty(rrt);
+                }
+                else if (button.name.Equals("SubmitButton", StringComparison.OrdinalIgnoreCase) &&
+                         button.transform is RectTransform srt)
+                {
+                    srt.sizeDelta = new Vector2(116f, 38f);
+                    srt.anchoredPosition = new Vector2(srt.anchoredPosition.x, 16f);
+                    MarkDirty(srt);
                 }
 
                 foreach (var tmp in button.GetComponentsInChildren<TMP_Text>(true))
@@ -223,6 +230,10 @@ namespace FatCat.Slothy.Tools
                         input.textComponent.fontSharedMaterial = bodyFont.material;
                     }
                     input.textComponent.color = Plum;
+                    input.contentType = TMP_InputField.ContentType.Custom;
+                    input.inputType = TMP_InputField.InputType.Standard;
+                    input.keyboardType = TouchScreenKeyboardType.NumbersAndPunctuation;
+                    input.characterLimit = 7;
                     MarkDirty(input.textComponent);
                 }
 

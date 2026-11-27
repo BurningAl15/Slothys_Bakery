@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 namespace INART.SlothyBakery.Base
@@ -274,22 +275,13 @@ namespace INART.SlothyBakery.Base
 
             _logic.InitializeDenominator(compareFractions[minigame1_Index]);
 
-            float movement = 0;
-            float evaluate;
-            float maxTime = Utils_Minigame1_Settings.maxTime_Moving;
-
-            while (movement < maxTime)
-            {
-                evaluate = _animationCurve.Evaluate(movement / maxTime);
-
-                movement += Time.fixedDeltaTime;
-                FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._left.plate, positions_Left, 0,
-                    evaluate);
-                FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._right.plate, positions_Right, 0,
-                    evaluate);
-
-                yield return null;
-            }
+            float maxTime = Mathf.Max(0.35f, Utils_Minigame1_Settings.maxTime_Moving);
+            var enterSeq = DOTween.Sequence();
+            if (compareFractions[minigame1_Index]._left.plate != null && positions_Left.Count > 0 && positions_Left[0] != null)
+                enterSeq.Join(compareFractions[minigame1_Index]._left.plate.transform.DOMove(positions_Left[0].position, maxTime).SetEase(Ease.OutCubic));
+            if (compareFractions[minigame1_Index]._right.plate != null && positions_Right.Count > 0 && positions_Right[0] != null)
+                enterSeq.Join(compareFractions[minigame1_Index]._right.plate.transform.DOMove(positions_Right[0].position, maxTime).SetEase(Ease.OutCubic));
+            yield return enterSeq.WaitForCompletion();
 
             yield return _logic.MoveMenu(true);
 
@@ -300,10 +292,7 @@ namespace INART.SlothyBakery.Base
         {
             _logic.ResetIsCorrect();
 
-            var maxTime = Utils_Minigame1_Settings.maxTime_Moving;
-
-            float movement = 0;
-            float evaluate;
+            var maxTime = Mathf.Max(0.35f, Utils_Minigame1_Settings.maxTime_Moving);
 
             //Run Progression
             yield return StartCoroutine(
@@ -320,49 +309,28 @@ namespace INART.SlothyBakery.Base
             else
                 SaveLoadState.Instance?.CompleteStoryChapter(1, SceneUtils.SecondMinigameScene, false);
 
-            //This should be a coroutine to make it soft but fast
-            movement = 0;
-            while (movement <= maxTime)
+            // Bring sign in with DOTween
+            if (compareFractions[minigame1_Index]._signPos != null && positions_Center.Count > 0 && positions_Center[0] != null)
             {
-                evaluate = _animationCurve.Evaluate(movement / maxTime);
-                movement += Time.fixedDeltaTime;
-                FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._signPos, positions_Center, 0,
-                    evaluate);
-                yield return null;
+                yield return compareFractions[minigame1_Index]._signPos.transform
+                    .DOMove(positions_Center[0].position, maxTime)
+                    .SetEase(Ease.OutBack, 1.1f)
+                    .WaitForCompletion();
             }
-            evaluate = _animationCurve.Evaluate(maxTime / maxTime);
-            FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._signPos, positions_Center, 0,
-                evaluate);
 
-            yield return new WaitForSeconds(3f);
-            yield return new WaitForSeconds(_delay);
+            yield return new WaitForSeconds(Mathf.Min(1.2f, 0.8f + _delay * 0.4f));
 
-            //Move from point 1 to point 2 (mid to end)
-            movement = 0;
-            while (movement <= maxTime)
-            {
-                evaluate = _animationCurve.Evaluate(movement / maxTime);
-
-                movement += Time.fixedDeltaTime;
-                FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._left.plate, positions_Left, 1,
-                    evaluate);
-                FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._right.plate, positions_Right, 1,
-                    evaluate);
-                FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._signPos, positions_Center, 1,
-                    evaluate);
-                yield return null;
-            }
-            evaluate = _animationCurve.Evaluate(maxTime / maxTime);
-            FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._left.plate, positions_Left, 1,
-                evaluate);
-            FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._right.plate, positions_Right, 1,
-                evaluate);
-            FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._signPos, positions_Center, 1,
-                evaluate);
+            // Slide current plates & sign out with DOTween
+            var exitSeq = DOTween.Sequence();
+            if (compareFractions[minigame1_Index]._left.plate != null && positions_Left.Count > 1 && positions_Left[1] != null)
+                exitSeq.Join(compareFractions[minigame1_Index]._left.plate.transform.DOMove(positions_Left[1].position, maxTime).SetEase(Ease.InCubic));
+            if (compareFractions[minigame1_Index]._right.plate != null && positions_Right.Count > 1 && positions_Right[1] != null)
+                exitSeq.Join(compareFractions[minigame1_Index]._right.plate.transform.DOMove(positions_Right[1].position, maxTime).SetEase(Ease.InCubic));
+            if (compareFractions[minigame1_Index]._signPos != null && positions_Center.Count > 1 && positions_Center[1] != null)
+                exitSeq.Join(compareFractions[minigame1_Index]._signPos.transform.DOMove(positions_Center[1].position, maxTime).SetEase(Ease.InCubic));
+            yield return exitSeq.WaitForCompletion();
 
             _instructive = InstructiveState.Start;
-
-
 
             //Main Loop
             if (minigame1_Index < compareFractions.Count - 1)
@@ -386,19 +354,12 @@ namespace INART.SlothyBakery.Base
                 _logic.InitializeDenominator(compareFractions[minigame1_Index]);
                 _logic.ResetIsCorrect();
 
-                movement = 0;
-                while (movement < maxTime)
-                {
-                    evaluate = _animationCurve.Evaluate(movement / maxTime);
-
-                    movement += Time.fixedDeltaTime;
-                    FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._left.plate, positions_Left, 0,
-                        evaluate);
-                    FractionExtensionMethods.Lerp(compareFractions[minigame1_Index]._right.plate, positions_Right, 0,
-                        evaluate);
-
-                    yield return null;
-                }
+                var nextSeq = DOTween.Sequence();
+                if (compareFractions[minigame1_Index]._left.plate != null && positions_Left.Count > 0 && positions_Left[0] != null)
+                    nextSeq.Join(compareFractions[minigame1_Index]._left.plate.transform.DOMove(positions_Left[0].position, maxTime).SetEase(Ease.OutCubic));
+                if (compareFractions[minigame1_Index]._right.plate != null && positions_Right.Count > 0 && positions_Right[0] != null)
+                    nextSeq.Join(compareFractions[minigame1_Index]._right.plate.transform.DOMove(positions_Right[0].position, maxTime).SetEase(Ease.OutCubic));
+                yield return nextSeq.WaitForCompletion();
             }
             //The last one
             else

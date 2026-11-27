@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using INART.SlothyBakery.Base;
 using UnityEngine;
 using TMPro;
@@ -80,28 +81,36 @@ namespace INART.SlothyBakery.Base
             Interact(_buttonMenu, false);
             Interact(_inputFieldMenu, false);
             Interact(_signButtonMenu, false);
+            ConfigureNumericFractionInput();
             SaveLoadState.Instance?.EnterMinigame(0, SceneTransition.SceneUtils.FirstMinigameScene);
+        }
+
+        private void ConfigureNumericFractionInput()
+        {
+            if (inputField == null) return;
+            inputField.contentType = TMP_InputField.ContentType.Custom;
+            inputField.inputType = TMP_InputField.InputType.Standard;
+            inputField.keyboardType = TouchScreenKeyboardType.NumbersAndPunctuation;
+            inputField.characterLimit = 7;
+            inputField.onValidateInput = ValidateFractionChar;
+        }
+
+        private static char ValidateFractionChar(string text, int charIndex, char addedChar)
+        {
+            if (char.IsDigit(addedChar)) return addedChar;
+            if (addedChar == '/' && (string.IsNullOrEmpty(text) || !text.Contains("/"))) return addedChar;
+            return '\0';
         }
 
         public IEnumerator MoveMenu(bool run)
         {
-            Vector3 init = run ? positionPoints.InitialPos : positionPoints.EndPos;
             Vector3 end = run ? positionPoints.EndPos : positionPoints.InitialPos;
-
-
-            float movement = 0;
-            float evaluate;
-            float maxTime = Utils_Minigame1_Settings.maxTime;
-            while (movement < maxTime)
-            {
-                evaluate = _animationCurve.Evaluate(movement / maxTime);
-                FractionExtensionMethods.Lerp(_rectTransform, init, end, evaluate);
-                movement += Time.deltaTime;
-                yield return null;
-            }
-
-            evaluate = _animationCurve.Evaluate(maxTime / maxTime);
-            FractionExtensionMethods.Lerp(_rectTransform, init, end, evaluate);
+            if (_rectTransform == null) yield break;
+            _rectTransform.DOKill();
+            float dur = Mathf.Max(0.25f, Utils_Minigame1_Settings.maxTime);
+            yield return _rectTransform.DOLocalMove(end, dur)
+                .SetEase(run ? Ease.OutBack : Ease.InBack, 1.1f)
+                .WaitForCompletion();
         }
 
         public void InitializeDenominator(int _denominator1, int _denominator2, Sign _value)
