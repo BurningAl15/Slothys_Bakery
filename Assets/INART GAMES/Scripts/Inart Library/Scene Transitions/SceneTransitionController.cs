@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Timers;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -116,14 +116,8 @@ namespace INART.SlothyBakery.SceneTransition
             _overlayFadeImage.raycastTarget = true;
             float dur = maxTimer > 0f ? Mathf.Clamp(maxTimer / transitionSpeed, 0.15f, 0.55f) : 0.35f;
             yield return null;
-            float elapsed = 0f;
-            while (elapsed < dur)
-            {
-                elapsed += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
-                float a = Mathf.Clamp01(elapsed / dur);
-                _overlayFadeImage.color = new Color(0f, 0f, 0f, a);
-                yield return null;
-            }
+            _overlayFadeImage.DOKill();
+            yield return _overlayFadeImage.DOFade(1f, dur).SetEase(Ease.InOutQuad).SetUpdate(true).WaitForCompletion();
 
             _overlayFadeImage.color = new Color(0f, 0f, 0f, 1f);
             currentCoroutine = null;
@@ -144,14 +138,8 @@ namespace INART.SlothyBakery.SceneTransition
 
             float dur = maxTimer > 0f ? Mathf.Clamp(maxTimer / transitionSpeed, 0.15f, 0.55f) : 0.35f;
             yield return null;
-            float elapsed = 0f;
-            while (elapsed < dur)
-            {
-                elapsed += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
-                float a = 1f - Mathf.Clamp01(elapsed / dur);
-                _overlayFadeImage.color = new Color(0f, 0f, 0f, a);
-                yield return null;
-            }
+            _overlayFadeImage.DOKill();
+            yield return _overlayFadeImage.DOFade(0f, dur).SetEase(Ease.InOutQuad).SetUpdate(true).WaitForCompletion();
 
             _overlayFadeImage.color = new Color(0f, 0f, 0f, 0f);
             _overlayFadeImage.raycastTarget = false;

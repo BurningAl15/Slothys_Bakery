@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -184,27 +185,13 @@ namespace INART.SlothyBakery.Base
 
             yield return new WaitForSeconds(.2f);
 
-            var scaledTime = Time.fixedDeltaTime * timeScaler;
-            var tempText = "";
-
-            float animationTime = 0;
-            var moveDelay = 1f;
+            float moveDur = timeScaler > 0f ? 1f / timeScaler : 0.6f;
             button.interactable = false;
 
-            while (animationTime <= moveDelay)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / moveDelay);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                rounds[index].objectLeft.transform.localPosition = Vector3.Lerp(leftObject.startPosition.localPosition,
-                    leftObject.midPosition.localPosition, animationCurveValue);
-                rounds[index].objectRight.transform.localPosition = Vector3.Lerp(
-                    rightObject.startPosition.localPosition, rightObject.midPosition.localPosition,
-                    animationCurveValue);
-
-                yield return null;
-            }
+            yield return AnimateRoundPair(
+                leftObject.startPosition.localPosition, leftObject.midPosition.localPosition,
+                rightObject.startPosition.localPosition, rightObject.midPosition.localPosition,
+                moveDur);
 
             SetValues();
             if (!isTurnedOn && rounds[index]._spriteControl != null)
@@ -213,17 +200,7 @@ namespace INART.SlothyBakery.Base
                 isTurnedOn = true;
             }
 
-            animationTime = 0;
-            while (animationTime <= moveDelay)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / moveDelay);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                ManageAlpha(animationCurveValue, Side.Both);
-
-                yield return null;
-            }
+            yield return AnimateRoundAlpha(0f, 1f, moveDur);
 
             SignManager.Instance.ResetAll();
             SignManager.Instance.EnableColliders();
@@ -284,33 +261,14 @@ namespace INART.SlothyBakery.Base
             button.interactable = false;
             ValueManager._instance.ResetValue();
 
-            float animationTime = 0;
+            float stepDur = timeScaler > 0f ? _delay / timeScaler : _delay;
 
-            while (animationTime <= _delay)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _delay);
-                var animationCurveValue = _animationCurve.Evaluate(percent);
+            yield return AnimateRoundPair(
+                leftObject.midPosition.localPosition, leftObject.endPosition.localPosition,
+                rightObject.midPosition.localPosition, rightObject.endPosition.localPosition,
+                stepDur);
 
-                rounds[index].objectLeft.transform.localPosition = Vector3.Lerp(leftObject.midPosition.localPosition,
-                    leftObject.endPosition.localPosition, animationCurveValue);
-                rounds[index].objectRight.transform.localPosition = Vector3.Lerp(rightObject.midPosition.localPosition,
-                    rightObject.endPosition.localPosition, animationCurveValue);
-
-                yield return null;
-            }
-
-            animationTime = 0;
-            while (animationTime <= _delay)
-            {
-                animationTime += scaledTime;
-                var percent = Mathf.Clamp01(animationTime / _delay);
-                var animationCurveValue = 1 - _animationCurve.Evaluate(percent);
-
-                ManageAlpha(animationCurveValue, Side.Both);
-
-                yield return null;
-            }
+            yield return AnimateRoundAlpha(1f, 0f, stepDur);
 
             rounds[index].parentObject.SetActive(false);
             ValueManager._instance.ResetValue();
@@ -330,42 +288,19 @@ namespace INART.SlothyBakery.Base
 
                 rounds[index].parentObject.SetActive(true);
 
-
-                animationTime = 0;
-                while (animationTime <= _delay)
-                {
-                    animationTime += scaledTime;
-                    var percent = Mathf.Clamp01(animationTime / _delay);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                    rounds[index].objectLeft.transform.localPosition = Vector3.Lerp(
-                        leftObject.startPosition.localPosition, leftObject.midPosition.localPosition,
-                        animationCurveValue);
-                    rounds[index].objectRight.transform.localPosition = Vector3.Lerp(
-                        rightObject.startPosition.localPosition, rightObject.midPosition.localPosition,
-                        animationCurveValue);
-
-                    yield return null;
-                }
+                yield return AnimateRoundPair(
+                    leftObject.startPosition.localPosition, leftObject.midPosition.localPosition,
+                    rightObject.startPosition.localPosition, rightObject.midPosition.localPosition,
+                    stepDur);
 
                 SetValues();
-            if (!isTurnedOn && rounds[index]._spriteControl != null)
-            {
-                rounds[index]._spriteControl.TurnOnSprites();
-                isTurnedOn = true;
-            }
-
-                animationTime = 0;
-                while (animationTime <= _delay)
+                if (!isTurnedOn && rounds[index]._spriteControl != null)
                 {
-                    animationTime += scaledTime;
-                    var percent = Mathf.Clamp01(animationTime / _delay);
-                    var animationCurveValue = _animationCurve.Evaluate(percent);
-
-                    ManageAlpha(animationCurveValue, Side.Both);
-
-                    yield return null;
+                    rounds[index]._spriteControl.TurnOnSprites();
+                    isTurnedOn = true;
                 }
+
+                yield return AnimateRoundAlpha(0f, 1f, stepDur);
 
                 // print("Slide Draggable Group");
 
@@ -391,6 +326,39 @@ namespace INART.SlothyBakery.Base
             isTurnedOn = false;
 
             currentCoroutine = null;
+        }
+
+        private YieldInstruction AnimateRoundPair(Vector3 leftFrom, Vector3 leftTo, Vector3 rightFrom, Vector3 rightTo, float duration)
+        {
+            var leftTf = rounds[index].objectLeft.transform;
+            var rightTf = rounds[index].objectRight.transform;
+            leftTf.DOKill();
+            rightTf.DOKill();
+            leftTf.localPosition = leftFrom;
+            rightTf.localPosition = rightFrom;
+
+            var seq = DOTween.Sequence();
+            if (_animationCurve != null && _animationCurve.length > 0)
+            {
+                seq.Join(leftTf.DOLocalMove(leftTo, duration).SetEase(_animationCurve));
+                seq.Join(rightTf.DOLocalMove(rightTo, duration).SetEase(_animationCurve));
+            }
+            else
+            {
+                seq.Join(leftTf.DOLocalMove(leftTo, duration).SetEase(Ease.OutCubic));
+                seq.Join(rightTf.DOLocalMove(rightTo, duration).SetEase(Ease.OutCubic));
+            }
+            return seq.WaitForCompletion();
+        }
+
+        private YieldInstruction AnimateRoundAlpha(float from, float to, float duration)
+        {
+            var tween = DOVirtual.Float(from, to, duration, v => ManageAlpha(v, Side.Both));
+            if (_animationCurve != null && _animationCurve.length > 0)
+                tween.SetEase(_animationCurve);
+            else
+                tween.SetEase(Ease.OutQuad);
+            return tween.WaitForCompletion();
         }
 
         void ManageAlpha(float _alpha, Side _side)
