@@ -101,13 +101,24 @@ namespace INART.SlothyBakery.Core
             if (SceneTransitionController.Instance != null && SceneTransitionController.Instance.gameObject.activeInHierarchy)
                 yield return StartCoroutine(SceneTransitionController.Instance.FadeEffect_IN());
 
-            bool skipGreeting = Fatcat.Slothy.Bakery.Modes.BakerySession.OffStory &&
-                (Fatcat.Slothy.Bakery.Modes.BakerySession.Restarted ||
-                 Fatcat.Slothy.Bakery.Modes.BakerySession.Mode != Fatcat.Slothy.Bakery.Modes.BakeryModeKind.Afternoon);
+            string activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            bool resumingMidChapter = !Fatcat.Slothy.Bakery.Modes.BakerySession.OffStory
+                && Base.SaveLoadState.Instance != null
+                && (Base.SaveLoadState.Instance.Progress.currentRoundIndex > 0
+                    || Base.SaveLoadState.Instance.HasCompletedIntro(activeScene));
+
+            bool skipGreeting = resumingMidChapter
+                || (Fatcat.Slothy.Bakery.Modes.BakerySession.OffStory &&
+                    (Fatcat.Slothy.Bakery.Modes.BakerySession.Restarted ||
+                     Fatcat.Slothy.Bakery.Modes.BakerySession.Mode != Fatcat.Slothy.Bakery.Modes.BakeryModeKind.Afternoon));
 
             if (CanvasAnimator.Instance != null && !skipGreeting)
+            {
                 yield return StartCoroutine(
                     CanvasAnimator.Instance.CanvasAnimation(canvasAnimationDuration, PhraseUtils.PhraseType.INTRO));
+                if (!Fatcat.Slothy.Bakery.Modes.BakerySession.OffStory)
+                    Base.SaveLoadState.Instance?.MarkIntroCompleted(activeScene);
+            }
 
             if (runAnimation)
             {

@@ -26,6 +26,8 @@ namespace INART.SlothyBakery.Base
         public int currentRoundIndex = 0;
         /// <summary>Last active Story scene name.</summary>
         public string currentSceneName = "";
+        /// <summary>Story scene whose intro narration was already completed.</summary>
+        public string introCompletedScene = "";
     }
 
     // ── Manager ────────────────────────────────────────────────────────────────
@@ -98,6 +100,7 @@ namespace INART.SlothyBakery.Base
             _progress.unlockedState = 0;
             _progress.currentRoundIndex = 0;
             _progress.currentSceneName = INART.SlothyBakery.SceneTransition.SceneUtils.FirstMinigameScene;
+            _progress.introCompletedScene = "";
             Save();
         }
 
@@ -110,9 +113,29 @@ namespace INART.SlothyBakery.Base
             _progress.unlockedState = chapterState;
             _progress.currentSceneName = sceneName;
             if (!sameChapter)
+            {
                 _progress.currentRoundIndex = 0;
+                if (_progress.introCompletedScene != sceneName)
+                    _progress.introCompletedScene = "";
+            }
             Save();
         }
+
+        /// <summary>Marks the Story intro narration completed for the given scene.</summary>
+        public void MarkIntroCompleted(string sceneName)
+        {
+            if (BakerySession.OffStory || string.IsNullOrEmpty(sceneName)) return;
+            _progress ??= new BakeryProgressData();
+            _progress.introCompletedScene = sceneName;
+            Save();
+        }
+
+        /// <summary>Returns true if the Story intro narration was already completed for the given scene.</summary>
+        public bool HasCompletedIntro(string sceneName)
+            => !BakerySession.OffStory
+               && _progress != null
+               && !string.IsNullOrEmpty(sceneName)
+               && _progress.introCompletedScene == sceneName;
 
         /// <summary>Persists round checkpoint inside the active Story chapter.</summary>
         public void SaveRoundCheckpoint(int chapterState, string sceneName, int nextRoundIndex)
@@ -144,6 +167,7 @@ namespace INART.SlothyBakery.Base
                 _progress.unlockedState = 0;
                 _progress.currentRoundIndex = 0;
                 _progress.currentSceneName = INART.SlothyBakery.SceneTransition.SceneUtils.FirstMinigameScene;
+                _progress.introCompletedScene = "";
                 BakeryStats.Add("story.finished");
             }
             else
@@ -151,6 +175,7 @@ namespace INART.SlothyBakery.Base
                 _progress.unlockedState = nextChapterState;
                 _progress.currentRoundIndex = 0;
                 _progress.currentSceneName = nextSceneName;
+                _progress.introCompletedScene = "";
             }
             Save();
         }
