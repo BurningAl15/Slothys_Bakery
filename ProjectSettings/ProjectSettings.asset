@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: FatCatGameStudio
-  productName: SlothysBakery
+  productName: Slothy's Bakery
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -149,7 +149,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 1.0.9
+  bundleVersion: 1.0.14
   preloadedAssets:
   - {fileID: 11400000, guid: 004919b8e3fbe4820aaa7ca375e26f81, type: 2}
   metroInputSource: 0
@@ -177,10 +177,10 @@ PlayerSettings:
   buildNumber:
     Standalone: 0
     VisionOS: 0
-    iPhone: 8
+    iPhone: 10
     tvOS: 0
   overrideDefaultApplicationIdentifier: 0
-  AndroidBundleVersionCode: 17
+  AndroidBundleVersionCode: 20
   AndroidMinSdkVersion: 26
   AndroidTargetSdkVersion: 37
   AndroidPreferredInstallLocation: 1

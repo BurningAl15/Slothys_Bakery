@@ -321,7 +321,8 @@ namespace INART.SlothyBakery.Notifications
                     Text = GetBody(plan.Index),
                     FireTime = plan.FireAt,
                     SmallIcon = "bakery_notif_small",
-                    LargeIcon = "bakery_notif_large"
+                    LargeIcon = "bakery_notif_large",
+                    Style = NotificationStyle.BigTextStyle
                 };
                 AndroidNotificationCenter.SendNotification(notification, androidChannelId);
             }
