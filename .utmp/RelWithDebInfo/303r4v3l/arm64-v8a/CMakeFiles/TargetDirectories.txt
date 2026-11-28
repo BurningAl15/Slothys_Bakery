@@ -1,5 +1,0 @@
-/Users/aldhairvera/server/projects/UnityProjects/FatcatGameStudio/CurrentlyWorkin/SlothysBakery/.utmp/RelWithDebInfo/303r4v3l/arm64-v8a/CMakeFiles/edit_cache.dir
-/Users/aldhairvera/server/projects/UnityProjects/FatcatGameStudio/CurrentlyWorkin/SlothysBakery/.utmp/RelWithDebInfo/303r4v3l/arm64-v8a/CMakeFiles/rebuild_cache.dir
-/Users/aldhairvera/server/projects/UnityProjects/FatcatGameStudio/CurrentlyWorkin/SlothysBakery/.utmp/RelWithDebInfo/303r4v3l/arm64-v8a/FramePacing/CMakeFiles/swappywrapper.dir
-/Users/aldhairvera/server/projects/UnityProjects/FatcatGameStudio/CurrentlyWorkin/SlothysBakery/.utmp/RelWithDebInfo/303r4v3l/arm64-v8a/FramePacing/CMakeFiles/edit_cache.dir
-/Users/aldhairvera/server/projects/UnityProjects/FatcatGameStudio/CurrentlyWorkin/SlothysBakery/.utmp/RelWithDebInfo/303r4v3l/arm64-v8a/FramePacing/CMakeFiles/rebuild_cache.dir

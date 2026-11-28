@@ -80,3 +80,6 @@ crashlytics-build.properties
 *.mobileprovision
 secrets.env
 *.credentials.json
+
+# Unity native build intermediates
+.utmp/
