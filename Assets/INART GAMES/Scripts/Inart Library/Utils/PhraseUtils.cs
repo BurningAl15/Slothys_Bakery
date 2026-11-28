@@ -9,6 +9,6 @@ public class PhraseUtils
         INTRO,CONGRAT,END    
     }
 
-    public static float waitUntilNextLetter = .04f;
+    public static float waitUntilNextLetter = .05f; // as Slothy's Café (owner 2026-11-28)
     public static float waitUntilPrevious = .5f;
 }
