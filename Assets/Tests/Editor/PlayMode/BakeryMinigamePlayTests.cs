@@ -187,6 +187,8 @@ namespace Fatcat.Slothy.Bakery.Tests
                 Assert.IsFalse(logic.IsCorrect);
                 logic.TurnOn_IfDenominatorsEquals_InputFieldMenu();
                 var input = (TMP_InputField)typeof(Minigame1_Logic).GetField("inputField", PrivateInst).GetValue(logic);
+                yield return new WaitForSecondsRealtime(0.6f);
+                CaptureAtAspect(Environment.GetEnvironmentVariable("FATCAT_CAPTURE_DIR"), "bakery_mg1_input");
                 // Wrong / empty multiplier rejected cleanly
                 input.text = "";
                 logic.CheckInputValue();
