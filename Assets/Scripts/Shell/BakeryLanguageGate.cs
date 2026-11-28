@@ -22,6 +22,10 @@ namespace Fatcat.Slothy.Bakery.Shell
                 picker.transform.SetAsLastSibling();
                 picker.Open();
             }
+            else
+            {
+                INART.SlothyBakery.Notifications.NotificationManager.AskOnceAtStartup();
+            }
         }
 
         public void OpenPicker()
@@ -47,6 +51,7 @@ namespace Fatcat.Slothy.Bakery.Shell
 
             FindAnyObjectByType<INART.SlothyBakery.Base.InitialMenuManager>()?.BeginDeferredIntro();
             FindAnyObjectByType<BakeryModesView>()?.BeginDeferredDockIntro();
+            INART.SlothyBakery.Notifications.NotificationManager.AskOnceAtStartup();
         }
     }
 }

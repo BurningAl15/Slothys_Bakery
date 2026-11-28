@@ -185,9 +185,51 @@ namespace INART.SlothyBakery.Notifications
         private static string GetLocalizedText(string key, string fallback)
             => Fatcat.Slothy.Bakery.Shell.BakeryPromptLocalization.GetLocalizedOrFallback(key, fallback);
 
-        /// <summary>Called by the settings toggle so system permission is requested only after opt-in.</summary>
+        private const string AskedStartupKey = "bakery.reminders.asked_startup";
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void EnsureInstance()
+        {
+            if (!Application.isPlaying || Instance != null) return;
+            var go = new GameObject(nameof(NotificationManager));
+            DontDestroyOnLoad(go);
+            go.AddComponent<NotificationManager>();
+        }
+
+        public static bool HasOsPermission
+        {
+            get
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+                return AndroidNotificationCenter.UserPermissionToPost == PermissionStatus.Allowed;
+#elif UNITY_IOS && !UNITY_EDITOR
+                return iOSNotificationCenter.GetNotificationSettings().AuthorizationStatus == AuthorizationStatus.Authorized;
+#else
+                return true;
+#endif
+            }
+        }
+
+        public static bool IsRemindersEnabled()
+        {
+            bool pref = SettingsManager.Instance != null
+                ? SettingsManager.Instance.NotificationsEnabled
+                : PlayerPrefs.GetInt("cfg_notif_enabled", 0) == 1;
+            return pref && HasOsPermission;
+        }
+
+        public static void AskOnceAtStartup()
+        {
+            if (!Application.isMobilePlatform || PlayerPrefs.GetInt(AskedStartupKey, 0) == 1) return;
+            PlayerPrefs.SetInt(AskedStartupKey, 1);
+            PlayerPrefs.Save();
+            RequestEnable();
+        }
+
+        /// <summary>Called by the settings toggle or startup prompt so system permission is requested cleanly.</summary>
         public static void RequestEnable(Action<bool> completed = null)
         {
+            EnsureInstance();
             if (Instance == null)
             {
                 completed?.Invoke(false);

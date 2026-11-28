@@ -351,6 +351,9 @@ namespace Fatcat.Slothy.Bakery.Tests
             var switches = settingsView.GetComponentsInChildren<Toggle>(true);
             Assert.AreEqual(2, switches.Length);
             switches[0].isOn = false;
+            switches[1].isOn = true;
+            yield return null;
+            Assert.AreEqual(1, PlayerPrefs.GetInt("cfg_notif_enabled", -1));
             switches[1].isOn = false;
             yield return null;
 

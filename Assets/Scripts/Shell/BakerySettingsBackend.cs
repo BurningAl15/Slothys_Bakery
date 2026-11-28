@@ -31,14 +31,7 @@ namespace Fatcat.Slothy.Bakery.Shell
             }
         }
 
-        public static bool RemindersEnabled
-        {
-            get
-            {
-                var mgr = FindAnyObjectByType<SettingsManager>();
-                return mgr != null ? mgr.NotificationsEnabled : PlayerPrefs.GetInt(RemindersKey, 1) == 1;
-            }
-        }
+        public static bool RemindersEnabled => NotificationManager.IsRemindersEnabled();
 
         public override float GetVolume(string id) =>
             id == "music" ? BakeryAudioSettings.Music : BakeryAudioSettings.Effects;
