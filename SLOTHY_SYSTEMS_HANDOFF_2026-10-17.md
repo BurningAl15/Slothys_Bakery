@@ -95,3 +95,19 @@ Análisis estático de los tres controladores activos, el guardado y su adaptaci
   - Suite completa EditMode + PlayMode (`Fatcat.Slothy.Bakery.Tests`): **12/12 Passed, 0 Failed, 0 Skipped** usando perfil aislado (`BakeryTestPrefsScope`) e inspección visual real a 16:9 (`1920x1080`) y 20:9 (`2340x1080`) de Menú (sin/con Continuar), Selector de idioma, Ajustes ES/EN, MG1/MG2/MG3, Modal de Modos, Pausa, Resumen, Puerta para adultos y Logros.
 - **Pendiente (Etapa 3 / Dispositivo)**:
   - Localización interna de textos/escenas legacy en `2. Minigame1`, `3. Minigame2`, `4. Minigame3`, integración de `NarratorFace` / `com.fatcat.feedback` dentro de rondas, Diploma, Recordatorios, Repisa/Postal de amigos y QA en dispositivo físico Android/iOS.
+
+
+### iOS App Store Connect · 27 noviembre 2026
+
+- App ID `com.FatCatGameStudio.SlothysBakery` registrado en Apple Developer y ficha `6839907319` creada en cuenta personal. Versión inicial de ficha `1.0.6`, acorde con ProjectSettings al momento de crearla. En preparación para envío, sin compilación asignada ni revisión enviada.
+- Guardados nombre, descripción en inglés, palabras clave, copyright, categoría Educación, subtítulo, ausencia de login y publicación manual. Pendientes capturas, idiomas adicionales, soporte/contacto de revisión, privacidad, derechos, clasificación por edades, precio/disponibilidad y build iOS válido. Verificar estado real antes de enviar.
+- FastTask local actualizado; sincronización cloud no confirmada.
+
+- Actualización 27 noviembre: descripciones, palabras clave y subtítulos guardados en inglés y español (México), junto con la URL de soporte del estudio en ambos idiomas. Contacto de revisión y notas todavía sin guardar. Clasificación, privacidad, precio, capturas y build pendientes.
+
+
+### iOS · políticas y revisión de privacidad · 27 noviembre 2026
+
+- En App Store Connect se guardó la URL de la política pública ya enlazada en la ficha Google Play correspondiente. Ambos documentos de Google indican acceso público por enlace y última modificación el 21 marzo 2024. Falta validar y actualizar su contenido para el build actual de iOS antes de declarar prácticas.
+- Ambos proyectos declaran Unity Analytics. Pizza inicializa Unity Services y registra eventos de nivel cuando existe consentimiento. Bakery contiene AnalyticsManager y llamadas a Unity Services. Es necesario verificar compilación final y servicios efectivos, incluyendo dependencias y consentimiento, antes de responder App Privacy. Los manifiestos exportados previamente enumeran tipos de datos y tracking y no deben considerarse por sí solos una declaración de lo que ocurre en el build final.
+- App Privacy aún no está publicada. La revisión automática rechazó seleccionar $0 en Pizza por falta de autorización expresa del precio. No se cambió precio ni territorios. Contacto de revisión pendiente de autorización para reutilizar los datos de Café. Sin envío, build nuevo ni pruebas en dispositivo.
