@@ -134,6 +134,21 @@ namespace INART.SlothyBakery.Base
         public List<Transform> positions_Left = new List<Transform>();
         public List<Transform> positions_Right = new List<Transform>();
         public List<Transform> positions_Center = new List<Transform>();
+
+        /// <summary>
+        /// One leg of a plate's or sign's path, as the pre-DOTween Lerp(points, from) did: snap to point
+        /// <paramref name="from"/> and move to point from + 1. (The DOTween port moved to point "from" instead, so
+        /// the plates stayed off screen on device.) Null when the object or the points are missing.
+        /// </summary>
+        static Tween MoveAlong(Transform t, List<Transform> points, int from, float duration, Ease ease)
+        {
+            if (t == null || points == null || points.Count < from + 2 || points[from] == null || points[from + 1] == null) return null;
+            t.DOKill();
+            t.position = points[from].position;
+            return t.DOMove(points[from + 1].position, duration).SetEase(ease);
+        }
+
+        static void JoinIfAny(Sequence seq, Tween t) { if (t != null) seq.Join(t); }
         [SerializeField] private int minigame1_Index = 0;
 
         private Dictionary<Sign, Sprite> spriteDictionary = new Dictionary<Sign, Sprite>();
@@ -277,10 +292,9 @@ namespace INART.SlothyBakery.Base
 
             float maxTime = Mathf.Max(0.35f, Utils_Minigame1_Settings.maxTime_Moving);
             var enterSeq = DOTween.Sequence();
-            if (compareFractions[minigame1_Index]._left.plate != null && positions_Left.Count > 0 && positions_Left[0] != null)
-                enterSeq.Join(compareFractions[minigame1_Index]._left.plate.transform.DOMove(positions_Left[0].position, maxTime).SetEase(Ease.OutCubic));
-            if (compareFractions[minigame1_Index]._right.plate != null && positions_Right.Count > 0 && positions_Right[0] != null)
-                enterSeq.Join(compareFractions[minigame1_Index]._right.plate.transform.DOMove(positions_Right[0].position, maxTime).SetEase(Ease.OutCubic));
+            // Same path as the original Lerp(points, 0): from point 0 (off screen) to point 1 (on the table).
+            JoinIfAny(enterSeq, MoveAlong(compareFractions[minigame1_Index]._left.plate, positions_Left, 0, maxTime, Ease.OutCubic));
+            JoinIfAny(enterSeq, MoveAlong(compareFractions[minigame1_Index]._right.plate, positions_Right, 0, maxTime, Ease.OutCubic));
             yield return enterSeq.WaitForCompletion();
 
             yield return _logic.MoveMenu(true);
@@ -310,24 +324,17 @@ namespace INART.SlothyBakery.Base
                 SaveLoadState.Instance?.CompleteStoryChapter(1, SceneUtils.SecondMinigameScene, false);
 
             // Bring sign in with DOTween
-            if (compareFractions[minigame1_Index]._signPos != null && positions_Center.Count > 0 && positions_Center[0] != null)
-            {
-                yield return compareFractions[minigame1_Index]._signPos.transform
-                    .DOMove(positions_Center[0].position, maxTime)
-                    .SetEase(Ease.OutBack, 1.1f)
-                    .WaitForCompletion();
-            }
+            var signIn = MoveAlong(compareFractions[minigame1_Index]._signPos, positions_Center, 0, maxTime, Ease.OutBack);
+            if (signIn != null) yield return signIn.WaitForCompletion();
 
             yield return new WaitForSeconds(Mathf.Min(1.2f, 0.8f + _delay * 0.4f));
 
             // Slide current plates & sign out with DOTween
             var exitSeq = DOTween.Sequence();
-            if (compareFractions[minigame1_Index]._left.plate != null && positions_Left.Count > 1 && positions_Left[1] != null)
-                exitSeq.Join(compareFractions[minigame1_Index]._left.plate.transform.DOMove(positions_Left[1].position, maxTime).SetEase(Ease.InCubic));
-            if (compareFractions[minigame1_Index]._right.plate != null && positions_Right.Count > 1 && positions_Right[1] != null)
-                exitSeq.Join(compareFractions[minigame1_Index]._right.plate.transform.DOMove(positions_Right[1].position, maxTime).SetEase(Ease.InCubic));
-            if (compareFractions[minigame1_Index]._signPos != null && positions_Center.Count > 1 && positions_Center[1] != null)
-                exitSeq.Join(compareFractions[minigame1_Index]._signPos.transform.DOMove(positions_Center[1].position, maxTime).SetEase(Ease.InCubic));
+            // Original Lerp(points, 1): from point 1 (table) to point 2 (out).
+            JoinIfAny(exitSeq, MoveAlong(compareFractions[minigame1_Index]._left.plate, positions_Left, 1, maxTime, Ease.InCubic));
+            JoinIfAny(exitSeq, MoveAlong(compareFractions[minigame1_Index]._right.plate, positions_Right, 1, maxTime, Ease.InCubic));
+            JoinIfAny(exitSeq, MoveAlong(compareFractions[minigame1_Index]._signPos, positions_Center, 1, maxTime, Ease.InCubic));
             yield return exitSeq.WaitForCompletion();
 
             _instructive = InstructiveState.Start;
@@ -355,10 +362,8 @@ namespace INART.SlothyBakery.Base
                 _logic.ResetIsCorrect();
 
                 var nextSeq = DOTween.Sequence();
-                if (compareFractions[minigame1_Index]._left.plate != null && positions_Left.Count > 0 && positions_Left[0] != null)
-                    nextSeq.Join(compareFractions[minigame1_Index]._left.plate.transform.DOMove(positions_Left[0].position, maxTime).SetEase(Ease.OutCubic));
-                if (compareFractions[minigame1_Index]._right.plate != null && positions_Right.Count > 0 && positions_Right[0] != null)
-                    nextSeq.Join(compareFractions[minigame1_Index]._right.plate.transform.DOMove(positions_Right[0].position, maxTime).SetEase(Ease.OutCubic));
+                JoinIfAny(nextSeq, MoveAlong(compareFractions[minigame1_Index]._left.plate, positions_Left, 0, maxTime, Ease.OutCubic));
+                JoinIfAny(nextSeq, MoveAlong(compareFractions[minigame1_Index]._right.plate, positions_Right, 0, maxTime, Ease.OutCubic));
                 yield return nextSeq.WaitForCompletion();
             }
             //The last one

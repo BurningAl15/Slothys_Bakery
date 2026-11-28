@@ -151,6 +151,22 @@ namespace Fatcat.Slothy.Bakery.Tests
             Assert.IsNotNull(logic);
             Assert.Greater(rounds.Count, 1);
 
+            // The plates must end on the table (path point 1), not stay off screen at point 0. The DOTween port
+            // tweened to point 0 and the round showed only the question and the sign buttons on device.
+            var left = (System.Collections.Generic.List<Transform>)typeof(Minigame1_B).GetField("positions_Left").GetValue(mg);
+            var right = (System.Collections.Generic.List<Transform>)typeof(Minigame1_B).GetField("positions_Right").GetValue(mg);
+            var round0 = rounds[0];
+            var leftSide = round0.GetType().GetField("_left").GetValue(round0);
+            var rightSide = round0.GetType().GetField("_right").GetValue(round0);
+            var leftPlate = (Transform)leftSide.GetType().GetField("plate").GetValue(leftSide);
+            var rightPlate = (Transform)rightSide.GetType().GetField("plate").GetValue(rightSide);
+            float platesDeadline = Time.realtimeSinceStartup + 4f;
+            while (Time.realtimeSinceStartup < platesDeadline &&
+                   (Vector3.Distance(leftPlate.position, left[1].position) > 0.05f || Vector3.Distance(rightPlate.position, right[1].position) > 0.05f))
+                yield return null;
+            Assert.Less(Vector3.Distance(leftPlate.position, left[1].position), 0.05f, "left plate reaches the table");
+            Assert.Less(Vector3.Distance(rightPlate.position, right[1].position), 0.05f, "right plate reaches the table");
+
             CaptureAtAspect(Environment.GetEnvironmentVariable("FATCAT_CAPTURE_DIR"), "bakery_mg1_round0");
 
             int d1 = (int)typeof(Minigame1_Logic).GetField("denominator1", PrivateInst).GetValue(logic);
