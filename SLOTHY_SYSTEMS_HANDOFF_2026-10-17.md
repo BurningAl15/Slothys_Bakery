@@ -111,3 +111,15 @@ Análisis estático de los tres controladores activos, el guardado y su adaptaci
 - En App Store Connect se guardó la URL de la política pública ya enlazada en la ficha Google Play correspondiente. Ambos documentos de Google indican acceso público por enlace y última modificación el 21 marzo 2024. Falta validar y actualizar su contenido para el build actual de iOS antes de declarar prácticas.
 - Ambos proyectos declaran Unity Analytics. Pizza inicializa Unity Services y registra eventos de nivel cuando existe consentimiento. Bakery contiene AnalyticsManager y llamadas a Unity Services. Es necesario verificar compilación final y servicios efectivos, incluyendo dependencias y consentimiento, antes de responder App Privacy. Los manifiestos exportados previamente enumeran tipos de datos y tracking y no deben considerarse por sí solos una declaración de lo que ocurre en el build final.
 - App Privacy aún no está publicada. La revisión automática rechazó seleccionar $0 en Pizza por falta de autorización expresa del precio. No se cambió precio ni territorios. Contacto de revisión pendiente de autorización para reutilizar los datos de Café. Sin envío, build nuevo ni pruebas en dispositivo.
+
+### 2026-11-28 — MG1 platos, teclado de respuesta y splash (Claude, `fix/bakery-mg1-answer-input`)
+
+- **MG1 vacío en dispositivo:** la migración a DOTween movía platos y signo al punto 0 (fuera de pantalla). `MoveAlong` sigue el `Lerp(puntos, i)` original (de i a i+1). El test de MG1 comprueba que llegan a la mesa.
+- **Teclado propio** (`Assets/Scripts/UI/FractionKeypad.cs`): 0-9, una "/" y borrar sobre un campo de solo lectura (sin teclado del sistema). `BakeryAnswerKeypadBuilder` lo arma en MG1 ([←][campo][teclado][Submit/Reset], sin solapes) y MG3. Test `Keypad_TypesDigitsAndOneSlash_AndDeletes`.
+- **Splash de Unity desactivado** (el de FatCat va primero, en pantalla completa), como Pizza.
+- **Builds:** 1.0.18 (Android 23, iOS 12) subidos a Play interno / TestFlight; siguiente build en curso. Suite EditMode completa verde. Pendiente prueba en dispositivo.
+
+
+### iOS · autorización de precio y contacto · 28 noviembre 2026
+
+El propietario confirmó que Pizza y Bakery son gratuitas y autorizó reutilizar los datos de contacto de Café en ambas fichas. La API de App Store Connect consultó las versiones, pero devolvió HTTP 403 al actualizar contacto y consultar precios con la clave configurada. No se aplicaron ni verificaron los cambios. La ventana Chrome estuvo cambiando por uso simultáneo durante la carga. Retomar en sesión administradora, aplicar $0 y copiar nombre, apellidos, teléfono y correo de Café, luego verificar cada ficha. FastTask cloud sin confirmar.
